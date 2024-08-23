@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+  <persistence-unit name="ProyectoCDAPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>com.soltelec.eventos.model.EstadosEvento</class>
+    <class>com.soltelec.eventos.model.EventoCda</class>
+    <class>com.soltelec.model.Spservices</class>
+    <class>com.soltelec.model.HojaPruebas</class>
+    <class>com.soltelec.model.Medidas</class>
+    <class>com.soltelec.model.TipoVehiculo</class>
+    <class>com.soltelec.model.ClasesVehiculo</class>
+    <class>com.soltelec.model.Dummy</class>
+    <class>com.soltelec.model.SubGrupos</class>
+    <class>com.soltelec.model.Defxplaca</class>
+    <class>com.soltelec.model.Defectos</class>
+    <class>com.soltelec.model.Permissions</class>
+    <class>com.soltelec.model.Consolas</class>
+    <class>com.soltelec.model.Calibraciones</class>
+    <class>com.soltelec.model.Colores</class>
+    <class>com.soltelec.model.Roadtypes</class>
+    <class>com.soltelec.model.Taskhistory</class>
+    <class>com.soltelec.model.Mechanics</class>
+    <class>com.soltelec.model.Defxprueba</class>
+    <class>com.soltelec.model.Grupos</class>
+    <class>com.soltelec.model.Dbshadows</class>
+    <class>com.soltelec.model.Llantas</class>
+    <class>com.soltelec.model.Emessages</class>
+    <class>com.soltelec.model.Fotos</class>
+    <class>com.soltelec.model.Usuarios</class>
+    <class>com.soltelec.model.Permisibles</class>
+    <class>com.soltelec.model.Parametros</class>
+    <class>com.soltelec.model.Equipments</class>
+    <class>com.soltelec.model.Propietarios</class>
+    <class>com.soltelec.model.Pruebas</class>
+    <class>com.soltelec.model.Defectoxmedida</class>
+    <class>com.soltelec.model.System</class>
+    <class>com.soltelec.model.TiposMedida</class>
+    <class>com.soltelec.model.TiposGasolina</class>
+    <class>com.soltelec.model.Ttpxdgp</class>
+    <class>com.soltelec.model.Schedules</class>
+    <class>com.soltelec.model.Pendingtasks</class>
+    <class>com.soltelec.model.LineasVehiculos</class>
+    <class>com.soltelec.model.Aseguradoras</class>
+    <class>com.soltelec.model.TipoPrueba</class>
+    <class>com.soltelec.model.Equipmenttypes</class>
+    <class>com.soltelec.model.Roads</class>
+    <class>com.soltelec.model.Servicios</class>
+    <class>com.soltelec.model.Departamentos</class>
+    <class>com.soltelec.model.Tasks</class>
+    <class>com.soltelec.model.Vehiculos</class>
+    <class>com.soltelec.model.Certificados</class>
+    <class>com.soltelec.model.Entities</class>
+    <class>com.soltelec.model.Defaultresume</class>
+    <class>com.soltelec.model.Marcas</class>
+    <class>com.soltelec.model.Equipos</class>
+    <class>com.soltelec.model.TipoCalibracion</class>
+    <class>com.soltelec.model.CalibracionDosPuntos</class>
+    <class>com.soltelec.model.AuditoriaSicov</class>
+    <class>com.soltelec.model.SEQUENCE</class>
+    <class>com.soltelec.model.com.soltelec.model.Cda</class>
+    <class>com.soltelec.model.Reinspeccion</class>
+    <class>com.soltelec.model.Cda</class>
+    <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
+    <validation-mode>NONE</validation-mode>
+    <properties>
+      <property name="show_sql" value="true"/>
+      <property name="eclipselink.jdbc.native-sql" value="true"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+    </properties>
+  </persistence-unit>
+</persistence>

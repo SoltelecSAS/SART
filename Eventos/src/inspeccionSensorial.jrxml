@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="inspeccionSensorial" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ea63499d-af62-4972-bf21-2673da934fd0">
+	<property name="ireport.zoom" value="4.177248169415694"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="59"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#808080">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#FFEFEF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#808080">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<subDataset name="dataSet" uuid="fb3bcdfe-df00-49bb-baa8-db33b7212d6d">
+		<parameter name="idPrueba" class="java.lang.Integer">
+			<defaultValueExpression><![CDATA[20]]></defaultValueExpression>
+		</parameter>
+		<parameter name="idTipoVehiculo" class="java.lang.Integer">
+			<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+		</parameter>
+		<parameter name="idTipoPrueba" class="java.lang.Integer">
+			<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT d.CARDEFAULT CODIGO,d.Nombre_problema DEFECTO,
+CASE WHEN dxp.id_defecto > 0 THEN 'SI' ELSE 'NO' END CONSEPTO
+FROM (
+select d.*
+from grupos_sub_grupos gg
+inner join sub_grupos sg on gg.SCDEFGROUPSUB = sg.SCDEFGROUPSUB
+inner join defectos d on sg.SCDEFGROUPSUB = d.DEFGROUPSSUB
+where gg.CARTYPE = $P{idTipoVehiculo} and sg.TESTTYPE = $P{idTipoPrueba}) d
+LEFT OUTER
+JOIN defxprueba dxp ON d.CARDEFAULT = dxp.id_defecto AND dxp.id_prueba = $P{idPrueba}]]>
+		</queryString>
+		<field name="CODIGO" class="java.lang.Integer"/>
+		<field name="DEFECTO" class="java.lang.String"/>
+		<field name="CONSEPTO" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="idPrueba" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[20]]></defaultValueExpression>
+	</parameter>
+	<parameter name="idTipoVehiculo" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="idTipoPrueba" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="userReport" class="java.lang.String"/>
+	<parameter name="placaVehiculo" class="java.lang.String"/>
+	<parameter name="nombreCda" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select * from cda]]>
+	</queryString>
+	<field name="id_cda" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nombre" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="NIT" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="direccion" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="telefono" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="celular" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="RESOLUCION" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="fecha_resolucion" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="codigo" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nom_resp_certificados" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Certificado_conformidad" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ciudad" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="consecutivo_apr" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="consecutivo_rep" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="consecutivo_cert" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="usuario_resp" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cont_cda" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="40" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="40" uuid="4216344a-7169-4cd6-aa00-f68fbf7fd83c"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="204" y="0" width="598" height="40" uuid="576a265b-fdf7-413b-9ad3-9809064a725d"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="204" y="0" width="352" height="40" uuid="a78bf0ff-3122-4df7-95e0-dd81e5444c6c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="22"/>
+				</textElement>
+				<text><![CDATA[Reporte de Inspección Sensorial]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-1" y="0" width="61" height="20" uuid="5e74a8c1-7a58-41fe-997c-61e4ef0e2d11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[ Usuario:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="62" y="0" width="142" height="20" uuid="6b3eda51-6f87-488e-8c8e-b75ebed0ce92"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{userReport}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="-1" y="20" width="61" height="20" uuid="9bb63b79-7826-4132-90a9-739b41058cb2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[ Placa:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="62" y="20" width="142" height="20" uuid="72b56ba0-d24c-496d-a0d0-c0a29a3fb2a9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{placaVehiculo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="556" y="0" width="246" height="20" uuid="69300001-6462-40f7-8cec-26786f2e6165"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Nombre CDA:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="556" y="20" width="246" height="20" uuid="2a0bd08c-2f94-4a3a-b105-bfb391ed3123"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{nombreCda}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="20" width="204" height="1" uuid="dcd88015-c368-4a3a-8463-346c9ad50693"/>
+			</line>
+			<line>
+				<reportElement x="61" y="0" width="1" height="40" uuid="270c97c9-db76-4f72-ba5d-946e4fea85bf"/>
+			</line>
+			<line>
+				<reportElement x="556" y="0" width="1" height="40" uuid="0f8e1697-9afc-4a81-b845-ab96225d47c9"/>
+			</line>
+			<line>
+				<reportElement x="557" y="19" width="244" height="1" uuid="fc5452f9-6d6f-47cb-99cc-69bc19fef562"/>
+			</line>
+		</band>
+	</title>
+	<detail>
+		<band height="80" splitType="Stretch">
+			<componentElement>
+				<reportElement key="table 3" style="table 3" x="0" y="0" width="801" height="80" uuid="a63ece8f-a7c5-454e-b08d-e9e288000072"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="dataSet" uuid="827b7047-bb07-44ac-a97b-c8bd397d2e2f">
+						<datasetParameter name="idPrueba">
+							<datasetParameterExpression><![CDATA[$P{idPrueba}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="idTipoVehiculo">
+							<datasetParameterExpression><![CDATA[$P{idTipoVehiculo}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="idTipoPrueba">
+							<datasetParameterExpression><![CDATA[$P{idTipoPrueba}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="61" uuid="f96bb84b-3f50-4ffa-87ce-c96139cdcd8f">
+						<jr:columnHeader style="table 3_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="61" height="30" uuid="35b74c3f-6f22-44c1-bf52-047075ce56b8"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[CÓDIGO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 3_TD" height="20" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="61" height="20" uuid="5e1e607b-bdd2-4880-8551-5b37ab2d6cde"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{CODIGO}+" "]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="681" uuid="be86aba2-1ac2-44eb-8445-56ae048d7ded">
+						<jr:columnHeader style="table 3_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="681" height="30" uuid="347decc3-e481-479f-a32b-44ce7e8b577b"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[DEFECTO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 3_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement x="0" y="0" width="681" height="20" uuid="5e6c11d8-8073-437e-84a5-3147a97dd07a"/>
+								<textElement verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[" "+$F{DEFECTO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="61" uuid="95ae7d3e-20a2-43fd-aefe-a96fa26b92e1">
+						<jr:columnHeader style="table 3_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="30" uuid="d7d2ada6-568f-4f9f-9f10-9b015ebbb31a"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[CONSEPTO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 3_TD" height="20" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="60" height="20" uuid="01aaa931-be73-4776-8a20-249610ea0a82"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{CONSEPTO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+</jasperReport>

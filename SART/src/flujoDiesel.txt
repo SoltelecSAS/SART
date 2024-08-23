@@ -1,0 +1,6 @@
+1. FRM_placa
+2. JDialogDiesel iniciarHilo
+3. WorkerInicioDiesel - doInBackground - iniciarPruebaDiesel
+4. CallableInicioDiesel - call - * (Preparacion)
+5. WorkerCiclosDiesel
+6. CallableCiclosOpacidadSensors (Preparacion) valor Min and Max

@@ -1,0 +1,661 @@
+2017-01-16 15:30:38 ERROR igrafica:1136 - No se puede iniciar el sensor de Temperatura
+y de humedad relativa
+java.lang.NullPointerException
+	at termohigrometro.TermoHigrometroPCSensors.obtenerValores(TermoHigrometroPCSensors.java:133)
+	at termohigrometro.TermoHigrometroPCSensors.obtenerValores(TermoHigrometroPCSensors.java:103)
+	at com.soltelec.igrafica.Frm_UICentral.inciarHiloHumedadTemperatura(Frm_UICentral.java:1119)
+	at com.soltelec.igrafica.Frm_UICentral.<init>(Frm_UICentral.java:91)
+	at com.soltelec.igrafica.Frm_UICentral$22.run(Frm_UICentral.java:1024)
+	at java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:312)
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:745)
+	at java.awt.EventQueue.access$300(EventQueue.java:103)
+	at java.awt.EventQueue$3.run(EventQueue.java:706)
+	at java.awt.EventQueue$3.run(EventQueue.java:704)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:715)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:242)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:161)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:150)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:146)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:138)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:91)
+2017-01-20 18:38:57 ERROR igrafica:1136 - No se puede iniciar el sensor de Temperatura
+y de humedad relativa
+java.lang.NullPointerException
+	at termohigrometro.TermoHigrometroPCSensors.obtenerValores(TermoHigrometroPCSensors.java:133)
+	at termohigrometro.TermoHigrometroPCSensors.obtenerValores(TermoHigrometroPCSensors.java:103)
+	at com.soltelec.igrafica.Frm_UICentral.inciarHiloHumedadTemperatura(Frm_UICentral.java:1119)
+	at com.soltelec.igrafica.Frm_UICentral.<init>(Frm_UICentral.java:91)
+	at com.soltelec.igrafica.Frm_UICentral$22.run(Frm_UICentral.java:1024)
+	at java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:312)
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:745)
+	at java.awt.EventQueue.access$300(EventQueue.java:103)
+	at java.awt.EventQueue$3.run(EventQueue.java:706)
+	at java.awt.EventQueue$3.run(EventQueue.java:704)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:715)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:242)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:161)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:150)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:146)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:138)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:91)
+2020-10-27 14:03:14 ERROR igrafica:1219 - No se puede iniciar el sensor de Temperatura
+y de humedad relativa
+java.io.FileNotFoundException: .\propiedades.properties (El sistema no puede encontrar el archivo especificado)
+	at java.io.FileInputStream.open(Native Method)
+	at java.io.FileInputStream.<init>(FileInputStream.java:146)
+	at java.io.FileInputStream.<init>(FileInputStream.java:101)
+	at utiltermohigrometro.UtilPropiedades.cargarPropiedad(UtilPropiedades.java:26)
+	at com.soltelec.igrafica.Frm_UICentral.inciarHiloHumedadTemperatura(Frm_UICentral.java:1172)
+	at com.soltelec.igrafica.Frm_UICentral.<init>(Frm_UICentral.java:104)
+	at com.soltelec.igrafica.FrmLogin.btn_ingresarActionPerformed(FrmLogin.java:274)
+	at com.soltelec.igrafica.FrmLogin.access$100(FrmLogin.java:27)
+	at com.soltelec.igrafica.FrmLogin$2.actionPerformed(FrmLogin.java:89)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:2018)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2341)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:402)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:259)
+	at javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:252)
+	at java.awt.Component.processMouseEvent(Component.java:6516)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3321)
+	at java.awt.Component.processEvent(Component.java:6281)
+	at java.awt.Container.processEvent(Container.java:2229)
+	at java.awt.Component.dispatchEventImpl(Component.java:4872)
+	at java.awt.Container.dispatchEventImpl(Container.java:2287)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4832)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:4492)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:4422)
+	at java.awt.Container.dispatchEventImpl(Container.java:2273)
+	at java.awt.Window.dispatchEventImpl(Window.java:2719)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:747)
+	at java.awt.EventQueue.access$300(EventQueue.java:103)
+	at java.awt.EventQueue$3.run(EventQueue.java:706)
+	at java.awt.EventQueue$3.run(EventQueue.java:704)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.awt.EventQueue$4.run(EventQueue.java:718)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:717)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:242)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:161)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:150)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:146)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:138)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:91)
+2020-10-27 14:24:25 ERROR igrafica:1219 - No se puede iniciar el sensor de Temperatura
+y de humedad relativa
+java.io.FileNotFoundException: .\propiedades.properties (El sistema no puede encontrar el archivo especificado)
+	at java.io.FileInputStream.open(Native Method)
+	at java.io.FileInputStream.<init>(FileInputStream.java:146)
+	at java.io.FileInputStream.<init>(FileInputStream.java:101)
+	at utiltermohigrometro.UtilPropiedades.cargarPropiedad(UtilPropiedades.java:26)
+	at com.soltelec.igrafica.Frm_UICentral.inciarHiloHumedadTemperatura(Frm_UICentral.java:1172)
+	at com.soltelec.igrafica.Frm_UICentral.<init>(Frm_UICentral.java:104)
+	at com.soltelec.igrafica.FrmLogin.btn_ingresarActionPerformed(FrmLogin.java:274)
+	at com.soltelec.igrafica.FrmLogin.access$100(FrmLogin.java:27)
+	at com.soltelec.igrafica.FrmLogin$2.actionPerformed(FrmLogin.java:89)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:2018)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2341)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:402)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:259)
+	at javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:252)
+	at java.awt.Component.processMouseEvent(Component.java:6516)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3321)
+	at java.awt.Component.processEvent(Component.java:6281)
+	at java.awt.Container.processEvent(Container.java:2229)
+	at java.awt.Component.dispatchEventImpl(Component.java:4872)
+	at java.awt.Container.dispatchEventImpl(Container.java:2287)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4832)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:4492)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:4422)
+	at java.awt.Container.dispatchEventImpl(Container.java:2273)
+	at java.awt.Window.dispatchEventImpl(Window.java:2719)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:747)
+	at java.awt.EventQueue.access$300(EventQueue.java:103)
+	at java.awt.EventQueue$3.run(EventQueue.java:706)
+	at java.awt.EventQueue$3.run(EventQueue.java:704)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.awt.EventQueue$4.run(EventQueue.java:718)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:717)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:242)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:161)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:150)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:146)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:138)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:91)
+2020-10-27 14:27:49 INFO  igrafica:1798 - Usuario Servicio Soltelec realiza prueba de :Taximetropara vehiculo de placas: PRUEBA1R
+2020-10-27 14:30:41 ERROR igrafica:1219 - No se puede iniciar el sensor de Temperatura
+y de humedad relativa
+java.io.FileNotFoundException: .\propiedades.properties (El sistema no puede encontrar el archivo especificado)
+	at java.io.FileInputStream.open(Native Method)
+	at java.io.FileInputStream.<init>(FileInputStream.java:146)
+	at java.io.FileInputStream.<init>(FileInputStream.java:101)
+	at utiltermohigrometro.UtilPropiedades.cargarPropiedad(UtilPropiedades.java:26)
+	at com.soltelec.igrafica.Frm_UICentral.inciarHiloHumedadTemperatura(Frm_UICentral.java:1172)
+	at com.soltelec.igrafica.Frm_UICentral.<init>(Frm_UICentral.java:104)
+	at com.soltelec.igrafica.FrmLogin.btn_ingresarActionPerformed(FrmLogin.java:274)
+	at com.soltelec.igrafica.FrmLogin.access$100(FrmLogin.java:27)
+	at com.soltelec.igrafica.FrmLogin$2.actionPerformed(FrmLogin.java:89)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:2018)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2341)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:402)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:259)
+	at javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:252)
+	at java.awt.Component.processMouseEvent(Component.java:6516)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3321)
+	at java.awt.Component.processEvent(Component.java:6281)
+	at java.awt.Container.processEvent(Container.java:2229)
+	at java.awt.Component.dispatchEventImpl(Component.java:4872)
+	at java.awt.Container.dispatchEventImpl(Container.java:2287)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4832)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:4492)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:4422)
+	at java.awt.Container.dispatchEventImpl(Container.java:2273)
+	at java.awt.Window.dispatchEventImpl(Window.java:2719)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:747)
+	at java.awt.EventQueue.access$300(EventQueue.java:103)
+	at java.awt.EventQueue$3.run(EventQueue.java:706)
+	at java.awt.EventQueue$3.run(EventQueue.java:704)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.awt.EventQueue$4.run(EventQueue.java:718)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:717)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:242)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:161)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:150)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:146)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:138)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:91)
+2020-10-27 14:32:48 INFO  igrafica:1798 - Usuario Servicio Soltelec realiza prueba de :Taximetropara vehiculo de placas: PRUEBA1R
+2020-10-27 14:33:00 INFO  ClienteSicov:39 - ------------------------------------------------------------
+2020-10-27 14:33:00 INFO  ClienteSicov:40 - ----Creando Evento para la prueba :  0
+2020-10-27 14:33:00 INFO  ClienteSicov:41 - ------------------------------------------------------------
+2020-10-27 14:33:00 INFO  ClienteSicov:49 - ---- Datos de la trama : 858|2020-10-27 14:32:55|Taximetro|PRUEBA1R|1|1||13510452
+2020-10-27 14:33:00 INFO  ClienteIndra:47 - ------------------ Enviando Evento-------------------------
+2020-10-27 14:33:01 WARN  JavaUtils:1308 - Unable to find required classes (javax.activation.DataHandler and javax.mail.internet.MimeMultipart). Attachment support is disabled.
+2020-10-27 14:33:01 INFO  ClienteIndra:59 - ---- Trama a enviar : 858|2020-10-27 14:32:55|Taximetro|PRUEBA1R|1|1||13510452
+2020-10-27 14:36:38 ERROR igrafica:1219 - No se puede iniciar el sensor de Temperatura
+y de humedad relativa
+java.io.FileNotFoundException: .\propiedades.properties (El sistema no puede encontrar el archivo especificado)
+	at java.io.FileInputStream.open(Native Method)
+	at java.io.FileInputStream.<init>(FileInputStream.java:146)
+	at java.io.FileInputStream.<init>(FileInputStream.java:101)
+	at utiltermohigrometro.UtilPropiedades.cargarPropiedad(UtilPropiedades.java:26)
+	at com.soltelec.igrafica.Frm_UICentral.inciarHiloHumedadTemperatura(Frm_UICentral.java:1172)
+	at com.soltelec.igrafica.Frm_UICentral.<init>(Frm_UICentral.java:104)
+	at com.soltelec.igrafica.FrmLogin.btn_ingresarActionPerformed(FrmLogin.java:274)
+	at com.soltelec.igrafica.FrmLogin.access$100(FrmLogin.java:27)
+	at com.soltelec.igrafica.FrmLogin$2.actionPerformed(FrmLogin.java:89)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:2018)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2341)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:402)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:259)
+	at javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:252)
+	at java.awt.Component.processMouseEvent(Component.java:6516)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3321)
+	at java.awt.Component.processEvent(Component.java:6281)
+	at java.awt.Container.processEvent(Container.java:2229)
+	at java.awt.Component.dispatchEventImpl(Component.java:4872)
+	at java.awt.Container.dispatchEventImpl(Container.java:2287)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4832)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:4492)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:4422)
+	at java.awt.Container.dispatchEventImpl(Container.java:2273)
+	at java.awt.Window.dispatchEventImpl(Window.java:2719)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:747)
+	at java.awt.EventQueue.access$300(EventQueue.java:103)
+	at java.awt.EventQueue$3.run(EventQueue.java:706)
+	at java.awt.EventQueue$3.run(EventQueue.java:704)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.awt.EventQueue$4.run(EventQueue.java:718)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:717)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:242)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:161)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:150)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:146)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:138)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:91)
+2020-10-27 14:37:13 INFO  igrafica:1798 - Usuario Servicio Soltelec realiza prueba de :Taximetropara vehiculo de placas: PRUEBA1R
+2020-10-27 14:44:37 ERROR igrafica:1219 - No se puede iniciar el sensor de Temperatura
+y de humedad relativa
+java.io.FileNotFoundException: .\propiedades.properties (El sistema no puede encontrar el archivo especificado)
+	at java.io.FileInputStream.open(Native Method)
+	at java.io.FileInputStream.<init>(FileInputStream.java:146)
+	at java.io.FileInputStream.<init>(FileInputStream.java:101)
+	at utiltermohigrometro.UtilPropiedades.cargarPropiedad(UtilPropiedades.java:26)
+	at com.soltelec.igrafica.Frm_UICentral.inciarHiloHumedadTemperatura(Frm_UICentral.java:1172)
+	at com.soltelec.igrafica.Frm_UICentral.<init>(Frm_UICentral.java:104)
+	at com.soltelec.igrafica.FrmLogin.btn_ingresarActionPerformed(FrmLogin.java:274)
+	at com.soltelec.igrafica.FrmLogin.access$100(FrmLogin.java:27)
+	at com.soltelec.igrafica.FrmLogin$2.actionPerformed(FrmLogin.java:89)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:2018)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2341)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:402)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:259)
+	at javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:252)
+	at java.awt.Component.processMouseEvent(Component.java:6516)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3321)
+	at java.awt.Component.processEvent(Component.java:6281)
+	at java.awt.Container.processEvent(Container.java:2229)
+	at java.awt.Component.dispatchEventImpl(Component.java:4872)
+	at java.awt.Container.dispatchEventImpl(Container.java:2287)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4832)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:4492)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:4422)
+	at java.awt.Container.dispatchEventImpl(Container.java:2273)
+	at java.awt.Window.dispatchEventImpl(Window.java:2719)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:747)
+	at java.awt.EventQueue.access$300(EventQueue.java:103)
+	at java.awt.EventQueue$3.run(EventQueue.java:706)
+	at java.awt.EventQueue$3.run(EventQueue.java:704)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.awt.EventQueue$4.run(EventQueue.java:718)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:717)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:242)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:161)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:150)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:146)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:138)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:91)
+2020-10-27 14:45:31 INFO  igrafica:1799 - Usuario Servicio Soltelec realiza prueba de :Taximetropara vehiculo de placas: PRUEBA1R
+2020-10-27 14:50:48 ERROR igrafica:1219 - No se puede iniciar el sensor de Temperatura
+y de humedad relativa
+java.io.FileNotFoundException: .\propiedades.properties (El sistema no puede encontrar el archivo especificado)
+	at java.io.FileInputStream.open(Native Method)
+	at java.io.FileInputStream.<init>(FileInputStream.java:146)
+	at java.io.FileInputStream.<init>(FileInputStream.java:101)
+	at utiltermohigrometro.UtilPropiedades.cargarPropiedad(UtilPropiedades.java:26)
+	at com.soltelec.igrafica.Frm_UICentral.inciarHiloHumedadTemperatura(Frm_UICentral.java:1172)
+	at com.soltelec.igrafica.Frm_UICentral.<init>(Frm_UICentral.java:104)
+	at com.soltelec.igrafica.FrmLogin.btn_ingresarActionPerformed(FrmLogin.java:274)
+	at com.soltelec.igrafica.FrmLogin.access$100(FrmLogin.java:27)
+	at com.soltelec.igrafica.FrmLogin$2.actionPerformed(FrmLogin.java:89)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:2018)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2341)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:402)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:259)
+	at javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:252)
+	at java.awt.Component.processMouseEvent(Component.java:6516)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3321)
+	at java.awt.Component.processEvent(Component.java:6281)
+	at java.awt.Container.processEvent(Container.java:2229)
+	at java.awt.Component.dispatchEventImpl(Component.java:4872)
+	at java.awt.Container.dispatchEventImpl(Container.java:2287)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4832)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:4492)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:4422)
+	at java.awt.Container.dispatchEventImpl(Container.java:2273)
+	at java.awt.Window.dispatchEventImpl(Window.java:2719)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:747)
+	at java.awt.EventQueue.access$300(EventQueue.java:103)
+	at java.awt.EventQueue$3.run(EventQueue.java:706)
+	at java.awt.EventQueue$3.run(EventQueue.java:704)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.awt.EventQueue$4.run(EventQueue.java:718)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:717)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:242)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:161)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:150)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:146)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:138)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:91)
+2020-10-27 14:51:19 INFO  igrafica:1799 - Usuario Servicio Soltelec realiza prueba de :Taximetropara vehiculo de placas: PRUEBA1R
+2020-11-06 13:05:21 ERROR Frm_mo_AExteriorv2:1023 - Error en el metodo llamarConexion() : PruebaInspecionSencorial: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+2020-11-06 14:10:28 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 14:10:28 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 14:10:28 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 14:10:28 INFO  Frm_mo_AExteriorv2:1064 - Error en el metodo : registrarDefectosPrueba()Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))
+2020-11-06 14:10:55 INFO  Frm_mo_AExteriorv2:1064 - Error en el metodo : registrarDefectosPrueba()Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))
+2020-11-06 14:10:57 INFO  Frm_mo_AExteriorv2:1064 - Error en el metodo : registrarDefectosPrueba()Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))
+2020-11-06 14:10:57 INFO  Frm_mo_AExteriorv2:1064 - Error en el metodo : registrarDefectosPrueba()Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))
+2020-11-06 14:10:58 INFO  Frm_mo_AExteriorv2:1064 - Error en el metodo : registrarDefectosPrueba()Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))
+2020-11-06 14:10:58 INFO  Frm_mo_AExteriorv2:1064 - Error en el metodo : registrarDefectosPrueba()Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))
+2020-11-06 14:14:13 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 14:14:13 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 14:14:13 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 14:14:13 INFO  Frm_mo_AExteriorv2:1064 - Error en el metodo : registrarDefectosPrueba()Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))
+2020-11-06 14:15:09 INFO  Frm_mo_AExteriorv2:1064 - Error en el metodo : registrarDefectosPrueba()Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))
+2020-11-06 14:15:13 INFO  Frm_mo_AExteriorv2:1064 - Error en el metodo : registrarDefectosPrueba()Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))
+2020-11-06 14:15:15 INFO  Frm_mo_AExteriorv2:1064 - Error en el metodo : registrarDefectosPrueba()Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))
+2020-11-06 14:15:17 INFO  Frm_mo_AExteriorv2:1064 - Error en el metodo : registrarDefectosPrueba()Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))
+2020-11-06 14:15:18 INFO  Frm_mo_AExteriorv2:1064 - Error en el metodo : registrarDefectosPrueba()Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))
+2020-11-06 14:17:34 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 14:17:34 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 14:17:34 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 14:20:39 INFO  Frm_mo_AExteriorv2:1064 - Error en el metodo : registrarDefectosPrueba()Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))Cannot add or update a child row: a foreign key constraint fails (`db_cda`.`defxprueba`, CONSTRAINT `FK_defxprueba_prueba` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`Id_Pruebas`))
+2020-11-06 14:24:34 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 14:24:34 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 14:24:34 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 14:25:40 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 14:25:40 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 14:25:40 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 14:26:55 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 14:26:55 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 14:26:55 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 14:27:35 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 14:27:35 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 14:27:35 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 14:29:15 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 14:29:15 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 14:29:15 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 14:29:15 INFO  Frm_mo_AExteriorv2:1049 - ----------------------------ERROR ------------------------------------------
+2020-11-06 14:29:15 INFO  Frm_mo_AExteriorv2:1050 - El defecto : 14000 ya esta asociado a la prueba 358407
+2020-11-06 14:29:15 INFO  Frm_mo_AExteriorv2:1051 - -------------------------------- ------------------------------------------
+2020-11-06 14:30:42 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 14:30:42 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 14:30:42 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:1049 - ----------------------------ERROR ------------------------------------------
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:1050 - El defecto : 14000 ya esta asociado a la prueba 358407
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:1051 - -------------------------------- ------------------------------------------
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:1049 - ----------------------------ERROR ------------------------------------------
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:1050 - El defecto : 14001 ya esta asociado a la prueba 358407
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:1051 - -------------------------------- ------------------------------------------
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:1049 - ----------------------------ERROR ------------------------------------------
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:1050 - El defecto : 14002 ya esta asociado a la prueba 358407
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:1051 - -------------------------------- ------------------------------------------
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:1089 - ----------------------------ERROR ------------------------------------------
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:1090 - El defecto : 14003 ya esta asociado a la prueba 358407
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:1091 - -------------------------------- ------------------------------------------
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:1089 - ----------------------------ERROR ------------------------------------------
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:1090 - El defecto : 14004 ya esta asociado a la prueba 358407
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:1091 - -------------------------------- ------------------------------------------
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:1089 - ----------------------------ERROR ------------------------------------------
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:1090 - El defecto : 14005 ya esta asociado a la prueba 358407
+2020-11-06 14:37:41 INFO  Frm_mo_AExteriorv2:1091 - -------------------------------- ------------------------------------------
+2020-11-06 14:43:52 INFO  Frm_mo_AExteriorv2:1049 - ----------------------------ERROR ------------------------------------------
+2020-11-06 14:43:52 INFO  Frm_mo_AExteriorv2:1050 - El defecto : 14009 ya esta asociado a la prueba 358407
+2020-11-06 14:43:52 INFO  Frm_mo_AExteriorv2:1051 - -------------------------------- ------------------------------------------
+2020-11-06 14:44:19 INFO  Frm_mo_AExteriorv2:1089 - ----------------------------ERROR ------------------------------------------
+2020-11-06 14:44:19 INFO  Frm_mo_AExteriorv2:1090 - El defecto : 14009 ya esta asociado a la prueba 358407
+2020-11-06 14:44:19 INFO  Frm_mo_AExteriorv2:1091 - -------------------------------- ------------------------------------------
+2020-11-06 14:46:42 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 14:46:42 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 14:46:42 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 14:48:09 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 14:48:09 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 14:48:09 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 14:48:44 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 14:48:44 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 14:48:44 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 14:49:00 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 14:49:00 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 14:49:00 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1117 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1118 - El defecto : 14000 ya esta asociado a la prueba 358407
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1119 - -------------------------------- ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1067 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1068 - El defecto : 14000 ya esta asociado a la prueba 358407
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1069 - -------------------------------- ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1117 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1118 - El defecto : 14001 ya esta asociado a la prueba 358407
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1119 - -------------------------------- ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1067 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1068 - El defecto : 14001 ya esta asociado a la prueba 358407
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1069 - -------------------------------- ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1117 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1118 - El defecto : 14002 ya esta asociado a la prueba 358407
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1119 - -------------------------------- ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1067 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1068 - El defecto : 14002 ya esta asociado a la prueba 358407
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1069 - -------------------------------- ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1117 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1118 - El defecto : 14003 ya esta asociado a la prueba 358407
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1119 - -------------------------------- ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1067 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1068 - El defecto : 14003 ya esta asociado a la prueba 358407
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1069 - -------------------------------- ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1117 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1118 - El defecto : 14004 ya esta asociado a la prueba 358407
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1119 - -------------------------------- ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1067 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1068 - El defecto : 14004 ya esta asociado a la prueba 358407
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1069 - -------------------------------- ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1117 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1118 - El defecto : 14005 ya esta asociado a la prueba 358407
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1119 - -------------------------------- ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1067 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1068 - El defecto : 14005 ya esta asociado a la prueba 358407
+2020-11-06 15:09:09 INFO  Frm_mo_AExteriorv2:1069 - -------------------------------- ------------------------------------------
+2020-11-06 15:10:53 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 15:10:53 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 15:10:53 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 15:11:16 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 15:11:16 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 15:11:16 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 15:13:36 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 15:13:36 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 15:13:36 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 15:15:49 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 15:15:49 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 15:15:49 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 15:17:20 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 15:17:21 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 15:17:21 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 15:19:32 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 15:19:32 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 15:19:32 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 15:20:22 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 15:20:22 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 15:20:22 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 15:22:24 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 15:22:24 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 15:22:24 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 15:22:24 INFO  Frm_mo_AExteriorv2:1067 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:22:24 INFO  Frm_mo_AExteriorv2:1068 - El defecto : 14000 ya esta asociado a la prueba 358407
+2020-11-06 15:22:24 INFO  Frm_mo_AExteriorv2:1069 - -------------------------------- ------------------------------------------
+2020-11-06 15:22:24 INFO  Frm_mo_AExteriorv2:1067 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:22:24 INFO  Frm_mo_AExteriorv2:1068 - El defecto : 14001 ya esta asociado a la prueba 358407
+2020-11-06 15:22:24 INFO  Frm_mo_AExteriorv2:1069 - -------------------------------- ------------------------------------------
+2020-11-06 15:22:24 INFO  Frm_mo_AExteriorv2:1067 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:22:24 INFO  Frm_mo_AExteriorv2:1068 - El defecto : 14002 ya esta asociado a la prueba 358407
+2020-11-06 15:22:24 INFO  Frm_mo_AExteriorv2:1069 - -------------------------------- ------------------------------------------
+2020-11-06 15:22:25 INFO  Frm_mo_AExteriorv2:1067 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:22:25 INFO  Frm_mo_AExteriorv2:1068 - El defecto : 14003 ya esta asociado a la prueba 358407
+2020-11-06 15:22:25 INFO  Frm_mo_AExteriorv2:1069 - -------------------------------- ------------------------------------------
+2020-11-06 15:22:25 INFO  Frm_mo_AExteriorv2:1067 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:22:25 INFO  Frm_mo_AExteriorv2:1068 - El defecto : 14004 ya esta asociado a la prueba 358407
+2020-11-06 15:22:25 INFO  Frm_mo_AExteriorv2:1069 - -------------------------------- ------------------------------------------
+2020-11-06 15:22:25 INFO  Frm_mo_AExteriorv2:1067 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:22:25 INFO  Frm_mo_AExteriorv2:1068 - El defecto : 14005 ya esta asociado a la prueba 358407
+2020-11-06 15:22:25 INFO  Frm_mo_AExteriorv2:1069 - -------------------------------- ------------------------------------------
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:1067 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:1068 - El defecto : 14000 ya esta asociado a la prueba 358407
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:1069 - -------------------------------- ------------------------------------------
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:1067 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:1068 - El defecto : 14001 ya esta asociado a la prueba 358407
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:1069 - -------------------------------- ------------------------------------------
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:1067 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:1068 - El defecto : 14002 ya esta asociado a la prueba 358407
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:1069 - -------------------------------- ------------------------------------------
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:1067 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:1068 - El defecto : 14003 ya esta asociado a la prueba 358407
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:1069 - -------------------------------- ------------------------------------------
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:1067 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:1068 - El defecto : 14004 ya esta asociado a la prueba 358407
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:1069 - -------------------------------- ------------------------------------------
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:1067 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:1068 - El defecto : 14005 ya esta asociado a la prueba 358407
+2020-11-06 15:22:39 INFO  Frm_mo_AExteriorv2:1069 - -------------------------------- ------------------------------------------
+2020-11-06 15:23:07 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 15:23:07 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 15:23:07 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:939 - -----------------------------------------------------
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:940 - ------Cargando defectos de Carroceria y chasis----
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:941 - -----------------------------------------------------
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:1117 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:1118 - El defecto : 14000 ya esta asociado a la prueba 358407
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:1119 - -------------------------------- ------------------------------------------
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:1117 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:1118 - El defecto : 14001 ya esta asociado a la prueba 358407
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:1119 - -------------------------------- ------------------------------------------
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:1117 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:1118 - El defecto : 14002 ya esta asociado a la prueba 358407
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:1119 - -------------------------------- ------------------------------------------
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:1117 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:1118 - El defecto : 14003 ya esta asociado a la prueba 358407
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:1119 - -------------------------------- ------------------------------------------
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:1117 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:1118 - El defecto : 14004 ya esta asociado a la prueba 358407
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:1119 - -------------------------------- ------------------------------------------
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:1117 - ----------------------------ERROR ------------------------------------------
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:1118 - El defecto : 14005 ya esta asociado a la prueba 358407
+2020-11-06 15:23:29 INFO  Frm_mo_AExteriorv2:1119 - -------------------------------- ------------------------------------------
+2020-11-06 17:12:41 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:12:41 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 65003 ya esta asociado a la prueba 358407
+2020-11-06 17:12:41 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:13:19 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:13:19 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 65003 ya esta asociado a la prueba 358407
+2020-11-06 17:13:19 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:18:15 INFO  Frm_mo_SFrenosv2:4592 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:18:15 INFO  Frm_mo_SFrenosv2:4593 - El defecto : 65003 ya esta asociado a la prueba 358407
+2020-11-06 17:18:15 INFO  Frm_mo_SFrenosv2:4594 - -------------------------------- ------------------------------------------
+2020-11-06 17:18:30 INFO  Frm_mo_SFrenosv2:4592 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:18:30 INFO  Frm_mo_SFrenosv2:4593 - El defecto : 65003 ya esta asociado a la prueba 358407
+2020-11-06 17:18:30 INFO  Frm_mo_SFrenosv2:4594 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 65003 ya esta asociado a la prueba 358407
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 14017 ya esta asociado a la prueba 358407
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 65000 ya esta asociado a la prueba 358407
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 65001 ya esta asociado a la prueba 358407
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 65004 ya esta asociado a la prueba 358407
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 65002 ya esta asociado a la prueba 358407
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 14018 ya esta asociado a la prueba 358407
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 14019 ya esta asociado a la prueba 358407
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 14020 ya esta asociado a la prueba 358407
+2020-11-06 17:21:09 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 14021 ya esta asociado a la prueba 358407
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 54000 ya esta asociado a la prueba 358407
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 54001 ya esta asociado a la prueba 358407
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 54002 ya esta asociado a la prueba 358407
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 14011 ya esta asociado a la prueba 358407
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 14012 ya esta asociado a la prueba 358407
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 14013 ya esta asociado a la prueba 358407
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 14014 ya esta asociado a la prueba 358407
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 14015 ya esta asociado a la prueba 358407
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 14016 ya esta asociado a la prueba 358407
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 54004 ya esta asociado a la prueba 358407
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 54005 ya esta asociado a la prueba 358407
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 54006 ya esta asociado a la prueba 358407
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 55007 ya esta asociado a la prueba 358407
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 55008 ya esta asociado a la prueba 358407
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 55009 ya esta asociado a la prueba 358407
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4542 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4543 - El defecto : 54003 ya esta asociado a la prueba 358407
+2020-11-06 17:21:10 INFO  Frm_mo_SFrenosv2:4544 - -------------------------------- ------------------------------------------
+2020-11-06 17:30:12 INFO  Frm_mo_Ensev2:294 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:30:12 INFO  Frm_mo_Ensev2:295 - El defecto : 10114 ya esta asociado a la prueba 358407
+2020-11-06 17:30:12 INFO  Frm_mo_Ensev2:296 - -------------------------------- ------------------------------------------
+2020-11-06 17:30:32 INFO  Frm_mo_Ensev2:294 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:30:32 INFO  Frm_mo_Ensev2:295 - El defecto : 10114 ya esta asociado a la prueba 358407
+2020-11-06 17:30:32 INFO  Frm_mo_Ensev2:296 - -------------------------------- ------------------------------------------
+2020-11-06 17:31:18 INFO  Frm_mo_Ensev2:344 - ----------------------------ERROR ------------------------------------------
+2020-11-06 17:31:18 INFO  Frm_mo_Ensev2:345 - El defecto : 10114 ya esta asociado a la prueba 358407
+2020-11-06 17:31:18 INFO  Frm_mo_Ensev2:346 - -------------------------------- ------------------------------------------
+2020-11-07 11:32:59 INFO  ClienteIndra:52 - ------------------ Enviando Evento-------------------------
+2020-11-07 11:33:26 INFO  ClienteIndra:52 - ------------------ Enviando Evento-------------------------
+2020-11-10 16:59:21 INFO  Frm_mo_AExteriorv2:938 - -----------------------------------------------------
+2020-11-10 16:59:21 INFO  Frm_mo_AExteriorv2:939 - ------Cargando defectos de Carroceria y chasis----
+2020-11-10 16:59:21 INFO  Frm_mo_AExteriorv2:940 - -----------------------------------------------------

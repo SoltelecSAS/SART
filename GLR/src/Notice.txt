@@ -1,0 +1,7 @@
+2016-12-18 Version 1.8.1 released
+_______________________________________________________________________________
+- SART-64 Ajuste de medida por catalizador
+
+2016-12-23 Version 1.8.2 released
+_______________________________________________________________________________
+Ajuste de Secuencia de vehiculos livianos y motos en prueba de gases

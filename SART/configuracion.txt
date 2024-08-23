@@ -1,0 +1,204 @@
+[DAQ]
+puerto: COM4
+
+[BANCO]
+desviacion: si
+suspension: no
+frenos: no
+pista_mixta: si
+
+[SOFTWARE]
+pruebas_unidas: si
+tiempo_mensajes: 4000
+registrar_medidas: si
+backup_registro: si
+rodillo_motocarro: derecho
+
+
+[DESVIACION]
+ancho_placa: 1.0
+aplica_sensor: 0
+resol_min: -25
+resol_max: 25
+tiempo_mensajes: 3000
+
+[SUSPENSION]
+umbral_peso_susp: 380
+factor_escala_susp: 1
+temporizador_inercia: 500
+salida_motor_derecho: 010000
+salida_motor_izquierdo: 100000
+tiempo_mensajes: 4000
+
+[TIPOPISTA]
+valida_tipo: 2
+tipo_pista: Mixta
+
+[FRENOMETRO]
+umbral_velo: 5
+umbral_peso_fren: 500
+factor_desq: 1.7
+
+livianos:
+pasos: 12
+salidas: 000000 ,000001
+tiempo: 1000
+salidas: 000000 ,000101
+tiempo: 2000
+salidas: 000000 ,000101
+tiempo: 1000
+salidas: 000000 ,000101
+tiempo: 8000
+salidas: 000000 ,000101
+tiempo: 1000
+salidas: 000000 ,000000
+tiempo: 3000
+salidas: 000001 ,000001
+tiempo: 1000
+salidas: 000001 ,000101
+tiempo: 2000
+salidas: 000001 ,000101
+tiempo: 2000
+salidas: 000001 ,000101
+tiempo: 8000
+salidas: 000001 ,000101
+tiempo: 1000
+salidas: 000000 ,000000
+tiempo: 6000
+
+
+motocarro:
+pasos: 10
+salidas: 000000,000010
+tiempo: 3000
+salidas: 000000,000011
+tiempo: 3000
+salidas: 000000,000011
+tiempo: 10000
+salidas: 000000,000010
+tiempo: 3000
+salidas: 000000,000000
+tiempo: 3000
+salidas: 000000,000100
+tiempo: 3000
+salidas: 000000,000101
+tiempo: 3000
+salidas: 000000,000101
+tiempo: 10000
+salidas: 000000,000100
+tiempo: 3000
+salidas: 000000,000000
+tiempo: 3000
+
+4x4:
+pasos: 24
+salidas: 000000,010010
+tiempo: 2000
+salidas: 000000,010110
+tiempo: 2000
+salidas: 000000,010110
+tiempo: 3000
+salidas: 000000,010110
+tiempo: 5000
+salidas: 000000,010110
+tiempo: 2000
+salidas: 000000,000000
+tiempo: 2000
+salidas: 000000,011001
+tiempo: 2000
+salidas: 000000,011001
+tiempo: 2000
+salidas: 000000,011001
+tiempo: 3000
+salidas: 000000,011001
+tiempo: 5000
+salidas: 000000,011001
+tiempo: 2000
+salidas: 000000,000000
+tiempo: 2000
+salidas: 000000,010110
+tiempo: 2000
+salidas: 000000,010110
+tiempo: 2000
+salidas: 000000,010110
+tiempo: 3000
+salidas: 000000,010110
+tiempo: 5000
+salidas: 000000,010110
+tiempo: 2000
+salidas: 000000,000000
+tiempo: 2000
+salidas: 000000,010110
+tiempo: 2000
+salidas: 000000,010110
+tiempo: 2000
+salidas: 000000,010110
+tiempo: 3000
+salidas: 000000,010110
+tiempo: 5000
+salidas: 000000,010110
+tiempo: 2000
+salidas: 000000,000000
+tiempo: 2000
+
+pesados:
+pasos: 4
+salidas: 000000,010001
+tiempo: 500
+salidas: 000000,010101
+tiempo: 10000
+salidas: 000000,010101
+tiempo: 2000
+salidas: 000000,000000
+tiempo: 2000
+
+
+motos:
+pasos: 10
+salidas: 000000,000010
+tiempo: 3000
+salidas: 000000,000011
+tiempo: 3000
+salidas: 000000,000011
+tiempo: 4000
+salidas: 000000,000010
+tiempo: 3000
+salidas: 000000,000000
+tiempo: 3000
+salidas: 000000,000100
+tiempo: 3000
+salidas: 000000,000101
+tiempo: 3000
+salidas: 000000,000101
+tiempo: 4000
+salidas: 000000,000100
+tiempo: 3000
+salidas: 000000,000000
+tiempo: 3000
+
+
+[TAXIMETRO]
+diametro_rodillo: 0.18084
+pulsos_por_vuelta: 4
+metros_por_unidad: 80
+segundos_por_unidad: 50
+unidades_distancia_a_medir: 4
+unidades_tiempo_a_medir: 2
+temporizador_pulso: 9
+pulso_x_milesima: 99
+show_cronometro: 1
+ajuste_taximetro: 1
+
+
+UPDATE pruebas p
+inner join hoja_pruebas h on h.TESTSHEET =  p.hoja_pruebas_for
+inner join vehiculos v on v.CAR = h.Vehiculo_for
+SET p.serialEquipo = '42890/42890AII;190906000132/EU16222/EU16223;9717094'serialTemperatura
+where date (h.Fecha_ingreso_vehiculo)>= '2020-10-01' and v.CARTYPE <> 4 
+and v.FUELTYPE <> 3 and  p.Finalizada= 'Y' and p.Tipo_prueba_for = 8
+
+
+
+
+
+

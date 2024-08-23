@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="error" monitorInterval="30" strict="true">
+
+    <Properties>
+        <Property name="log-path">${sys:catalina.base}/logs/</Property>
+        <Property name="filename">appName.log</Property>
+    </Properties>
+
+    <Appenders>
+        <RollingFile name="RollingFile" fileName="${log-path}/${filename}" filePattern="${log-path}/${filename}-%d{yyyy-MM-dd}-%i.log">
+            <Layout type="PatternLayout" pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="5 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10" />
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="RollingFile" />
+        </Root>
+    </Loggers>
+
+</Configuration>
+
+
+

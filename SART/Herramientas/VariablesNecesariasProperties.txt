@@ -1,0 +1,108 @@
+
+-----------------------------------------------------------------------------
+--------   ESTAS VARIABLES VAN EN EL ARCIVO properties.properties -----------
+-----------------------------------------------------------------------------
+
+
+NOTA : 
+
+
+	False --> No permite visualizar el boton
+	True -->  Permite visualizar el boton
+
+
+1. Esta variable permite visualizar o ocultar el boton de rechazar por RPM fuera de rango.
+
+	Ejemplo de las dos casuisticas: 
+	
+		activarBotonRPM=false 
+		activarBotonRPM=true
+
+2. Esta variables permite ocultar o visualizar dos opciones mas de las condiciones anormales en la prueba de gases
+
+	Ejemplo de uso para lo indicado : 
+	
+		ActivarTapaLlenado=true
+		ActivarTapaLlenado=false 
+
+		ActivarTapaLlenado=true
+		ActivarSalidasAdicional=false
+	
+	
+3. Falta por descripcion
+
+	Ejemplo de uso para lo indicado : 
+	
+		rpmPruebaRuidoHabilitada=true
+		rpmPruebaRuidoHabilitada=false
+
+
+4.  Falta por descripcion
+
+	Ejemplo de uso para lo indicado : 
+	
+		activarFlagFrenos=true
+		activarFlagFrenos=false
+
+5.  Falta por descripcion
+	
+	Ejemplo de uso para lo indicado : 
+		
+		rpmPruebaRuidoHabilitada=true;
+		rpmPruebaRuidoHabilitada=false;
+
+
+
+6. Variable que contiene la ruta que toma el sar para iniciar el vlc y tomar la foto
+
+		RutaVLC=C:\\Program Files\\VideoLAN\\VLC
+	
+	
+7.  Variables que contine el numero de foto a tomar, ya sea la uno o la 2
+	
+		NumeroFotoTomar=1 o NumeroFotoTomar=2
+	
+
+8. Esta variables permite configurar la velocidad de conexion en la comunicacion  con el equipo electronico
+
+	VelocidadPuerto=2400
+9. Variables para luxometro longitud de la trama
+
+	valorInicialTrama=6
+	valorFinalTrama=11
+
+10.Variable para activar o desactivar Temporizador para medicion cada hora del opacimetro
+
+	TemporizadorOpacimetro=true ó TemporizadorOpacimetro=false 
+
+11. variable para validacion de estabilizacion de medidas, si esta en true no deja seguir la prueba en caso de 
+que supere el rango de 3% de las medidas si esta en false o null muestra mensaje de advertencia y permite hacer
+la prueba despues de la estabilizacion.
+
+	Estabilizacion=true ó Estabilizacion=false
+
+12. variable para ajuste del span tanto de fuerza izquierda como fuerza derecha en livianos, en caso de no existir las
+variables el software buscara las variables spanfi y spanfd respectivamente en el archivo calibraciones.properties
+
+	spanfdl=25.259828018671687
+	spanfil=24.67425865792642
+
+23. variable para activar el doble frenado en los vehiculos de enseñanza, al estar en true pide freno del instructor 
+si esta en false no pide freno del instructor, en caso de que la variable no exista el sistema la toma por default en true .
+
+	FrenoEnse = True ó FrenoEnse = False
+
+
+
+
+
+/////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+

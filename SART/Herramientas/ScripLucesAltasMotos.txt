@@ -1,0 +1,17 @@
+INSERT INTO tipos_medida(`MEASURETYPE`, `TESTTYPE`, `Nombre_medida`, `Descripcion_medida`, `Unidad`)
+VALUES (2056,'2','INT_LUZ1_ALTA_MOTO','Intensidad luz 1 Alta  en motos','Klux');
+INSERT INTO tipos_medida (`MEASURETYPE`, `TESTTYPE`, `Nombre_medida`, `Descripcion_medida`, `Unidad`)
+VALUES (2057,'2','INT_LUZ2_ALTA_MOTO','Intensidad luz 2 Alta  en motos','Klux');
+INSERT INTO tipos_medida (`MEASURETYPE`, `TESTTYPE`, `Nombre_medida`, `Descripcion_medida`, `Unidad`)
+VALUES (2061,'2','INT_LUZ3_ALTA_MOTO','Intensidad luz 3 Alta en motos','Klux');
+INSERT INTO tipos_medida (`MEASURETYPE`, `TESTTYPE`, `Nombre_medida`, `Descripcion_medida`, `Unidad`)
+VALUES (2062,'2','INT_LUZ4_ALTA_MOTO','Intensidad luz 4 Alta en motos','Klux');
+INSERT INTO tipos_medida (`MEASURETYPE`, `TESTTYPE`, `Nombre_medida`, `Descripcion_medida`, `Unidad`)
+VALUES (2063,'2','INT_LUZ5_ALTA_MOTO','Intensidad luz 5 Alta en motos','Klux');
+INSERT INTO tipos_medida (`MEASURETYPE`, `TESTTYPE`, `Nombre_medida`, `Descripcion_medida`, `Unidad`)
+VALUES (2064,'2','INT_LUZ6_ALTA_MOTO','Intensidad luz 6 Alta en motos','Klux');
+INSERT INTO tipos_medida (`MEASURETYPE`, `TESTTYPE`, `Nombre_medida`, `Descripcion_medida`, `Unidad`)
+VALUES (1006,'2','Kilometraje','Kilometraj del vehiculo','Km');
+
+
+IntAltaDer

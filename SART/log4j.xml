@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration debug="true">
+
+    <appender name="ROLL" class="org.apache.log4j.rolling.RollingFileAppender">
+        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="FileNamePattern" value="./bitacora/log-%d{yyyy-MM-dd}.txt"/>
+        </rollingPolicy>
+
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %-4r [%t] %-5p %c %x - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="console" class="org.apache.log4j.ConsoleAppender"> 
+        <param name="Target" value="System.out"/> 
+        <layout class="org.apache.log4j.PatternLayout"> 
+            <param name="ConversionPattern" value="%-5p %c{1} - %m%n"/> 
+        </layout> 
+    </appender> 
+  
+    <appender name="DB" class="org.apache.log4j.jdbc.JDBCAppender">
+        <param name="URL" value="jdbc:mysql://localhost:3306/db_cda"/>
+        <param name="User" value="root" />
+        <param name="Driver" value="com.mysql.jdbc.Driver"/>
+        <param name="Password" value="admin"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="INSERT INTO evento_cda(descripcion,finicial,id_estado) VALUES ('%p %m','%n%d{yyyy-MM-dd HH:mm:ss}',2)"/>
+        </layout>
+    </appender>
+
+    <logger name="igrafica" additivity="true"> 
+        <level value="info"/> 
+        <appender-ref ref="ROLL"/> 
+    </logger> 
+
+
+    <root>
+        <priority value="INFO"/> 
+        <appender-ref ref="ROLL"/>
+        <appender-ref ref="console"/>
+    </root>
+
+</log4j:configuration>
+
+
+
