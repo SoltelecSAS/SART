@@ -877,7 +877,7 @@ public class dialogfrenmotos extends javax.swing.JDialog implements ActionListen
         PruebaDefaultDAO frenosDAO = new PruebaDefaultDAO();
         try 
         {
-           repetirPrueba = frenosDAO.persist(frenos, idPrueba, idUsuario,aplicTrans,this.ipEquipo,"Moto","Moto","");
+           repetirPrueba = frenosDAO.persist(frenos, idPrueba, idUsuario,aplicTrans,this.ipEquipo,"Moto","Moto","", "dialogfrenmotos");
            if (repetirPrueba == false) 
            {
                 tramaAuditoria = "{\"eficaciaTotal\":\"".concat(String.valueOf(eficacia)).concat("\",").concat("\"eficaciaAuxiliar\":\"").concat(String.valueOf(" ")).concat("\",");

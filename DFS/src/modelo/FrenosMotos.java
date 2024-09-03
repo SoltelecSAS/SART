@@ -26,7 +26,7 @@ public class FrenosMotos implements PruebaDefault {
     private String aprobada;
 
     //Permisible para eficacia de frenado
-    private static final int MINIMO_EFICACIA_A = 30;
+    private int minimoEficaciaA = 30;
     private boolean repetirPrueba;
 
     public double getPesoDelantero() {
@@ -90,21 +90,47 @@ public class FrenosMotos implements PruebaDefault {
     }
 
     @Override
-    public void verificarDefectos() {
+    public void verificarDefectos(String tipoVehiculo) {
         aprobada = "Y";
         defectos = new ArrayList<>();
 
-        if (eficacia < MINIMO_EFICACIA_A) {
+        if (tipoVehiculo.equalsIgnoreCase("Moto")) {
+            defectos = getDefectosMoto();
+        } else {
+            defectos = getDefectosCicloMotor();
+        }
+
+        if (eficacia < minimoEficaciaA) {
             aprobada = "N";
             defectos.add(54010);
         }
     }
 
+    private List<Integer> getDefectosMoto(){
+        List<Integer> defects = new ArrayList<>();
+        minimoEficaciaA = 30;
+        if (eficacia < minimoEficaciaA) {
+            aprobada = "N";
+            defects.add(54010);
+        }
+        return defects;
+    }
+
+    private List<Integer> getDefectosCicloMotor(){
+        List<Integer> defects = new ArrayList<>();
+        minimoEficaciaA = 40;
+        if (eficacia < minimoEficaciaA) {
+            defects.add(56000);//cambiar permisible = 54010
+            aprobada = "N";
+        } 
+        return defects;
+    }
+
     @Override
-    public List<Integer> getDefectos() {
+    public List<Integer> getDefectos(String placa) {
         if (defectos == null) {
             calcularEficacia();
-            verificarDefectos();
+            verificarDefectos(placa);
         }
         return defectos;
     }

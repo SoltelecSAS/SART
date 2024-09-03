@@ -36,6 +36,7 @@ import javax.swing.Timer;
 import org.soltelec.componenteluces.LuzAlta;
 import org.soltelec.componenteluces.LuzBaja;
 import org.soltelec.componenteluces.LuzExploradora;
+import org.soltelec.pruebasgases.FrmComentario;
 import org.soltelec.util.Conex;
 import org.soltelec.util.ConsultarDatosVehiculo;
 
@@ -89,39 +90,63 @@ public class HiloPruebaLuxometro implements Runnable, ActionListener
 
   private int valorInicialTrama = 6;
   private int valorFinalTrama = 11;
+  private String tipoVehiculo = "";
 
   private ArrayList<String> tramasBajas = new ArrayList();
   private ArrayList<String> tramasAltas = new ArrayList();
   private ArrayList<String> tramasFarolas = new ArrayList();
 
+  public void setTipoVehiculo(String tipoVehiculo) {
+    System.out.println("tipo vehiculo ="+ tipoVehiculo);
+    this.tipoVehiculo = tipoVehiculo;
+  }
+
   public HiloPruebaLuxometro(PanelLuxometro panel, int aplicTrans)
   {
-    cargarUrl();
-    this.panelLuxometro = panel;
-    this.panelLuxometro.getButtonCancelar().addActionListener(this);
-    aplicTrans = aplicTrans;
+    try {
+      cargarUrl();
 
-    this.tramasBajas.add("L01D1K");
-    this.tramasBajas.add("L01DRK");
-    this.tramasBajas.add("L01DLK");
-    this.tramasBajas.add("L01D1L");
-    this.tramasBajas.add("L01DRL");
-    this.tramasBajas.add("L01DLL");
+    } catch (Exception e) {
+      System.out.println("Error: "+e.getMessage());
+    }
 
-    this.tramasAltas.add("L01M1K");
-    this.tramasAltas.add("L01M1L");
-    this.tramasAltas.add("L01MRK");
-    this.tramasAltas.add("L01MRL");
-    this.tramasAltas.add("L01MLK");
-    this.tramasAltas.add("L01MLL");
+    try {
+      this.panelLuxometro = panel;
+      this.panelLuxometro.getButtonCancelar().addActionListener(this);
+      this.aplicTrans = aplicTrans;
 
-    this.tramasFarolas.add("L01F1K");
-    this.tramasFarolas.add("L01F1L");
-    this.tramasFarolas.add("L01FRK");
-    this.tramasFarolas.add("L01FLL");
-    this.tramasFarolas.add("L01FRL");
+      this.tramasBajas.add("L01D1K");
+      this.tramasBajas.add("L01DRK");
+      this.tramasBajas.add("L01DLK");
+      this.tramasBajas.add("L01D1L");
+      this.tramasBajas.add("L01DRL");
+      this.tramasBajas.add("L01DLL");
 
-    cargarLongitudTramaLeer();
+      this.tramasAltas.add("L01M1K");
+      this.tramasAltas.add("L01M1L");
+      this.tramasAltas.add("L01MRK");
+      this.tramasAltas.add("L01MRL");
+      this.tramasAltas.add("L01MLK");
+      this.tramasAltas.add("L01MLL");
+
+      this.tramasFarolas.add("L01F1K");
+      this.tramasFarolas.add("L01F1L");
+      this.tramasFarolas.add("L01FRK");
+      this.tramasFarolas.add("L01FLL");
+      this.tramasFarolas.add("L01FRL");
+    } catch (Exception e) {
+      System.out.println("Error: "+e.getMessage());
+    }
+
+      
+    try {
+      cargarLongitudTramaLeer();
+    } catch (Exception e) {
+      System.out.println("Error: "+e.getMessage());
+    }
+      
+    
+    
   }
 
   private void cargarLongitudTramaLeer()
@@ -2534,9 +2559,12 @@ public class HiloPruebaLuxometro implements Runnable, ActionListener
       PreparedStatement psDefectos = this.conexion.prepareStatement(str2);
 
       if ((this.farBajaDerecha < this.permisibleBaja) || (this.farBajaIzquierda < this.permisibleBaja)) {
+        
+        
         if (aplicTrans == 0) {
+          int codigo = tipoVehiculo.equalsIgnoreCase("CICLOMOTOR") ? 21006 : 20000;
           psDefectos.clearParameters();
-          psDefectos.setInt(1, 20000);
+          psDefectos.setInt(1, codigo);
           psDefectos.setLong(2, this.idPrueba.longValue());
           psDefectos.executeUpdate();
         }
@@ -2545,16 +2573,18 @@ public class HiloPruebaLuxometro implements Runnable, ActionListener
 
       if ((this.angBajaDerecha < this.permisibleAnguloBajo) || (this.angBajaDerecha > this.permisibleAnguloAlto)) {
         if (aplicTrans == 0) {
+          int codigo = tipoVehiculo.equalsIgnoreCase("CICLOMOTOR") ? 21002 : 20002;
           psDefectos.clearParameters();
-          psDefectos.setInt(1, 20002);
+          psDefectos.setInt(1, codigo);
           psDefectos.setLong(2, this.idPrueba.longValue());
           psDefectos.executeUpdate();
         }
         aprobada = false;
       } else if ((this.angBajaIzquierda < this.permisibleAnguloBajo) || (this.angBajaIzquierda > this.permisibleAnguloAlto)) {
         if (aplicTrans == 0) {
+          int codigo = tipoVehiculo.equalsIgnoreCase("CICLOMOTOR") ? 21002 : 20002;
           psDefectos.clearParameters();
-          psDefectos.setInt(1, 20002);
+          psDefectos.setInt(1, codigo);
           psDefectos.setLong(2, this.idPrueba.longValue());
           psDefectos.executeUpdate();
         }
@@ -2564,8 +2594,9 @@ public class HiloPruebaLuxometro implements Runnable, ActionListener
       if (mayorSuma > this.permisibleSumatoria)
       {
         if (aplicTrans == 0) {
+          int codigo = tipoVehiculo.equalsIgnoreCase("CICLOMOTOR") ? 21005 : 20001;
           psDefectos.clearParameters();
-          psDefectos.setInt(1, 20001);
+          psDefectos.setInt(1, codigo);
           psDefectos.setLong(2, this.idPrueba.longValue());
           psDefectos.executeUpdate();
         }
@@ -2865,12 +2896,12 @@ public class HiloPruebaLuxometro implements Runnable, ActionListener
       this.conexion.close();
       this.lblObservacion = this.lblObservacion.concat(this.lblExploradoras);
       
-      if (org.soltelec.util.Mensajes.mensajePregunta("¿Desea Agregar un Comentario a la Prueba ?")) 
+      /* if (org.soltelec.util.Mensajes.mensajePregunta("¿Desea Agregar un Comentario a la Prueba ?")) 
       {
         FrmComentario frm = new FrmComentario(SwingUtilities.getWindowAncestor(this.panelLuxometro), idPrueba, JDialog.DEFAULT_MODALITY_TYPE, this.lblObservacion);
         frm.setVisible(true);
         frm.setModal(true);
-      }else{
+      }else{ */
           String statement2 = "UPDATE pruebas SET Autorizada = 'A',usuario_for = ?,serialEquipo = ? ,observaciones = NULL WHERE pruebas.Id_Pruebas = ?";
         PreparedStatement instruccion2 = this.conexion.prepareStatement(statement2);
         instruccion2.setLong(1, idUsuario);
@@ -2879,7 +2910,7 @@ public class HiloPruebaLuxometro implements Runnable, ActionListener
         //instruccion2.setString(3, this.lblObservacion.concat(this.lblExploradoras));
         instruccion2.setLong(3, idPrueba.longValue());
         i = instruccion2.executeUpdate();
-      }
+      //}
       System.out.println("comentario es: " + this.lblObservacion);
       if (escrTrans == true)
         escrTrans1 = "E";

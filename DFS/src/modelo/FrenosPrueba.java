@@ -144,9 +144,9 @@ public class FrenosPrueba implements PruebaDefault {
     }
 
     @Override
-    public List<Integer> getDefectos() {
+    public List<Integer> getDefectos(String placa) {
         if (defectos == null) {
-            verificarDefectos();
+            verificarDefectos(placa);
         }
         return defectos;
     }
@@ -318,7 +318,7 @@ public class FrenosPrueba implements PruebaDefault {
     }
 
     @Override
-    public void verificarDefectos() {
+    public void verificarDefectos(String placa) {
         aprobada = "Y";
         defectos = new ArrayList<>();
 

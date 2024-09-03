@@ -22,7 +22,6 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,15 +56,20 @@ import org.soltelec.util.UtilGasesModelo;
 import org.soltelec.util.UtilPropiedades;
 import org.soltelec.util.UtilidadAbortoPrueba;
 import org.soltelec.util.VariablesOpacidad;
+import org.soltelec.conexion_seriales.Conexion;
 
 import java.sql.*;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.TimerTask;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
+import javax.swing.WindowConstants;
+import org.apache.log4j.Logger;
 import org.soltelec.models.controllers.EquipoController;
+import org.soltelec.util.UtilConexion;
 
 /**
  * Hilo que realiza la prueba de los ciclos de opacidad la logica de adquisicion
@@ -150,6 +154,8 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
     private double rpmSimuladas;
     private int contadorSimulacion;
     private DialogoDiesel dlgDiesel = null;
+    private double tempAmbiente;
+    private double humedadRelativa;
 //    private int numeroCiclos=0;
 ////    private int numeroPruebasUnitarias = 0;
 //    private List<Double> listaMaximosTresCiclos = null;
@@ -157,7 +163,15 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
 //    private int numeroPruebasUnitariasDiferenciaA5 = 0;
 //    private int numeroPruebasUnitariasDiferenciaA2=0; 
 
-    public CallableCiclosOpacidadSensors(Opacimetro opacimetro, MedidorRevTemp medidorRevTemp, PanelPruebaGases panel, DialogoCiclosAceleracion dialogo, double diametroExosto, long idPrueba, long idUsuario, Boolean simulada, long idHojaPrueba) {
+    public CallableCiclosOpacidadSensors(
+        Opacimetro opacimetro, MedidorRevTemp medidorRevTemp, 
+        PanelPruebaGases panel, DialogoCiclosAceleracion dialogo, 
+        double diametroExosto, long idPrueba, long idUsuario, 
+        Boolean simulada, long idHojaPrueba,
+        double tempAmbiente, double humedadRelativa) {
+        
+        this.tempAmbiente = tempAmbiente;
+        this.humedadRelativa = humedadRelativa;
         this.opacimetro = opacimetro;
         this.medidorRevTemp = medidorRevTemp;
         this.panel = panel;
@@ -955,7 +969,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
             }
         }
         panel.getPanelMensaje().setText(" VERIFICACION DEL CONTROL DE GIRO");
-        int opcion = JOptionPane.showConfirmDialog(null, "¿Fue correcta la operacion de los sistemas de control de velocidad de giro o la Capacidad Limitadora del Sistema de Inyeccion Combustible?", "Control de Giro", JOptionPane.YES_NO_OPTION);
+        int opcion = JOptionPane.showConfirmDialog(null, "¿Fue correcta la operacion de los sistemas de control de velocidad de giro", "Control de Giro", JOptionPane.YES_NO_OPTION);
 
         if (opcion == JOptionPane.NO_OPTION) {
             //El usuario indica deficientes condiciones de operacion          
@@ -1060,6 +1074,8 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
         panel.getPanelMensaje().setVisible(false);
         panel.getPanelFiguras().setVisible(true);
 
+        //
+
         //Durante diez segundos tomar la velocidad ralenti
         rpm = medidorRevTemp.getRpm();
 
@@ -1077,7 +1093,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
             }
         }
 
-        while (contadorTemporizacion < 10) {
+        /* while (contadorTemporizacion < 10) {
             rpm = medidorRevTemp.getRpm();
             if (rpm > 1200) {
                 while (true) {
@@ -1111,16 +1127,40 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
             }
             panel.getMensaje().setText("POR FAVOR MANTENGA EL VEHICULO EN RALENTI  t:" + contadorTemporizacion);
             Thread.sleep(100);
+        }//end of while de velocidad  */
+
+        while (contadorTemporizacion < 10) {
+            rpm = medidorRevTemp.getRpm();
+            panel.getRadialTacometro().setValue(rpm);
+            panel.getLinearTemperatura().setValue(medidorRevTemp.getTemp());
+            if (contadorTemporizacion >= 5) {
+                shiftRegisterVelocidad.ponerElemento(rpm);
+            }
+            if (shiftRegisterVelocidad.isStable()) {
+                panel.getMensaje().setText("Estable  t:" + contadorTemporizacion);
+                Thread.sleep(200);
+            }
+            if (shiftRegisterVelocidad.isAcelerando()) {
+                panel.getMensaje().setText("Acelerando t:" + contadorTemporizacion);
+                Thread.sleep(200);
+            }
+            panel.getMensaje().setText("POR FAVOR REALICE UNA ACELERACION SUAVE Y CONTROLADA HASTA LLEGAR A GOBERNADAS EN 10s O MENOS.\n PONGA ATENCION A CUALQUER INDICIO VISIBLE O SONORO  t:" + contadorTemporizacion);
+            Thread.sleep(100);
         }//end of while de velocidad 
+
+        
+
         velocidadRalenti = (int) shiftRegisterVelocidad.media();
 
         panel.getPanelFiguras().setVisible(false);
         panel.getPanelMensaje().setVisible(true);
-        panel.getPanelMensaje().setText("POR FAVOR ACELERE EL VEHICULO A GOBERNADAS");
+        panel.getPanelMensaje().setText("POR FAVOR MANTENGA EL VEHICULO EN GOBERNADAS Y PRESTE ATENCION SI LA CAPACIDAD LIMITADORA DEL SISTEMA DE INYECCION DEL MOTOR ESTE OPERANDO CORRECTAMENTE");
         if (simulacion == true) {
             simuladorRpm.setREVOLUCIONES_CRUCERO((int) velocidadCrucero);
             simuladorRpm.setSimularCrucero(true);
         }
+
+        
 
         panel.getMensaje().setText(" ");
         Thread.sleep(3500);
@@ -1135,14 +1175,30 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                 valRpmRal = true;
                 panel.getPanelFiguras().setVisible(true);
                 panel.getPanelMensaje().setVisible(false);
+                //Indicación de mal funcionamiento del motor
             } else {
                 panel.getMensaje().setText("NO DETECTO CAMBIO EN LAS REVOLUCIONES; POR FAVOR CAMBIE A GOBERNADA ");
             }
         }
+
+        valRpmRal = false;
+        while (valRpmRal == false) {
+            rpm = medidorRevTemp.getRpm();
+            rpm = rpm - 150;
+            if (rpm >= velocidadRalenti) {
+                valRpmRal = true;
+                panel.getPanelFiguras().setVisible(true);
+                panel.getPanelMensaje().setVisible(false);
+                
+            } else {
+                panel.getMensaje().setText("NO DETECTO CAMBIO EN LAS REVOLUCIONES; POR FAVOR CAMBIE A GOBERNADA ");
+            }
+        }
+
         panel.getPanelMensaje().setVisible(false);
         panel.getPanelFiguras().setVisible(true);
         contadorTemporizacion = 0;
-        while (contadorTemporizacion < 7) {
+        while (contadorTemporizacion < 10) {
             panel.getMensaje().setText("POR FAVOR MANTENGA EL VEHICULO EN GOBERNADAS  t:" + contadorTemporizacion);
             rpm = medidorRevTemp.getRpm();
             if (velocidadRalenti > rpm) {
@@ -1168,12 +1224,171 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                 noCrearDenuevo = false;
             }
             if (contadorTemporizacion > 2) {
-                panel.getMensaje().setText("POR FAVOR MANTENGA A GOBERNADAS");
+                panel.getMensaje().setText("POR FAVOR MANTENGA EL VEHICULO EN GOBERNADAS  t:" + contadorTemporizacion);
                 shiftRegisterVelocidad.ponerElemento(rpm);
             }
             Thread.sleep(50);
         }
         velocidadCrucero = shiftRegisterVelocidad.media();
+        //Indicación de mal funcionamiento del motor
+        recuadroSiNo("3.1.3.12.1. ¿Observo alguna anomalia visible o sonora durante la etapa de aceleracion lenta y controlada?", "Condiciones anormales en la etapa de ralenti segun el numeral 3.1.3.12.1");
+        recuadroSiNo(   
+            "3.1.3.12.2 ¿Hubo algún indicio de que la capacidad limitadora del sistema de inyección de"+ 
+            "combustible no está operando, o que se esté presentando algún daño en el motor o alguna"+
+            "condición insegura para el personal o el equipo ?" //mensaje recuadro
+            , 
+            "Problemas en el sistema de inyección de combustible que limita la velocidad maxima "+
+            "del motor segun el numeral 3.1.3.12.2"); //mensaje del defecto en caso de que si
+    }
+
+    private void recuadroSiNo(String mensaje, String defecto) {
+        // Crear un JFrame como referencia del diálogo
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        // Crear un JOptionPane con las opciones Sí y No
+        JOptionPane optionPane = new JOptionPane(
+                mensaje, 
+                JOptionPane.QUESTION_MESSAGE, 
+                JOptionPane.YES_NO_OPTION);
+
+        // Crear un JDialog a partir del JOptionPane
+        JDialog dialog = optionPane.createDialog(frame, "Confirmación");
+
+        // Hacer que el diálogo no se pueda cerrar con la "X"
+        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+
+        // Mostrar el diálogo
+        dialog.setVisible(true);
+
+        // Obtener la respuesta seleccionada
+        int response = (int) optionPane.getValue();
+
+        // Ejecutar la acción correspondiente
+        if (response == JOptionPane.YES_OPTION) {
+            registrarMalFunMotor(idPrueba, defecto);
+        } else if (response == JOptionPane.NO_OPTION) {
+            System.out.println("Has seleccionado No");
+        }
+
+        // Cerrar el frame después de que se haya respondido el diálogo
+        frame.dispose();
+    }
+
+    private void registrarMalFunMotor(long idPrueba, String defecto) {
+
+        String sqlInsertDefecto = "INSERT INTO defxprueba (id_defecto, id_prueba) VALUES (80000, ?)";
+        String sqlUpdatePrueba = "UPDATE pruebas SET observaciones = ?, Aprobada = ?, Finalizada = ?, serialEquipo = ? WHERE id_pruebas = ?";
+    
+        System.out.println("----------------------------------------------------------------------");
+        System.out.println("-----------Temperatura: " + VariablesOpacidad.getTemperaturaMotor() + "--------------------");
+        System.out.println("----------------------------------------------------------------------");
+
+        String serialEquipo = "";
+        try {
+            serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+        } catch (Exception e) {
+            serialEquipo = "Serial no Encontrado ";
+        }
+    
+        Conexion.setConexionFromFile();
+    
+        registrarTemperaturaHumedad(tempAmbiente, humedadRelativa);
+        registrarTemperaturaMotorInicial(VariablesOpacidad.getTemperaturaMotor());
+    
+        try (java.sql.Connection conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContrasena());
+             PreparedStatement insertarDefecto = conexion.prepareStatement(sqlInsertDefecto);
+             PreparedStatement updatePruebasStmt = conexion.prepareStatement(sqlUpdatePrueba)) {
+    
+            // Establecer los parámetros para la inserción
+            insertarDefecto.setLong(1, idPrueba);
+    
+            // Ejecutar la inserción
+            insertarDefecto.executeUpdate();
+    
+            // Establecer los parámetros para la actualización
+            updatePruebasStmt.setString(1, defecto);
+            updatePruebasStmt.setString(2, "N");
+            updatePruebasStmt.setString(3, "Y");
+            updatePruebasStmt.setString(4, serialEquipo);
+            updatePruebasStmt.setLong(5, idPrueba);
+    
+            // Ejecutar la actualización
+            updatePruebasStmt.executeUpdate();
+    
+            // Mostrar mensaje y esperar 3 segundos antes de cerrar la aplicación
+            JOptionPane.showMessageDialog(null, "Prueba rechazada y finalizada con éxito. \nPor seguridad cerraremos el programa", "Información", JOptionPane.INFORMATION_MESSAGE);
+            System.exit(0);
+            
+        } catch (SQLException ex) { 
+            ex.printStackTrace();
+            System.out.println("Error al tratar de rechazar y finalizar la prueba por falla súbita: " + ex.getMessage());
+        }
+    }
+
+    private void registrarTemperaturaHumedad(Double tempAmbiente, Double humedadAmbiente) {
+        java.sql.Connection cn = null;
+        try {
+            cn = UtilConexion.obtenerConexion();
+            String strInsert = "INSERT INTO medidas(MEASURETYPE,Valor_medida,TEST) VALUES(?,?,?)";
+            PreparedStatement ps = cn.prepareStatement(strInsert);
+            //insertar la temperatura
+            cn.setAutoCommit(false);
+            ps.setInt(1, 8031);
+            ps.setDouble(2, tempAmbiente);
+            ps.setLong(3, idPrueba);
+            ps.executeUpdate();
+            ps.clearParameters();
+            ps.setInt(1, 8032);
+            ps.setDouble(2, humedadAmbiente);
+            ps.setLong(3, idPrueba);
+            ps.executeUpdate();
+            cn.commit();
+            cn.setAutoCommit(true);
+        } catch (Exception exc) {
+            JOptionPane.showMessageDialog(null, "No se pueden grabar los valores de humedad y temperatura");
+            Logger.getRootLogger().error("No se pueden grabar los valores de humedad y temperatura");
+            exc.printStackTrace();
+
+        } finally {
+            try {
+                if (cn != null) {
+                    cn.close();
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    private void registrarTemperaturaMotorInicial(double tempIniMotor) {
+
+        if (tempIniMotor == 0) JOptionPane.showMessageDialog(null, "La temperatura inicial del motor fue 0");
+        java.sql.Connection cn = null;
+        try {
+            cn = UtilConexion.obtenerConexion();
+            String strInsert = "INSERT INTO medidas(MEASURETYPE,Valor_medida,TEST) VALUES(?,?,?)";
+            PreparedStatement ps = cn.prepareStatement(strInsert);
+            //insertar la temperatura
+            cn.setAutoCommit(false);
+            ps.setInt(1, 8034);
+            ps.setDouble(2, tempIniMotor);
+            ps.setLong(3, idPrueba);
+            ps.executeUpdate();
+            cn.commit();
+            cn.setAutoCommit(true);
+        } catch (Exception exc) {
+            JOptionPane.showMessageDialog(null, "No se pueden grabar los valores de temperatura inicial motor");
+            Logger.getRootLogger().error("No se pueden grabar los valores de temperatura inicial motor");
+            exc.printStackTrace();
+
+        } finally {
+            try {
+                if (cn != null) {
+                    cn.close();
+                }
+            } catch (Exception e) {
+            }
+        }
     }
 
     private void probarAceleracionGobernada() throws InterruptedException, DeficienteOperacionException, IOException {

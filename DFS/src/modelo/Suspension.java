@@ -82,9 +82,9 @@ public class Suspension implements PruebaDefault {
     }
 
     @Override
-    public List<Integer> getDefectos() {
+    public List<Integer> getDefectos(String placa) {
         if (defectos == null) {
-           verificarDefectos();
+           verificarDefectos(placa);
         }
         return defectos;
     }
@@ -97,10 +97,15 @@ public class Suspension implements PruebaDefault {
     @Override
     public List<Integer> getTiposMedida() 
     {
+
+        System.out.println("--------------------------------------------------- ");
+        System.out.println("- Estoy modelo suspension implemntCalculoSuspension-");
+        System.out.println("--------------------------------------------------- ");
+
         tiposMedida = new ArrayList<>();
         int[] idCampoPeso = {6000, 6004, 6001, 6005, 6002, 6006, 6003, 6007};
         int[] idCampoFuerza = {6008, 6012, 6009, 6013, 6010, 6014, 6011, 6015};
-        int[] idCampoSuspension = {6016, 6017, 6020, 6021, 6022, 6018, 6023, 6019 };
+        int[] idCampoSuspension = {6016, 6017, 6020, 6021, 6022, 6018, 6023, 6019};
 
         for (int i = 0; i < (pesoDerecho.size() * 2); i++) {
             tiposMedida.add(idCampoPeso[i]);
@@ -159,7 +164,7 @@ public class Suspension implements PruebaDefault {
     }
     
     @Override
-    public void verificarDefectos() {
+    public void verificarDefectos(String placa) {
         aprobada = "Y";
         defectos = new ArrayList<>();
        

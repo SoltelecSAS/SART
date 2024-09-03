@@ -3460,7 +3460,7 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
             PruebaDefaultDAO.escrTrans = "@";
 
             try {
-                repetirPrueba = desviacionDAO.persist(desviacion, idPruebadesv, idUsuario, aplicTrans, this.ipEquipo, tipoPista, tipoVehiculo, this.Placa);
+                repetirPrueba = desviacionDAO.persist(desviacion, idPruebadesv, idUsuario, aplicTrans, this.ipEquipo, tipoPista, tipoVehiculo, this.Placa, "desviacion dlgMotoCarro");
             } catch (ClassNotFoundException ex) {
             }
             if (repetirPrueba == false) {
@@ -3508,7 +3508,7 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
         try {
             PruebaDefaultDAO.escrTrans = "@";
             try {
-                repetirPrueba = suspensionDAO.persist(suspension, idPruebasusp, idUsuario, aplicTrans, this.ipEquipo, tipoPista, tipoVehiculo, this.Placa);
+                repetirPrueba = suspensionDAO.persist(suspension, idPruebasusp, idUsuario, aplicTrans, this.ipEquipo, tipoPista, tipoVehiculo, this.Placa, "suspension dlgMotoCarro");
             } catch (ClassNotFoundException ex) {
             }
             if (repetirPrueba == false) {
@@ -3579,7 +3579,7 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
             PruebaDefaultDAO.escrTrans = "@";
 
             try {
-                repetirPrueba = frenosDAO.persist(frenos, idPruebafren, idUsuario, aplicTrans, this.ipEquipo, tipoPista, tipoVehiculo, Placa);
+                repetirPrueba = frenosDAO.persist(frenos, idPruebafren, idUsuario, aplicTrans, this.ipEquipo, tipoPista, tipoVehiculo, Placa, "frenos dlgMotoCarro");
             } catch (ClassNotFoundException ex) {
                 System.out.println("message error" + ex.getMessage());
             }

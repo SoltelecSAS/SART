@@ -743,7 +743,7 @@ public class Frm_Placas extends javax.swing.JDialog {
         int tipo1 = tipo.getTipoVehiculo().getCartype();
         System.out.println(" el tipo is " + tipo1);
         if (valida_tipo == 1) {
-            if (tipo1 != 4 && tipo1 != 5) {
+            if (tipo1 != 4 && tipo1 != 5 && tipo1 != 121 && tipo1 != 122) {
                 JOptionPane.showMessageDialog(null, "DISCULPE; EL VEHICULO NO ES UNA MOTO");
                 return;
             }
@@ -1289,7 +1289,7 @@ public class Frm_Placas extends javax.swing.JDialog {
                 return;
             } else {
                 registarPruebaLog(placas, usuarioJPA, "Luces");
-                Vehiculos v = controladorVerificar.getTipoVehiculo(placas, em);
+                Vehiculos vehiculoVariable = controladorVerificar.getTipoVehiculo(placas, em);
                 Properties properties = new Properties();
                 String versionLuxometro = "";
                 String ubicacionLuxometro = "";
@@ -1347,14 +1347,19 @@ public class Frm_Placas extends javax.swing.JDialog {
                 if (null != versionLuxometro) {
 
                     if (versionLuxometro.equalsIgnoreCase("LUJAN")) {
-                        if (v.getTipoVehiculo().getNombre().equalsIgnoreCase("Moto") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Motocarro")) {//Si es una moto entonces hacer prueba de moto
+                        if (
+                            vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Moto") 
+                            || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Motocarro")
+                            || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("CICLOMOTOR")
+                            || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("TRICIMOTO")
+                        ) {//Si es una moto entonces hacer prueba de moto
                             Long indPrueba = Long.parseLong((String.valueOf(idPrueba)));
                             JDialogLucesMotoLujan jDialogLucesMoto = new JDialogLucesMotoLujan(frame, true, indPrueba, idHojaPruebaLocal, idUsuario, aplicTrans, tipoLux, placas);
                             regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
                             System.out.println("sali pruebas de luces xxx");
                             doClose(0);
                         }
-                        if (v.getTipoVehiculo().getNombre().equalsIgnoreCase("Liviano") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Pesado") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("4x4") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis_AplTaximetro") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis")) {
+                        if (vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Liviano") || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Pesado") || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("4x4") || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis_AplTaximetro") || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis")) {
                             System.out.println("estoy entrando a Jdialogo para implementar pruebas de luces xxx");
                             HiloPruebaLuxometroLujan.aplicTrans = aplicTrans;
                             JDialogLucesVehiculoLujan jDialogLuces = new JDialogLucesVehiculoLujan(frame, true, idPrueba, idUsuario, idHojaPruebaLocal, aplicTrans, placas);
@@ -1363,19 +1368,30 @@ public class Frm_Placas extends javax.swing.JDialog {
                         }
                     }
 
+                    String tipo = vehiculoVariable.getTipoVehiculo().getNombre();
                     if (versionLuxometro.equalsIgnoreCase("SERIAL")) {
-                        if (v.getTipoVehiculo().getNombre().equalsIgnoreCase("Moto") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Motocarro")) {//Si es una moto entonces hacer prueba de moto
+                        if (
+                            tipo.equalsIgnoreCase("Moto") 
+                            || tipo.equalsIgnoreCase("Motocarro")
+                            || tipo.equalsIgnoreCase("TRICIMOTO")
+                            || tipo.equalsIgnoreCase("CICLOMOTOR")
+                        ) {//Si es una moto entonces hacer prueba de moto
                             Long indPrueba = Long.parseLong((String.valueOf(idPrueba)));
-                            JDialogLucesMoto jDialogLucesMoto = new JDialogLucesMoto(frame, true, indPrueba, idHojaPruebaLocal, idUsuario, aplicTrans, tipoLux);
+                            JDialogLucesMoto jDialogLucesMoto = new JDialogLucesMoto(frame, true, indPrueba, idHojaPruebaLocal, idUsuario, aplicTrans, tipoLux, tipo);
                             regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
                             System.out.println("sali pruebas de luces xxx");
                             doClose(0);
-
-                        } else if (v.getTipoVehiculo().getNombre().equalsIgnoreCase("Liviano") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Pesado") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("4x4") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis_AplTaximetro") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis")) {
+                        } else if (
+                            tipo.equalsIgnoreCase("Liviano") 
+                            || tipo.equalsIgnoreCase("Pesado") 
+                            || tipo.equalsIgnoreCase("4x4") 
+                            || tipo.equalsIgnoreCase("Taxis_AplTaximetro") 
+                            || tipo.equalsIgnoreCase("Taxis")
+                        ) {
                             System.out.println("estoy entrando a Jdialogo para implementar pruebas de luces xxx");
                             HiloPruebaLuxometro.aplicTrans = aplicTrans;
                             System.out.println("ya sali de crear el aplicTransacción");
-                            JDialogLuces jDialogLuces = new JDialogLuces(frame, true, idPrueba, idUsuario, idHojaPruebaLocal, aplicTrans);
+                            JDialogLuces jDialogLuces = new JDialogLuces(frame, true, idPrueba, idUsuario, idHojaPruebaLocal, aplicTrans, tipo);
                             System.out.println("se creo el jdialogluces");
                             regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
                             System.out.println("salgo del regIdAuditoria");
@@ -1395,7 +1411,12 @@ public class Frm_Placas extends javax.swing.JDialog {
                         LecturaArchivoLuxometroMoon archivoLuxometroMoon = new LecturaArchivoLuxometroMoon(aplicTrans);
 //                        LecturaArchivoLuxomMoonPru archivLuxo= new LecturaArchivoLuxomMoonPru();
                         int tipoVehiculo = 0;
-                        if (v.getTipoVehiculo().getNombre().equalsIgnoreCase("Moto")) {
+                        if (
+                            vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Moto") 
+                            || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Motocarro")
+                            || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("CICLOMOTOR")
+                            || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("TRICIMOTO")
+                        ) {
                             tipoVehiculo = 1;
                             archivoLuxometroMoon.iniciarTomaMedidaLuxometro(placas, idHojaPruebaLocal, idPrueba, idUsuario, tipoVehiculo, ubicacionLuxometro);
                         } else {
@@ -1426,11 +1447,16 @@ public class Frm_Placas extends javax.swing.JDialog {
                         LecturaArchivoLuxometroMoon.tramaAuditoria = "";
                     }
                     if (versionLuxometro.equalsIgnoreCase("CAPELEC")) {
-                        if (v.getTipoVehiculo().getNombre().equalsIgnoreCase("Moto") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Motocarro")) {//Si es una moto entonces hacer prueba de moto
+                        if (
+                            vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Moto") 
+                            || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Motocarro")
+                            || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("CICLOMOTOR")
+                            || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("TRICIMOTO")
+                        ) {//Si es una moto entonces hacer prueba de moto
                             JDialogLucesMotoCapelec jDialogLucesMoto = new JDialogLucesMotoCapelec(frame, true, idPrueba, idHojaPruebaLocal, idUsuario);
                             regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
                             doClose(0);
-                        } else if (v.getTipoVehiculo().getNombre().equalsIgnoreCase("Liviano") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Pesado") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("4x4") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis_AplTaximetro") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis")) {
+                        } else if (vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Liviano") || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Pesado") || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("4x4") || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis_AplTaximetro") || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis")) {
                             System.out.println("estoy entrando a Jdialogo paraa implementar pruebas de luces como CAPELEC");
                             JDialogLucesCarros jDialogLuces = new JDialogLucesCarros(frame, true, idPrueba, idUsuario, idHojaPruebaLocal);
                             regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
@@ -1550,8 +1576,8 @@ public class Frm_Placas extends javax.swing.JDialog {
 //                PruebaDefaultDAO.escrTrans = "";
                 registarPruebaLog(placas, usuarioJPA, "Frenos");
 //                System.out.println("valor inicial  " + PruebaDefaultDAO.escrTrans);
-                Vehiculos v = controladorVerificar.getTipoVehiculo(placas, em);
-                boolean ensenianza = v.getEsEnsenaza() > 0;
+                Vehiculos vehiculoVariable = controladorVerificar.getTipoVehiculo(placas, em);
+                boolean ensenianza = vehiculoVariable.getEsEnsenaza() > 0;
                 //CAMBIO FRENO DE ENSEÑANZA
                 System.out.println("c5");
                 if (revTec == 1) {
@@ -1582,7 +1608,10 @@ public class Frm_Placas extends javax.swing.JDialog {
                         }
                     }
                 }
-                if (v.getTipoVehiculo().getNombre().equalsIgnoreCase("Moto")) {//Si es una moto entonces hacer prueba de moto
+                if (
+                    vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Moto")
+                    || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("CICLOMOTOR")
+                ) {//Si es una moto entonces hacer prueba de moto
                     //TODO: Prueba de frenos con plancha o rodillos
                     boolean plancha = false;
                     String version = "v1";
@@ -1610,14 +1639,14 @@ public class Frm_Placas extends javax.swing.JDialog {
                             regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
                         }
                     } else {
-                        DlgFrenoMoto dfm = new DlgFrenoMoto(frame, true, idPrueba, idUsuario, idHojaPruebaLocal, aplicTrans, ipEquipo, v.getCarplate(), cam_usuario.getText());
+                        DlgFrenoMoto dfm = new DlgFrenoMoto(frame, true, idPrueba, idUsuario, idHojaPruebaLocal, aplicTrans, ipEquipo, vehiculoVariable.getCarplate(), cam_usuario.getText());
                         dfm.setVisible(true);
                         doClose(0);
                         regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
                     }
-                } else if (v.getTipoVehiculo().getNombre().equalsIgnoreCase("Liviano") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis_AplTaximetro") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis")) {
+                } else if (vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Liviano") || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis_AplTaximetro") || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis")) {
                     System.out.println(" c7");
-                    DlgIntegradoLiviano dlgFrenLivianos = new DlgIntegradoLiviano(frame, 0, 0, idPrueba, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), v.getCarplate(), cam_usuario.getText());
+                    DlgIntegradoLiviano dlgFrenLivianos = new DlgIntegradoLiviano(frame, 0, 0, idPrueba, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, vehiculoVariable.getTipoVehiculo().getNombre(), vehiculoVariable.getCarplate(), cam_usuario.getText());
                     dlgFrenLivianos.setVisible(true);
                     doClose(0);
                     System.out.println("VOY A REGISTAR TIMER DE TRANSACCION ");
@@ -1625,23 +1654,26 @@ public class Frm_Placas extends javax.swing.JDialog {
                     regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
 
                 }//end else de liviano y pesado
-                else if (v.getTipoVehiculo().getNombre().equalsIgnoreCase("Pesado")) {
-                    DlgIntegradoPesado dlgFrenPesados = new DlgIntegradoPesado(frame, 0, idPrueba, idUsuario, idHojaPruebaLocal, v.getNumeroejes(), ensenianza, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), v.getCarplate(), cam_usuario.getText());
-                    dlgFrenPesados.setNumeroejes(v.getNumeroejes());
+                else if (vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Pesado")) {
+                    DlgIntegradoPesado dlgFrenPesados = new DlgIntegradoPesado(frame, 0, idPrueba, idUsuario, idHojaPruebaLocal, vehiculoVariable.getNumeroejes(), ensenianza, aplicTrans, ipEquipo, vehiculoVariable.getTipoVehiculo().getNombre(), vehiculoVariable.getCarplate(), cam_usuario.getText());
+                    dlgFrenPesados.setNumeroejes(vehiculoVariable.getNumeroejes());
                     dlgFrenPesados.setVisible(true);
                     doClose(0);
                     System.out.println("VOY A REGISTAR TIMER DE TRANSACCION ");
                     regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
 
-                } else if (v.getTipoVehiculo().getNombre().equalsIgnoreCase("4x4")) {
-                    DlgIntegrado4x4 dlgFren4x4 = new DlgIntegrado4x4(frame, 0, 0, idPrueba, idUsuario, idHojaPruebaLocal, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), v.getCarplate(), cam_usuario.getText());
+                } else if (vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("4x4")) {
+                    DlgIntegrado4x4 dlgFren4x4 = new DlgIntegrado4x4(frame, 0, 0, idPrueba, idUsuario, idHojaPruebaLocal, aplicTrans, ipEquipo, vehiculoVariable.getTipoVehiculo().getNombre(), vehiculoVariable.getCarplate(), cam_usuario.getText());
                     dlgFren4x4.setVisible(true);
                     doClose(0);
                     System.out.println("VOY A REGISTAR TIMER DE TRANSACCION ");
                     regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
-                } else if (v.getTipoVehiculo().getNombre().equalsIgnoreCase("Motocarro")) {
+                } else if (
+                    vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Motocarro")
+                    || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("TRICIMOTO")
+                ) {
                     System.out.println(" PRUEBA DE FRENOS MOTOCARROS");
-                    DlgIntegradoMotoCarro dlgFrenMotoCarro = new DlgIntegradoMotoCarro(frame, 0, 0, idPrueba, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), v.getCarplate(), cam_usuario.getText());
+                    DlgIntegradoMotoCarro dlgFrenMotoCarro = new DlgIntegradoMotoCarro(frame, 0, 0, idPrueba, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, vehiculoVariable.getTipoVehiculo().getNombre(), vehiculoVariable.getCarplate(), cam_usuario.getText());
                     dlgFrenMotoCarro.setVisible(true);
                     doClose(0);
                     System.out.println("VOY A REGISTAR TIMER DE TRANSACCION ");
@@ -1935,7 +1967,12 @@ public class Frm_Placas extends javax.swing.JDialog {
                 }
             }
 
-            if (v.getTipoVehiculo().getNombre().equalsIgnoreCase("Moto") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Motocarro")) {
+            if (    
+                v.getTipoVehiculo().getNombre().equalsIgnoreCase("Moto") 
+                || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Motocarro")
+                || v.getTipoVehiculo().getNombre().equalsIgnoreCase("CICLOMOTOR")
+                || v.getTipoVehiculo().getNombre().equalsIgnoreCase("TRICIMOTO")
+            ) {
                 if (v.getTiposGasolina().getNombregasolina().equalsIgnoreCase("Diesel")) {
                     boolean flag = combustibleDieselMotoMotocarro(idHojaPruebaLocal, revTec, cda, eventoDTO, frame, aplicTrans);
                     if (!flag) {
@@ -2090,26 +2127,31 @@ public class Frm_Placas extends javax.swing.JDialog {
      * @param revTec
      * @param cda
      * @param eventoDTO
-     * @param v
+     * @param vehiculoVariable
      * @param frame
      * @return
      */
-    private boolean combustibleGasolina(int idHojaPruebaLocal, String serialBanco, int revTec, Cda cda, EventoDTO eventoDTO, Vehiculos v, Frame frame) {
+    private boolean combustibleGasolina(int idHojaPruebaLocal, String serialBanco, int revTec, Cda cda, EventoDTO eventoDTO, Vehiculos vehiculoVariable, Frame frame) {
         System.out.println("--------------------------------------------------");
         System.out.println("----------  Prueba Combustible Gasolina-----------");
         System.out.println("--------------------------------------------------");
         //JFM COMENTARIO GASES 
         try {
             // VALIDADOR DE RULES PARA VEHICULOS A GASOLINA                   
-            if (v.getTipoVehiculo().getNombre().equalsIgnoreCase("Moto") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Motocarro")) {
-                motoMotoCarros(v, frame);
+            if (
+                vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Moto") 
+                || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Motocarro")
+                || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("CICLOMOTOR")
+                || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("TRICIMOTO")
+            ) {
+                motoMotoCarros(vehiculoVariable, frame);
             }
             System.out.println("valor de rev tec = " + revTec);
             if (revTec == 1) {
                 System.out.println("entro a prueba de gases de indra");
                 //si es indra realiza envio de evento
                 if (cda.getProveedorSicov().equalsIgnoreCase("INDRA")) {
-                    if (!envioEventoIndraGases(cda, eventoDTO, v)) {
+                    if (!envioEventoIndraGases(cda, eventoDTO, vehiculoVariable)) {
                         return false;
                     }//si si de una
                 }
@@ -2119,8 +2161,13 @@ public class Frm_Placas extends javax.swing.JDialog {
             System.out.println("SERIAL  BANCO SART  1.7.3 " + serialBanco);
             RegVefCalibraciones r = new RegVefCalibraciones();
 
-            if (v.getTipoVehiculo().getNombre().equalsIgnoreCase("Moto") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Motocarro")) {
-                System.out.println("--------------------------" + v);
+            if (
+                vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Moto") 
+                || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Motocarro")
+                || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("CICLOMOTOR")
+                || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("TRICIMOTO")
+            ) {
+                System.out.println("--------------------------" + vehiculoVariable);
                 boolean prueba = r.validAnalizador(serialBanco, dlgMotos.getNumeroTiempos());
                 if (prueba == false) {
                     JOptionPane.showMessageDialog(null, "Disculpe. El banco con serial "+serialBanco+" no corresponde con los tiempos del motor del Vehiculo");
@@ -2129,7 +2176,7 @@ public class Frm_Placas extends javax.swing.JDialog {
                 }
             }
 
-            if (v.getTipoVehiculo().getNombre().equalsIgnoreCase("Liviano")) {
+            if (vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Liviano")) {
                 try {
                     (new EquipoController()).findIdEquipoBySerial(serialBanco);
                 } catch (Exception e) {

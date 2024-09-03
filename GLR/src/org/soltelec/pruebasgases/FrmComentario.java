@@ -57,7 +57,7 @@ public class FrmComentario extends javax.swing.JDialog {
 
     //DIRECCIÓN IP DEL SERVIDOR = 186.112.176.34
     //---
-    FrmComentario() {
+    FrmComentario(Window windowAncestor, Long idPrueba1, ModalityType DEFAULT_MODALITY_TYPE1, String a_) {
     }
 
     ////////////////////////////////////////////PARA NO PERDER LA REFERENCIA DEL OBJETO/////////

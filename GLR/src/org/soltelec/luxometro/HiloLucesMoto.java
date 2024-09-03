@@ -32,6 +32,7 @@ import javax.swing.Timer;
 import org.soltelec.componenteluces.LuzAlta;
 import org.soltelec.componenteluces.LuzBaja;
 import org.soltelec.componenteluces.LuzExploradora;
+import org.soltelec.pruebasgases.FrmComentario;
 import org.soltelec.util.Conex;
 import org.soltelec.util.ConsultarDatosVehiculo;
 
@@ -52,6 +53,7 @@ public class HiloLucesMoto implements Runnable, ActionListener
     private volatile Thread blinker;
     private Long idPrueba = Long.valueOf(9L);
     private int idUsuario = 1;
+    private String tipoVehiculo = "";
     private int idHojaPrueba = 4;
     private boolean cancelacion = false;
     private String urljdbc;
@@ -81,6 +83,10 @@ public class HiloLucesMoto implements Runnable, ActionListener
     int valorFinalTrama = 11;
 
     private Object opcion = "BAJAS Y ALTAS";
+
+    public void setTipoVehiculo(String tipoVehiculo) {
+        this.tipoVehiculo = tipoVehiculo;
+    }
 
     public HiloLucesMoto(PanelLuxometroMotos panel, int aplicaModificacion, String tipoLuxometro) 
     {
@@ -670,7 +676,7 @@ public class HiloLucesMoto implements Runnable, ActionListener
             Thread.sleep(2000L);
             this.serialPort.close();
             escrTrans = "@";
-            logicaRegistrarMedidas(this.idPrueba, this.idUsuario, 0);
+            logicaRegistrarMedidas(this.idPrueba, this.idUsuario, 0, this.tipoVehiculo);
             this.panelLuxometro.cerrar();
             
         } catch (InterruptedException ie) {
@@ -1065,7 +1071,7 @@ public class HiloLucesMoto implements Runnable, ActionListener
         return medidasAltas;
     }
 
-    private void logicaRegistrarMedidas(Long idPrueba, int idUsuario, int numLuces) 
+    private void logicaRegistrarMedidas(Long idPrueba, int idUsuario, int numLuces, String tipo) 
     {
         boolean defectoisInsert = false;
         boolean isAprobada = true;
@@ -1082,8 +1088,8 @@ public class HiloLucesMoto implements Runnable, ActionListener
                 for (int i = 0; i < this.anguloBaja.length; i++) {
                     if ((this.anguloBaja[i] < permisibleAnguloBajo) || (this.anguloBaja[i] > permisibleAnguloAlto)) {
                         if (this.aplicaModificacion == 0) {
-                            
-                            registrarDefectos(24006, idPrueba);
+                            int codigo = tipo.equalsIgnoreCase("CICLOMOTOR") ? 21002: 24006;
+                            registrarDefectos(codigo, idPrueba);
                         }
                         isAprobada = false;
                     }
@@ -1093,6 +1099,7 @@ public class HiloLucesMoto implements Runnable, ActionListener
 
             }
 
+            double suma = 0;
             if (this.valorMedidaBajaDerecha.length > 0) {
                 int[] medidasBajas = cargarArrayTipoMedidasBajas();
                 for (int i = 0; i < this.valorMedidaBajaDerecha.length; i++) {
@@ -1105,8 +1112,20 @@ public class HiloLucesMoto implements Runnable, ActionListener
                     }
                     System.out.println("valor de la medida bajaderecha : " + this.valorMedidaBajaDerecha[i] + ", id de la prueba : "+ idPrueba);
                     registrarMedida(medidasBajas[i], this.valorMedidaBajaDerecha[i], idPrueba);
-                }
 
+                    if(tipo.equalsIgnoreCase("CICLOMOTOR")){
+                        int opcion = JOptionPane.showConfirmDialog(
+                            null, 
+                            "¿La farola #"+(i+1)+" baja se encuentra dentro de las simultaneas?", 
+                            "Confirmación", 
+                            JOptionPane.YES_NO_OPTION
+                        );
+
+                        if (opcion == JOptionPane.YES_OPTION) {
+                            suma += this.valorMedidaBajaDerecha[i];
+                        }
+                    }
+                }
             }
 
             if (!this.opcion.equals("BAJAS")) {
@@ -1121,13 +1140,32 @@ public class HiloLucesMoto implements Runnable, ActionListener
                         }
                         System.out.println("valor de la medida alta derecha : " + this.valorMedidaAltaDerecha[i] + ", id de la prueba : "+ idPrueba);
                         registrarMedida(medidasAltas[i], this.valorMedidaAltaDerecha[i], idPrueba);
+                        
+                        if(tipo.equalsIgnoreCase("CICLOMOTOR")){
+                            int opcion = JOptionPane.showConfirmDialog(
+                                null, 
+                                "¿La farola #"+(i+1)+" alta se encuentra dentro de las simultaneas?", 
+                                "Confirmación", 
+                                JOptionPane.YES_NO_OPTION
+                            );
+    
+                            if (opcion == JOptionPane.YES_OPTION) {
+                                suma += this.valorMedidaAltaDerecha[i];
+                            }
+                        }
                     }
                 }
+            }
 
+            registrarMedida(2011, suma, idPrueba);
+
+            if(suma > 225D && tipo.equalsIgnoreCase("CICLOMOTOR")){
+                registrarDefectos(21005, idPrueba);
             }
 
             if (defectoisInsert) {
-                registrarDefectos(24005, idPrueba);
+                int codigo = tipo.equalsIgnoreCase("CICLOMOTOR") ? 21006 : 24005;
+                registrarDefectos(codigo, idPrueba);
             }
 
             if (this.aplicaModificacion == 0) {
@@ -1147,11 +1185,11 @@ public class HiloLucesMoto implements Runnable, ActionListener
             this.conexion.setAutoCommit(true);
             this.conexion.close();
 
-            if (org.soltelec.util.Mensajes.mensajePregunta("¿Desea Agregar un Comentario a la Prueba ?")) {
-                FrmComentario frm = new FrmComentario(SwingUtilities.getWindowAncestor(this.panelLuxometro), idPrueba, JDialog.DEFAULT_MODALITY_TYPE, " ");
-                frm.setVisible(true);
-                frm.setModal(true);
-            }
+            //if (org.soltelec.util.Mensajes.mensajePregunta("¿Desea Agregar un Comentario a la Prueba ?")) {
+            //    FrmComentario frm = new FrmComentario(SwingUtilities.getWindowAncestor(this.panelLuxometro), idPrueba, JDialog.DEFAULT_MODALITY_TYPE, " ");
+            //    frm.setVisible(true);
+            //    frm.setModal(true);
+            //}
 
             com.soltelec.modulopuc.utilidades.Mensajes.messageDoneTime("Se ha REGISTRADO la Prueba de Luces para la Moto de una Manera Exitosa ..¡", 3);
         } catch (SQLException ex) {

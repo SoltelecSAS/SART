@@ -27,21 +27,22 @@ public class JDialogLuces extends JDialog{
        
      }
 
-    public JDialogLuces(Frame owner, boolean modal, long idPruebas, long idUsuario, long idHojaPrueba,int aplicTrans){
+    public JDialogLuces(Frame owner, boolean modal, long idPruebas, long idUsuario, long idHojaPrueba,int aplicTrans, String tipoVehiculo){
         this(owner,modal);
-        iniciarHilo(idPruebas,idUsuario,idHojaPrueba,aplicTrans);
+        iniciarHilo(idPruebas,idUsuario,idHojaPrueba,aplicTrans, tipoVehiculo);
         this.setVisible(true);
     }
 
     public PanelLuxometro getPanelLuxometro() {
         return panelLuxometro;
     }
-    private void iniciarHilo(long idPruebas,long idUsuario,long idHojaPrueba,int aplicTrans) {
-        System.out.println(" entro a inicar hilo luces ");
+    private void iniciarHilo(long idPruebas,long idUsuario,long idHojaPrueba,int aplicTrans, String tipoVehiculo) {
+        System.out.println(" entro a inicar hilo luces con: "+idPruebas+" "+idUsuario+" "+idHojaPrueba+" "+aplicTrans+" "+tipoVehiculo);
         HiloPruebaLuxometro hilo = new HiloPruebaLuxometro(panelLuxometro,aplicTrans);
         hilo.setIdPrueba(idPruebas);
         hilo.setIdUsuario(idUsuario);
         hilo.setIdHojaPrueba(idHojaPrueba);
+        hilo.setTipoVehiculo(tipoVehiculo);
         (new Thread(hilo)).start();       
     }    
 }

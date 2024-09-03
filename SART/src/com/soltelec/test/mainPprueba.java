@@ -31,7 +31,7 @@ public class mainPprueba {
         Frm_Placas a=new Frm_Placas();
         Frame frame = (Frame) SwingUtilities.getWindowAncestor(a);
         long idPrueba=120;
-        JDialogLucesMoto insta=new JDialogLucesMoto(frame,true,idPrueba,123,123,1,"Serial");
+        JDialogLucesMoto insta=new JDialogLucesMoto(frame,true,idPrueba,123,123,1,"Serial", "moto");
     }
     
 }

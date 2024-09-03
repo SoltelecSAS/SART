@@ -586,7 +586,7 @@ public class DlgFrenoMoto extends javax.swing.JDialog implements ActionListener 
             System.out.println("estoy dentro del metodo registar Medidas: ");
             PruebaDefaultDAO.escrTrans = "@";
             try {            
-                repetirPrueba = frenosDAO.persist(frenos, idPrueba, idUsuario,aplicTrans,this.ipEquipo,"Moto","Moto","");
+                repetirPrueba = frenosDAO.persist(frenos, idPrueba, idUsuario,aplicTrans,this.ipEquipo,"Moto","Moto","","DlgFrenoMoto");
             } catch (ClassNotFoundException ex) {    }
             if (repetirPrueba == false) {
                 

@@ -196,7 +196,7 @@ public class PanelBotonesPrincipal extends JPanel implements ActionListener {
         } else if (e.getSource() == buttonSonometro) {
             dlgSonometro = new JDialogSonometro(null, true, 9/*idPrueba*/, 1/*idUsuario*/, 4/*idHojaPrueba*/);
         } else if (e.getSource() == buttonLucesMoto) {
-            dlgLucesMoto = new JDialogLucesMoto(null, true, 9L/*idPrueba*/, 1/*idUsuario*/, 4/*idHojaPrueba*/,1,"SERIAL");
+            dlgLucesMoto = new JDialogLucesMoto(null, true, 9L/*idPrueba*/, 1/*idUsuario*/, 4/*idHojaPrueba*/,1,"SERIAL", "moto");
         } else if (e.getSource() == buttonServicioCentralAuto) {
             PanelServicioCentral gui = new PanelServicioCentral();
             JDialog app = new JDialog();

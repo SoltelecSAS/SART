@@ -53,6 +53,7 @@ import java.awt.Rectangle;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -239,7 +240,7 @@ public class PanelPruebaGases extends JPanel implements ActionListener {
 
     public void cancelacion() {
         cerrar();
-        String strSeleccion = null;
+        String causarAborto = null;
         try {
             frmC = new JDialogMotosGases(null, false, 0, 0, 0, null, placas, null);
         } catch (IOException ex) {
@@ -268,99 +269,95 @@ public class PanelPruebaGases extends JPanel implements ActionListener {
         JXLoginPane.Status status = JXLoginPane.showLoginDialog(frmC, pane);
         while (true) {
             if (status == JXLoginPane.Status.SUCCEEDED) {
-                String nombreUsuario = pane.getUserName();//El nombre de usuario que se acaba de autenticar
-                //traer el id de ese usuario
-                System.out.println("Usuario :" + nombreUsuario);
-                //preguntar el motivo de la cancelacion
+                String nombreUsuario = pane.getUserName(); // El nombre de usuario que se acaba de autenticar
+                System.out.println("Usuario: " + nombreUsuario);
+        
+                // Preguntar el motivo de la cancelación
                 boolean pressMotivo = false;
                 Object objSeleccion = null;
                 objSeleccion = JOptionPane.showInputDialog(
                         null,
                         "Motivo del Aborto Prueba Gases",
-                        "Abortar Prueba Por:",
+                        "Abortar Prueba desde panel:",
                         JOptionPane.QUESTION_MESSAGE,
-                        null, // null para icono defecto
+                        null, // null para icono por defecto
                         new Object[]{
-                            "Fallas del equipo de medicion",
-                            "Falla subita de fluido electrico del equipo de medicion",
-                            "Bloqueo forzado del equipo de medicion",
-                            "Ejecucion Incorrecta de la Prueba"},
+                                "Fallas del equipo de medición",
+                                "Falla súbita de fluido eléctrico del equipo de medición",
+                                "Bloqueo forzado del equipo de medición",
+                                "Ejecución incorrecta de la prueba"
+                        },
                         "Causales de Aborto");
-                strSeleccion = (String) objSeleccion;
-                guardarCausaAborto(strSeleccion);
-                System.out.println("va preguntar comentario");
-                if (Mensajes.mensajePregunta("¿Desea Agregar otra Observacion Referente al Aborto?")) {
-                    panelCancelacion.getMensaje().setText("Registro de Ampliacion de Observaciones Encontradas..!");
-                    System.out.println("va instanciar comentario");
-                    org.soltelec.pruebasgases.FrmComentario frm = new org.soltelec.pruebasgases.FrmComentario(SwingUtilities.getWindowAncestor(frmC), idUsuario, JDialog.DEFAULT_MODALITY_TYPE, strSeleccion, idUsuario, "aborto", 0);
-                    System.out.println("ya instancio");
-                    frm.setLocationRelativeTo(panelCancelacion);
-                    System.out.println("entra bloque comentario");
-                    frm.setModal(true);
-                    frm.setVisible(true);
-                    JOptionPane.showMessageDialog(null, "Aborto de la  prueba por: " + strSeleccion);
-
-                } else {
-                    try {
-                        RegistrarMedidas regMedidas = new RegistrarMedidas();
-                        Connection cn = regMedidas.getConnection();
-                        ConsultasLogin consultasLogin = new ConsultasLogin();
-                        regMedidas.registrarCancelacion(strSeleccion, strSeleccion, this.idUsuario, idUsuario);//Registra la prueba como Rechazada           
-                    } catch (SQLException | ClassNotFoundException exc) {
-                        Mensajes.mostrarExcepcion(exc);
-                    } finally {//al cancelar la prueba se deben liberar todos los recursos.
-
-                    }
+        
+                causarAborto = (String) objSeleccion;
+        
+                // Solicitar comentario opcional
+                String observacion = JOptionPane.showInputDialog(
+                        null,
+                        "¿Desea agregar un comentario? (Aceptar para si, Cancelar para no)",
+                        "Comentario adicional",
+                        JOptionPane.QUESTION_MESSAGE);
+        
+                // Si el comentario es null (usuario presionó cancelar) o vacío, asignar un string vacío
+                if (observacion == null || observacion.trim().isEmpty()) {
+                    observacion = ""; // String vacío
                 }
+        
+                // Registrar el aborto de la prueba con el motivo y comentario
+                registrarAborto(idPrueba, causarAborto, observacion);
+        
                 panelCancelacion.cerrar();
                 break;
             }
-            if (status == JXLoginPane.Status.NOT_STARTED || status == JXLoginPane.Status.CANCELLED) {
-                Mensajes.mensajeAdvertencia("DISCULPE ESPERANDO  CANCELACION POR PARTE DEL DIRECTOR TECNICO");
+            if (
+                status == JXLoginPane.Status.NOT_STARTED 
+                || status == JXLoginPane.Status.CANCELLED
+                ) {
+                Mensajes.mensajeAdvertencia("DISCULPE ESPERANDO CANCELACION POR PARTE DEL DIRECTOR TECNICO");
                 status = JXLoginPane.showLoginDialog(frmC, pane);
             }
         }
     }
 
-    // Método para guardar la causa de aborto en la base de datos
-    private void guardarCausaAborto(String causaAborto) {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
+    private void registrarAborto(long idPrueba, String causalAborto, String comentarioAborto) {
+    
+        int idEquipo = LeerArchivo.getIdEquipoFromEquiposProperties();
 
-        try {
-            // Conectar a la base de datos (modifica los parámetros según tu configuración)
-            conn = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContrasena());
-
-            // Consulta SQL para actualizar la tabla 'pruebas'
-            String sql = "UPDATE pruebas SET Comentario_aborto = ?, Abortada = ?, Finalizada = ? WHERE id_pruebas = ?";
-
-            // Preparar la declaración
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, causaAborto);
-            pstmt.setString(2, "Y"); // Marcar como abortada
-            pstmt.setString(3, "Y"); // Marcar como finalizada
-            pstmt.setLong(4, idPrueba);
-
+        String sqlUpdatePrueba = "UPDATE pruebas SET Comentario_aborto = ?, Abortada = ?, Finalizada = ?, serialEquipo = ?, observaciones = ? WHERE id_pruebas = ?";
+        String sqlFindSerial = "SELECT serialresolucion FROM equipos WHERE id_equipo = ?";
+        Conexion.setConexionFromFile();
+    
+        try (Connection conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContrasena());
+             PreparedStatement updatePruebasStmt = conexion.prepareStatement(sqlUpdatePrueba);
+             PreparedStatement findSerial = conexion.prepareStatement(sqlFindSerial)) {
+            
+            findSerial.setInt(1, idEquipo);
+            
+            String serial = null;
+            //rc representa el resultado de la consulta
+            try (ResultSet rc = findSerial.executeQuery()) {
+                while (rc.next()) {
+                    serial = rc.getString("serialresolucion");
+                }
+            }
+    
+            // Establecer los parámetros para la actualización
+            updatePruebasStmt.setString(1, comentarioAborto);
+            updatePruebasStmt.setString(2, "Y");
+            updatePruebasStmt.setString(3, "Y");
+            updatePruebasStmt.setString(4, serial);
+            updatePruebasStmt.setString(5, causalAborto);
+            updatePruebasStmt.setLong(6, idPrueba);
+    
             // Ejecutar la actualización
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            // Cerrar recursos
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            updatePruebasStmt.executeUpdate();
+    
+            // Mostrar mensaje y esperar 3 segundos antes de cerrar la aplicación
+            JOptionPane.showMessageDialog(null, "Prueba abortada y finalizada con éxito.", "Información", JOptionPane.INFORMATION_MESSAGE);
+            
+        } catch (SQLException ex) { 
+            ex.printStackTrace();
+            System.out.println("Error al tratar de abortar y finalizar la prueba por: " + ex.getMessage());
         }
     }
 

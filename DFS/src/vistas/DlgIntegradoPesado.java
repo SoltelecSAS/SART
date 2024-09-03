@@ -1983,7 +1983,7 @@ public class DlgIntegradoPesado extends javax.swing.JDialog implements ActionLis
             System.out.println("toma el marcado de confirmacion DESVIACION PESADO");
             PruebaDefaultDAO.escrTrans = "@";
             try {
-                repetirPrueba = desviacionDAO.persist(desviacion, idPruebadesv, idUsuario, aplicTrans, this.ipEquipo, tipoPista, tipoVehiculo, this.Placa);
+                repetirPrueba = desviacionDAO.persist(desviacion, idPruebadesv, idUsuario, aplicTrans, this.ipEquipo, tipoPista, tipoVehiculo, this.Placa, "desviacion dlgPesado");
             } catch (ClassNotFoundException ex) {
             }
             if (repetirPrueba == false) {
@@ -2035,7 +2035,7 @@ public class DlgIntegradoPesado extends javax.swing.JDialog implements ActionLis
             System.out.println("-------------------------------------------------------------------------------------");
             PruebaDefaultDAO.escrTrans = "@";
             try {
-                repetirPrueba = frenosDAO.persist(frenos, idPruebafren, idUsuario, aplicTrans, this.ipEquipo, tipoPista, tipoVehiculo, this.Placa);
+                repetirPrueba = frenosDAO.persist(frenos, idPruebafren, idUsuario, aplicTrans, this.ipEquipo, tipoPista, tipoVehiculo, this.Placa, "frenos dlgPesado");
             } catch (ClassNotFoundException ex) {
             }
             if (repetirPrueba == false) {

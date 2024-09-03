@@ -244,7 +244,7 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
                 //llamar al mismo callable polimorfico
                 JDialogReconfiguracionKit dlgReconfiguracion = new JDialogReconfiguracionKit(capelec, serialPort);
                 dlgReconfiguracion.setVisible(true);//se bloquea hasta que el kit este correctamente configurado
-                CallableCiclosOpacidadSensors callable = new CallableCiclosOpacidadSensors(opacimetro, capelec, panel, dialogoCiclos, diametroExosto, idPrueba, idUsuario, simulacion, idHojaPrueba);
+                CallableCiclosOpacidadSensors callable = new CallableCiclosOpacidadSensors(opacimetro, capelec, panel, dialogoCiclos, diametroExosto, idPrueba, idUsuario, simulacion, idHojaPrueba, tempAmbiente, humedadAmbiente);
                 Future<List<MedidaGeneral>> future = executor.submit(callable);
                 panel.getButtonFinalizar().addActionListener(new ListenerCancelacionDiesel(future, idPrueba, opacimetro, null, panel, idUsuario));
                 panel.getButtonRpm().setText("Falla Subita");
@@ -295,7 +295,7 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
                 } else {
                     tb8500 = new TB85000();
                 }
-                Future<List<MedidaGeneral>> future = executor.submit(new CallableCiclosOpacidadSensors(opacimetro, tb8500, panel, dialogoCiclos, diametroExosto, idPrueba, idUsuario, simulacion, idHojaPrueba));
+                Future<List<MedidaGeneral>> future = executor.submit(new CallableCiclosOpacidadSensors(opacimetro, tb8500, panel, dialogoCiclos, diametroExosto, idPrueba, idUsuario, simulacion, idHojaPrueba, tempAmbiente, humedadAmbiente));
                 panel.getButtonFinalizar().addActionListener(new ListenerCancelacionDiesel(future, idPrueba, opacimetro, null, panel, idUsuario));
                 panel.getButtonRpm().setText("Falla Subita");
 
@@ -383,7 +383,7 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
     private void registrarFallaSubita(long idPrueba) {
 
         String sqlInsertDefecto = "INSERT INTO defxprueba (id_defecto, id_prueba) VALUES (80000, ?)";
-        String sqlUpdatePrueba = "UPDATE pruebas SET observaciones = ?, Aprobada = ?, Finalizada = ? WHERE id_pruebas = ?";
+        String sqlUpdatePrueba = "UPDATE pruebas SET observaciones = ?, Aprobada = ?, Finalizada = ?, serialEquipo = ? WHERE id_pruebas = ?";
     
         System.out.println("----------------------------------------------------------------------");
         System.out.println("-----------Temperatura: " + VariablesOpacidad.getTemperaturaMotor() + "--------------------");
@@ -408,7 +408,8 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
             updatePruebasStmt.setString(1, "Falla súbita del motor y/o sus accesorios");
             updatePruebasStmt.setString(2, "N");
             updatePruebasStmt.setString(3, "Y");
-            updatePruebasStmt.setLong(4, idPrueba);
+            updatePruebasStmt.setString(4, cargarSerial());
+            updatePruebasStmt.setLong(5, idPrueba);
     
             // Ejecutar la actualización
             updatePruebasStmt.executeUpdate();

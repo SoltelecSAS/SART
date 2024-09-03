@@ -24,7 +24,7 @@ public class PruebaDefaultDAO {
     public static String escrTrans = "*";
     public static String serialEquipo = "";
 
-    public boolean persist(PruebaDefault prueba, int idPrueba, int idUsuario, int aplicTrans, String ipEquipo,String tipoPista,String tipoVehiculo,String placa) throws NoPersistException, ClassNotFoundException 
+    public boolean persist(PruebaDefault prueba, int idPrueba, int idUsuario, int aplicTrans, String ipEquipo,String tipoPista, String tipoVehiculo, String placa, String lugarTomaDatos) throws NoPersistException, ClassNotFoundException 
     {
         medidasDAO = new MedidasDAO();
         pruebasDAO = new PruebasDAO();
@@ -60,9 +60,9 @@ public class PruebaDefaultDAO {
         }
        
         System.out.println("VOY A GUARDAR MEDIDAS ..");
-        repetirPrueba = medidasDAO.guardarMedidas(prueba, idPrueba);
+        repetirPrueba = medidasDAO.guardarMedidas(prueba, idPrueba, lugarTomaDatos);
          System.out.println("YA DEBI  GUARDAR MEDIDAS ..!");
-         List<Integer> lstDef = prueba.getDefectos();
+         List<Integer> lstDef = prueba.getDefectos(placa);
         boolean escTran = true;
         if (aplicTrans == 1 && prueba.getAprobada().equalsIgnoreCase("N")) 
         {
@@ -82,7 +82,7 @@ public class PruebaDefaultDAO {
                 if(lstDef.size()>0){
                 System.out.println("lista de defectos size>0-----> "+lstDef.size() );               
                     System.out.println("get defectos es diferente de null, entro a insertar defectos");
-                pruebasDAO.guardarDefectos(prueba.getDefectos(), idPrueba); 
+                pruebasDAO.guardarDefectos(prueba.getDefectos(tipoVehiculo), idPrueba); 
                 }           
         }
         pruebasDAO.finalizarPrueba(idPrueba, idUsuario, prueba.getAprobada(), escTran, ipEquipo);

@@ -34,21 +34,22 @@ public class JDialogLucesMoto extends JDialog
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     }//end of constructor
 
-    public JDialogLucesMoto(Frame owner, boolean modal, Long idPrueba, int idHojaPruebas, int idUsuario,int aplicTrans,String tipoLuxometro) {
+    public JDialogLucesMoto(Frame owner, boolean modal, Long idPrueba, int idHojaPruebas, int idUsuario,int aplicTrans, String tipoLuxometro, String tipoVehiculo) {
         this(owner, modal);        
-        iniciarHilo(idPrueba, idUsuario, idHojaPruebas,aplicTrans,tipoLuxometro);   
+        iniciarHilo(idPrueba, idUsuario, idHojaPruebas,aplicTrans,tipoLuxometro, tipoVehiculo);   
     }
     
     public PanelLuxometroMotos getPanel() {
         return panel;
     }//end of method
 
-    private void iniciarHilo(Long idPrueba, int idUsuario, int idHojaPruebas,int aplicTrans,String tipoLuxometro) {
+    private void iniciarHilo(Long idPrueba, int idUsuario, int idHojaPruebas,int aplicTrans,String tipoLuxometro, String tipoVehiculo) {
          System.out.println("el tipo luxometro is "+tipoLuxometro);
         HiloLucesMoto h = new HiloLucesMoto(panel,aplicTrans,tipoLuxometro);
         h.setIdPrueba(idPrueba);
         h.setIdUsuario(idUsuario);
         h.setIdHojaPrueba(idHojaPruebas);
+        h.setTipoVehiculo(tipoVehiculo);
         Thread t = new Thread(h);
         t.start();
         this.setVisible(true);       

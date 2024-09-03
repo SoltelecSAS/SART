@@ -967,7 +967,7 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
                     objSeleccion = JOptionPane.showInputDialog(
                             null,
                             "Motivo del Aborto Prueba Gases",
-                            "Abortar Prueba Por:",
+                            "Abortar Prueba desde callable:",
                             JOptionPane.QUESTION_MESSAGE,
                             null, // null para icono defecto
                             new Object[]{

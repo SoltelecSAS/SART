@@ -25,12 +25,14 @@ public class MedidasDAO {
      * @param valorMedida el valor de la medida a guardar
      * @param idPrueba el id de la prueba a la cual hace referencia
      */
-     public boolean guardarMedidas(PruebaDefault prueba, int idPrueba) throws NoPersistException 
+     public boolean guardarMedidas(PruebaDefault prueba, int idPrueba, String lugarTomaDatos) throws NoPersistException 
      {
+
+
         System.out.println("---------------------------------------------------");
-        System.out.println("------------------Guardar Medidas------------------");
+        System.out.println("------------------Guardar Medidas desde "+lugarTomaDatos+"------------------");
         System.out.println("---------------------------------------------------");
-         
+
         String campos = "(" + Medidas.ID_TIPO_MEDIDA + "," + Medidas.VALOR_MEDIDA + "," + Medidas.ID_PRUEBA + ")";
         String valores = "";
         List<Integer> tiposMedida = prueba.getTiposMedida();
@@ -59,10 +61,18 @@ public class MedidasDAO {
         System.out.println("--PRUEBA SUSPENSION 12/04/2021--------");
         System.out.println("--------------------------------------");
         
-        
-        for (int i = 0; i < tiposMedida.size(); i++) 
-        {            
-            valores = "('" + tiposMedida.get(i) + "','" + valoresMedida.get(i) + "','" + idPrueba + "')";
+        System.out.println("Numero tipos de medida: "+tiposMedida.size());
+        for (int i = 0; i < valoresMedida.size(); i++) 
+        {        
+            System.out.println("--------------------------------------------------------------");    
+            System.out.println("ciclo "+i);
+            System.out.println("tipo de medida "+i+" "+tiposMedida.get(i));
+            System.out.println("valor de medida "+i+" "+valoresMedida.get(i));
+            System.out.println("--------------------------------------------------------------");
+
+            valores = "('" + tiposMedida.get(i) + "','" + 
+            valoresMedida.get(i) + "','" + 
+            idPrueba + "')";
             String consulta="SELECT * FROM "+ Medidas.TABLA+ " WHERE MEASURETYPE=" + tiposMedida.get(i) + " AND  TEST="+ idPrueba;
             System.out.println("Consulta de medidas : " +consulta);
             String actualizacion="UPDATE "+ Medidas.TABLA + " SET Valor_medida= "+ valoresMedida.get(i) +"  WHERE MEASURETYPE="+ tiposMedida.get(i)+ " AND TEST="+idPrueba;

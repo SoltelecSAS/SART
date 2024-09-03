@@ -38,4 +38,12 @@ public class LeerArchivo {
         if (resultado != null) return Double.parseDouble(resultado);
         return 1;
     }
+
+    public static int getIdEquipoFromEquiposProperties(){
+        String archivo = "equipos.properties"; // Nombre del archivo
+        String buscarTexto = "GASES=";
+        String resultado = LeerArchivo.leerDatoDesdeArchivo(archivo, buscarTexto);
+        if (resultado != null) return Integer.parseInt(resultado);
+        return 0;
+    }
 }

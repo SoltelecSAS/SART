@@ -189,7 +189,7 @@ public class EvaluarRegistrarPruebaGasolina {
             rs.next();//primer registro
             int modelo = rs.getInt("Modelo");
             int gasolina = rs.getInt("FUELTYPE");
-            boolean pruebaAprobada = false;
+            boolean pruebaAprobada = true;
             boolean dilucion = false;
             //Verificar la Dilucion
             System.out.println("Modelo del vehiculo: " + modelo);
@@ -201,12 +201,38 @@ public class EvaluarRegistrarPruebaGasolina {
             System.out.println("coCrucero: 1" + coCrucero);
 //           
             if (gasolina == 1) {
-                if (o2Crucero > 5 || o2Ralenti > 5 || co2Crucero <= 7 || co2Ralenti <= 7 || co2Ralenti >= 17 || co2Crucero >= 17) {
+                if (
+                    o2Crucero > 5 || o2Ralenti > 5 
+                    || co2Crucero < 7 || co2Ralenti < 7 
+                    || co2Ralenti >= 17 || co2Crucero >= 17
+                    ) {
                     dilucion = true;
                     pruebaAprobada = false;
+
+                    System.out.println();
+                    System.out.println();
+                    System.out.println("¡¡¡Se detecto dilucion: !!!");
+                    System.out.println("o2Ralenti: "+o2Ralenti);
+                    System.out.println("o2Crucero: "+o2Crucero);
+                    System.out.println("co2Ralenti: "+co2Ralenti);
+                    System.out.println("co2Crucero: "+co2Crucero);
+                    System.out.println();
+                    System.out.println();
+                }else{
+                    System.out.println();
+                    System.out.println();
+                    System.out.println("No se detecto dilucion: ");
+                    System.out.println("o2Ralenti: "+o2Ralenti);
+                    System.out.println("o2Crucero: "+o2Crucero);
+                    System.out.println("co2Ralenti: "+co2Ralenti);
+                    System.out.println("co2Crucero: "+co2Crucero);
+                    System.out.println();
+                    System.out.println();
                 }
             }
-            {
+            
+            
+            
                 //EVALUAR LA PRUEBA
 //                if(fechaDeIngresoVehiculo.before(fechaInicioResolucion0762Tabla29)){
 //                    System.out.println("valores vieja resolucion--------------------------------------------------------------------------------------------------------");
@@ -222,21 +248,21 @@ public class EvaluarRegistrarPruebaGasolina {
 //                }else{
                 System.out.println("valores nueva resolucion--------------------------------------------------------------------------------------------------------");
                 if (modelo <= 1984) {
-                    pruebaAprobada = hcRalenti <= 650 && hcCrucero <= 650 && coRalenti <= 4 && coCrucero <= 4;
+                    pruebaAprobada = (hcRalenti <= 650 && hcCrucero <= 650 && coRalenti <= 4 && coCrucero <= 4) && pruebaAprobada;
                     System.out.println("entro a menores a 1984");
                 } else if (modelo >= 1985 && modelo <= 1997) {
-                    pruebaAprobada = hcRalenti <= 400 && hcCrucero <= 400 && coRalenti <= 3 && coCrucero <= 3;
+                    pruebaAprobada = (hcRalenti <= 400 && hcCrucero <= 400 && coRalenti <= 3 && coCrucero <= 3) && pruebaAprobada;
                     System.out.println("entro entre 1985 y 1997");
                 } else if (modelo >= 1998 && modelo <= 2009) {
-                    pruebaAprobada = hcRalenti <= 200 && hcCrucero <= 200 && coRalenti <= 1 && coCrucero <= 1;
+                    pruebaAprobada = (hcRalenti <= 200 && hcCrucero <= 200 && coRalenti <= 1 && coCrucero <= 1) && pruebaAprobada;
                     System.out.println("entro entre 1998 y 2009");
                 } else {//modelo >= 2010
-                    pruebaAprobada = hcRalenti <= 160 && hcCrucero <= 160 && coRalenti <= 0.8 && coCrucero <= 0.8;
+                    pruebaAprobada = (hcRalenti <= 160 && hcCrucero <= 160 && coRalenti <= 0.8 && coCrucero <= 0.8) && pruebaAprobada;
                     System.out.println("entro mayores 2010");
                 }
                 System.out.println("prueba aprobada: " + pruebaAprobada);
                 // }
-            }
+            
             String serialEquipo = "";
             try {
                 serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);

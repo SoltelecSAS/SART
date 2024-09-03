@@ -18,7 +18,7 @@ public interface PruebaDefault {
      * en la preuba.
      * @return
      */
-    public List<Integer> getDefectos();
+    public List<Integer> getDefectos(String tipoVehiculo);
     
     /**
      * Metodo para obtener el estado de la prueba Y = Aprobada, N = No Aprobada
@@ -46,7 +46,7 @@ public interface PruebaDefault {
     /**
      * Metodo para verificar los defectos y determina el estado de la prueba. 
      */
-    public void verificarDefectos();
+    public void verificarDefectos(String placa);
     
     /**
      * Metodo para imprimir los valores en la consola de ejecucion

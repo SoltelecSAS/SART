@@ -2027,7 +2027,7 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
         try {
             PruebaDefaultDAO.escrTrans = "@";
             try {
-                repetirPrueba = desviacionDAO.persist(desviacion, idPruebadesv, idUsuario, aplicTrans, this.ipEquipo,tipoPista,tipoVehiculo,this.Placa);
+                repetirPrueba = desviacionDAO.persist(desviacion, idPruebadesv, idUsuario, aplicTrans, this.ipEquipo,tipoPista,tipoVehiculo,this.Placa, "desviaciones DlgIntegrado4x4");
             } catch (ClassNotFoundException ex) { }
             if (repetirPrueba == false) {
                 tramaAuditoriaDesv = "{";
@@ -2058,7 +2058,7 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
         try {
             PruebaDefaultDAO.escrTrans = "@";
             try {
-                repetirPrueba = suspensionDAO.persist(suspension, idPruebasusp, idUsuario, aplicTrans, this.ipEquipo,tipoPista,tipoVehiculo,this.Placa);
+                repetirPrueba = suspensionDAO.persist(suspension, idPruebasusp, idUsuario, aplicTrans, this.ipEquipo,tipoPista,tipoVehiculo,this.Placa, "Suspencion dlgIntegrado4x4");
             } catch (ClassNotFoundException ex) {  }
             if (repetirPrueba == false) {
                 tramaAuditoriaSusp = "";
@@ -2098,7 +2098,7 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
         try {
             PruebaDefaultDAO.escrTrans = "@";
             try {
-                repetirPrueba = frenosDAO.persist(frenos, idPruebafren, idUsuario, aplicTrans, this.ipEquipo,tipoPista,tipoVehiculo,this.Placa);
+                repetirPrueba = frenosDAO.persist(frenos, idPruebafren, idUsuario, aplicTrans, this.ipEquipo,tipoPista,tipoVehiculo,this.Placa, "frenos DlgIntegrado4x4");
             } catch (ClassNotFoundException ex) {    }
             if (repetirPrueba                                                == false) {
                 DlgIntegrado4x4.tramaAuditoria = "{\"eficaciaTotal\":\"".concat(String.valueOf(Frenos.eficacia)).concat("\",").concat("\"eficaciaAuxiliar\":\"").concat(String.valueOf(Frenos.eficaciaFrenoMano)).concat("\",");

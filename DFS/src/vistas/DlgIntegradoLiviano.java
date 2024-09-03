@@ -2520,7 +2520,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             PruebaDefaultDAO.escrTrans = "@";
 
             try {
-                repetirPrueba = desviacionDAO.persist(desviacion, idPruebadesv, idUsuario, aplicTrans, this.ipEquipo, tipoPista, tipoVehiculo, this.Placa);
+                repetirPrueba = desviacionDAO.persist(desviacion, idPruebadesv, idUsuario, aplicTrans, this.ipEquipo, tipoPista, tipoVehiculo, this.Placa, "desviaciones dlgLiviano");
             } catch (ClassNotFoundException ex) {
             }
             if (repetirPrueba == false) {
@@ -2566,14 +2566,14 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 //        }
         boolean valoresNulosOCeros = false;
 
-        for (int k = 0; k < fuerzasvd.size(); k++) {
-            System.out.println("Valor de fuerza derecha " + fuerzasvd.get(k) + " en la posición " + k);
-            suspension.setFuerzaDerecha(fuerzasvd.get(k));
+        for (int i = 0; i < fuerzasvd.size(); i++) {
+            System.out.println("Valor de fuerza derecha " + fuerzasvd.get(i) + " en la posición " + i);
+            suspension.setFuerzaDerecha(fuerzasvd.get(i));
 
-            System.out.println("Valor de fuerza izquierda " + fuerzasvi.get(k) + " en la posición " + k);
-            suspension.setFuerzaIzquierda(fuerzasvi.get(k));
+            System.out.println("Valor de fuerza izquierda " + fuerzasvi.get(i) + " en la posición " + i);
+            suspension.setFuerzaIzquierda(fuerzasvi.get(i));
 
-            if (fuerzasvd.get(k) == null || fuerzasvi.get(k) == null || fuerzasvd.get(k) == 0 || fuerzasvi.get(k) == 0) {
+            if (fuerzasvd.get(i) == null || fuerzasvi.get(i) == null || fuerzasvd.get(i) == 0 || fuerzasvi.get(i) == 0) {
                 valoresNulosOCeros = true;
                 break;
             }
@@ -2602,7 +2602,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         try {
             PruebaDefaultDAO.escrTrans = "@";
             try {
-                repetirPrueba = suspensionDAO.persist(suspension, idPruebasusp, idUsuario, aplicTrans, this.ipEquipo, tipoPista, tipoVehiculo, this.Placa);
+                repetirPrueba = suspensionDAO.persist(suspension, idPruebasusp, idUsuario, aplicTrans, this.ipEquipo, tipoPista, tipoVehiculo, this.Placa, "suspencion dlg livianos");
             } catch (ClassNotFoundException ex) {
             }
             if (repetirPrueba == false) {
@@ -2648,7 +2648,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             PruebaDefaultDAO.escrTrans = "@";
 
             try {
-                repetirPrueba = frenosDAO.persist(frenos, idPruebafren, idUsuario, aplicTrans, this.ipEquipo, tipoPista, tipoVehiculo, this.Placa);
+                repetirPrueba = frenosDAO.persist(frenos, idPruebafren, idUsuario, aplicTrans, this.ipEquipo, tipoPista, tipoVehiculo, this.Placa, "frenos dlgLiviano");
             } catch (ClassNotFoundException ex) {
             }
             if (repetirPrueba == false) {

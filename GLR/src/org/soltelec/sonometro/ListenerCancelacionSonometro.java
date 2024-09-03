@@ -10,6 +10,8 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Locale;
 import java.util.concurrent.Future;
@@ -81,7 +83,7 @@ public class ListenerCancelacionSonometro implements ActionListener {
                     objSeleccion = JOptionPane.showInputDialog(
                             null,
                             "Motivo del Aborto Prueba Gases",
-                            "Abortar Prueba Por:",
+                            "Abortar Prueba desde listener:",
                             JOptionPane.QUESTION_MESSAGE,
                             null, // null para icono defecto
                             new Object[]{
@@ -111,4 +113,6 @@ public class ListenerCancelacionSonometro implements ActionListener {
             Logger.getLogger(ListenerCancelacionGases.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//end of method 
+
+    
 }//end of class
