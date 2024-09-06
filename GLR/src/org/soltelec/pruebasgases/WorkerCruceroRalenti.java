@@ -102,8 +102,11 @@ public class WorkerCruceroRalenti extends SwingWorker<Void, Void> {
     @Override
     protected Void doInBackground() throws Exception {
 
-        for (ActionListener al : panel.getButtonFinalizar().getActionListeners()) {
-            panel.getButtonFinalizar().removeActionListener(al);
+        try {
+            ActionListener[] actionListeners = panel.getButtonFinalizar().getActionListeners();//
+            panel.getButtonFinalizar().removeActionListener(actionListeners[0]);//
+        } catch (Exception exc) {
+            System.out.println("Shallow exception of actionListenr");
         }
         for (ActionListener al : panel.getButtonFinalizar().getActionListeners()) {
             panel.getButtonRpm().removeActionListener(al);
@@ -184,8 +187,11 @@ public class WorkerCruceroRalenti extends SwingWorker<Void, Void> {
                 panel.getButtonRpm().addActionListener(new ListenerCambioRpms(futureValidador, (MedidorRevTemp) banco, banco, panel, idUsuario));
 
                 lstValMisc = futureValidador.get();
-                for (ActionListener al : panel.getButtonFinalizar().getActionListeners()) {
-                    panel.getButtonFinalizar().removeActionListener(al);
+                try {
+                    ActionListener[] actionListeners = panel.getButtonFinalizar().getActionListeners();//
+                    panel.getButtonFinalizar().removeActionListener(actionListeners[0]);//
+                } catch (Exception exc) {
+                    System.out.println("Shallow exception of actionListenr");
                 }
                 for (ActionListener al : panel.getButtonFinalizar().getActionListeners()) {
                     panel.getButtonRpm().removeActionListener(al);
@@ -251,8 +257,11 @@ public class WorkerCruceroRalenti extends SwingWorker<Void, Void> {
                 panel.getButtonRpm().addActionListener(new ListenerCambioRpms(futureValidador, (MedidorRevTemp) banco, banco, panel, idUsuario));
                 lstValMisc = futureValidador.get();
 
-                for (ActionListener al : panel.getButtonFinalizar().getActionListeners()) {
-                    panel.getButtonFinalizar().removeActionListener(al);
+                try {
+                    ActionListener[] actionListeners = panel.getButtonFinalizar().getActionListeners();//
+                    panel.getButtonFinalizar().removeActionListener(actionListeners[0]);//
+                } catch (Exception exc) {
+                    System.out.println("Shallow exception of actionListenr");
                 }
                 for (ActionListener al : panel.getButtonRpm().getActionListeners()) {
                     panel.getButtonRpm().removeActionListener(al);
@@ -278,8 +287,11 @@ public class WorkerCruceroRalenti extends SwingWorker<Void, Void> {
                 panel.getButtonFinalizar().addActionListener(new ListenerCancelacionGases(futureValidador, idPrueba, banco, null, panel, idUsuario));
                 panel.getButtonRpm().addActionListener(new ListenerCambioRpms(futureValidador, (MedidorRevTemp) banco, banco, panel, idUsuario));
                 lstValMisc = futureValidador.get();
-                for (ActionListener al : panel.getButtonFinalizar().getActionListeners()) {
-                    panel.getButtonFinalizar().removeActionListener(al);
+                try {
+                    ActionListener[] actionListeners = panel.getButtonFinalizar().getActionListeners();//
+                    panel.getButtonFinalizar().removeActionListener(actionListeners[0]);//
+                } catch (Exception exc) {
+                    System.out.println("Shallow exception of actionListenr");
                 }
                 for (ActionListener al : panel.getButtonRpm().getActionListeners()) {
                     panel.getButtonRpm().removeActionListener(al);

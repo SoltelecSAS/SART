@@ -1093,7 +1093,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
             }
         }
 
-        /* while (contadorTemporizacion < 10) {
+        while (contadorTemporizacion < 10) {
             rpm = medidorRevTemp.getRpm();
             if (rpm > 1200) {
                 while (true) {
@@ -1127,30 +1127,17 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
             }
             panel.getMensaje().setText("POR FAVOR MANTENGA EL VEHICULO EN RALENTI  t:" + contadorTemporizacion);
             Thread.sleep(100);
-        }//end of while de velocidad  */
+        }//end of while de velocidad 
+
+        velocidadRalenti = (int) shiftRegisterVelocidad.media();
 
         while (contadorTemporizacion < 10) {
             rpm = medidorRevTemp.getRpm();
             panel.getRadialTacometro().setValue(rpm);
             panel.getLinearTemperatura().setValue(medidorRevTemp.getTemp());
-            if (contadorTemporizacion >= 5) {
-                shiftRegisterVelocidad.ponerElemento(rpm);
-            }
-            if (shiftRegisterVelocidad.isStable()) {
-                panel.getMensaje().setText("Estable  t:" + contadorTemporizacion);
-                Thread.sleep(200);
-            }
-            if (shiftRegisterVelocidad.isAcelerando()) {
-                panel.getMensaje().setText("Acelerando t:" + contadorTemporizacion);
-                Thread.sleep(200);
-            }
             panel.getMensaje().setText("POR FAVOR REALICE UNA ACELERACION SUAVE Y CONTROLADA HASTA LLEGAR A GOBERNADAS EN 10s O MENOS.\n PONGA ATENCION A CUALQUER INDICIO VISIBLE O SONORO  t:" + contadorTemporizacion);
-            Thread.sleep(100);
+            Thread.sleep(1000);
         }//end of while de velocidad 
-
-        
-
-        velocidadRalenti = (int) shiftRegisterVelocidad.media();
 
         panel.getPanelFiguras().setVisible(false);
         panel.getPanelMensaje().setVisible(true);
@@ -1266,7 +1253,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
 
         // Ejecutar la acción correspondiente
         if (response == JOptionPane.YES_OPTION) {
-            registrarMalFunMotor(idPrueba, defecto);
+            registrarDefectoDiesel(idPrueba, defecto);
         } else if (response == JOptionPane.NO_OPTION) {
             System.out.println("Has seleccionado No");
         }
@@ -1275,7 +1262,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
         frame.dispose();
     }
 
-    private void registrarMalFunMotor(long idPrueba, String defecto) {
+    private void registrarDefectoDiesel(long idPrueba, String defecto) {
 
         String sqlInsertDefecto = "INSERT INTO defxprueba (id_defecto, id_prueba) VALUES (80000, ?)";
         String sqlUpdatePrueba = "UPDATE pruebas SET observaciones = ?, Aprobada = ?, Finalizada = ?, serialEquipo = ? WHERE id_pruebas = ?";
@@ -1317,7 +1304,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
             updatePruebasStmt.executeUpdate();
     
             // Mostrar mensaje y esperar 3 segundos antes de cerrar la aplicación
-            JOptionPane.showMessageDialog(null, "Prueba rechazada y finalizada con éxito. \nPor seguridad cerraremos el programa", "Información", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Prueba rechazada y finalizada debido a:\n "+defecto+". \nPor seguridad cerraremos el programa", "Información", JOptionPane.INFORMATION_MESSAGE);
             System.exit(0);
             
         } catch (SQLException ex) { 
@@ -1411,6 +1398,9 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                 panel.getLinearTemperatura().setLcdValue(medidorRevTemp.getTemp());
                 panel.getMensaje().setText("PONGA LA VELOCIDAD EN : " + velocidadRalenti + "rpms.. t: " + contadorTemporizacion);
                 Thread.sleep(100);
+                if (contadorTemporizacion >= 10) {
+                    registrarDefectoDiesel(idPrueba, "El vehiculo presenta malas condiciones de operacion segun el numeral 3.1.3.12 ");
+                }
             }
             rpm = medidorRevTemp.getRpm();
             T_ANTES_ACELERAR = 10;
@@ -1442,9 +1432,10 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                 continue;
             }
 
-            contadorTemporizacion = 0;
+            
             panel.getRadialTacometro().setBackgroundColor(BackgroundColor.BLACK);
             panel.getMensaje().setText(" ");
+            contadorTemporizacion = 0;
             if (simulacion == true) {
                 simuladorRpm.setREVOLUCIONES_CRUCERO((int) velocidadCrucero);
                 simuladorRpm.setSimularCrucero(true);
@@ -1452,7 +1443,9 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                 contadorTemporizacion = 0;
             }
             panel.getRadialTacometro().setBackgroundColor(BackgroundColor.GREEN);
-            while (contadorTemporizacion < 5 && (rpm < velocidadCrucero - 100)) {
+            boolean cumple = false;
+            while (contadorTemporizacion < 5) {
+                
                 panel.getMensaje().setText("ACELERE a !:" + velocidadCrucero + " t: " + contadorTemporizacion);
                 rpm = medidorRevTemp.getRpm();
                 if (simulacion == true) {
@@ -1462,10 +1455,23 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                     }
                 }
                 panel.getRadialTacometro().setValue(rpm);
+
+                if(
+                    contadorTemporizacion < 5 && 
+                    (rpm < velocidadCrucero - 100)
+                ) {
+                    cumple = true;
+                }
+                if (rpm> velocidadCrucero + 100) {
+                    cumple = false;
+                    panel.getMensaje().setText("Aceleracion fallida por diferencia de gobernada mayor a 100");
+                    break;
+                }
+
                 Thread.sleep(100);
             }
 
-            if (contadorTemporizacion >= 5) {
+            if (cumple) {
                 panel.getMensaje().setText("ACELERACION FALLIDA: intentos restantes " + (2 - intentosAceleracionGobernada));
                 Thread.sleep(2000);
                 intentosAceleracionGobernada++;
