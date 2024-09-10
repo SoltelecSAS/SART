@@ -1131,6 +1131,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
 
         velocidadRalenti = (int) shiftRegisterVelocidad.media();
 
+        contadorTemporizacion = 0;
         while (contadorTemporizacion < 10) {
             rpm = medidorRevTemp.getRpm();
             panel.getRadialTacometro().setValue(rpm);
@@ -1139,9 +1140,9 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
             Thread.sleep(1000);
         }//end of while de velocidad 
 
-        panel.getPanelFiguras().setVisible(false);
+        /* panel.getPanelFiguras().setVisible(false);
         panel.getPanelMensaje().setVisible(true);
-        panel.getPanelMensaje().setText("POR FAVOR MANTENGA EL VEHICULO EN GOBERNADAS Y PRESTE ATENCION SI LA CAPACIDAD LIMITADORA DEL SISTEMA DE INYECCION DEL MOTOR ESTE OPERANDO CORRECTAMENTE");
+        panel.getPanelMensaje().setText("POR FAVOR MANTENGA EL VEHICULO EN GOBERNADAS Y PRESTE ATENCION SI LA CAPACIDAD LIMITADORA DEL SISTEMA DE INYECCION DEL MOTOR ESTE OPERANDO CORRECTAMENTE"); */
         if (simulacion == true) {
             simuladorRpm.setREVOLUCIONES_CRUCERO((int) velocidadCrucero);
             simuladorRpm.setSimularCrucero(true);
@@ -1149,12 +1150,12 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
 
         
 
-        panel.getMensaje().setText(" ");
+        /* panel.getMensaje().setText(" ");
         Thread.sleep(3500);
         panel.getPanelMensaje().setVisible(false);
-        panel.getPanelFiguras().setVisible(true);
+        panel.getPanelFiguras().setVisible(true); */
         boolean noCrearDenuevo = true;
-        valRpmRal = false;
+        /* valRpmRal = false;
         while (valRpmRal == false) {
             rpm = medidorRevTemp.getRpm();
             rpm = rpm - 150;
@@ -1166,9 +1167,9 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
             } else {
                 panel.getMensaje().setText("NO DETECTO CAMBIO EN LAS REVOLUCIONES; POR FAVOR CAMBIE A GOBERNADA ");
             }
-        }
+        } */
 
-        valRpmRal = false;
+        /* valRpmRal = false;
         while (valRpmRal == false) {
             rpm = medidorRevTemp.getRpm();
             rpm = rpm - 150;
@@ -1180,13 +1181,17 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
             } else {
                 panel.getMensaje().setText("NO DETECTO CAMBIO EN LAS REVOLUCIONES; POR FAVOR CAMBIE A GOBERNADA ");
             }
-        }
+        } */
 
         panel.getPanelMensaje().setVisible(false);
         panel.getPanelFiguras().setVisible(true);
         contadorTemporizacion = 0;
-        while (contadorTemporizacion < 10) {
-            panel.getMensaje().setText("POR FAVOR MANTENGA EL VEHICULO EN GOBERNADAS  t:" + contadorTemporizacion);
+        while (contadorTemporizacion < 5) {
+            panel.getMensaje().setText(
+                "POR FAVOR MANTENGA EL VEHICULO EN GOBERNADAS DURANTE 5 segundos\n"+ 
+                "Observe si hay algún indicio de que la capacidad limitadora del sistema de inyección de combustible del motor no este funcionando correctamente\n"+
+                "\ntiempo:" + contadorTemporizacion+" segundos."
+            );
             rpm = medidorRevTemp.getRpm();
             if (velocidadRalenti > rpm) {
                 while (true) {
@@ -1210,22 +1215,25 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                 shiftRegisterVelocidad = new ShiftRegister(1, rpm);
                 noCrearDenuevo = false;
             }
-            if (contadorTemporizacion > 2) {
-                panel.getMensaje().setText("POR FAVOR MANTENGA EL VEHICULO EN GOBERNADAS  t:" + contadorTemporizacion);
-                shiftRegisterVelocidad.ponerElemento(rpm);
-            }
+                
+            shiftRegisterVelocidad.ponerElemento(rpm);
             Thread.sleep(50);
         }
         velocidadCrucero = shiftRegisterVelocidad.media();
         //Indicación de mal funcionamiento del motor
-        recuadroSiNo("3.1.3.12.1. ¿Observo alguna anomalia visible o sonora durante la etapa de aceleracion lenta y controlada?", "Condiciones anormales en la etapa de ralenti segun el numeral 3.1.3.12.1");
+        recuadroSiNo(
+            "3.1.3.12.1. ¿Observo alguna anomalia visible o sonora durante la etapa de aceleracion lenta y controlada?"//mensaje recuadro
+            , 
+            "Condiciones anormales en la etapa de ralenti segun el numeral 3.1.3.12.1"//defecto que se insertara los comentarios del fur
+        );
         recuadroSiNo(   
             "3.1.3.12.2 ¿Hubo algún indicio de que la capacidad limitadora del sistema de inyección de"+ 
             "combustible no está operando, o que se esté presentando algún daño en el motor o alguna"+
             "condición insegura para el personal o el equipo ?" //mensaje recuadro
             , 
             "Problemas en el sistema de inyección de combustible que limita la velocidad maxima "+
-            "del motor segun el numeral 3.1.3.12.2"); //mensaje del defecto en caso de que si
+            "del motor segun el numeral 3.1.3.12.2" //defecto que se insertara los comentarios del fur
+        ); //mensaje del defecto en caso de que si
     }
 
     private void recuadroSiNo(String mensaje, String defecto) {
@@ -1444,7 +1452,8 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
             }
             panel.getRadialTacometro().setBackgroundColor(BackgroundColor.GREEN);
             boolean cumple = false;
-            while (contadorTemporizacion < 5) {
+            contadorTemporizacion = 0;
+            while (contadorTemporizacion <= 5) {
                 
                 panel.getMensaje().setText("ACELERE a !:" + velocidadCrucero + " t: " + contadorTemporizacion);
                 rpm = medidorRevTemp.getRpm();
@@ -1472,11 +1481,11 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
             }
 
             if (cumple) {
+                aceleracionGobernadas5sValida = true;
+            } else {
                 panel.getMensaje().setText("ACELERACION FALLIDA: intentos restantes " + (2 - intentosAceleracionGobernada));
                 Thread.sleep(2000);
                 intentosAceleracionGobernada++;
-            } else {
-                aceleracionGobernadas5sValida = true;
             }
         }
 //        intentosAceleracionGobernada=8;
@@ -1485,7 +1494,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                     + " \nver numeral 3.1.3.13 ntc 4231");
             liberarRecursos();
             listaMedidasTemp = new ArrayList<MedidaGeneral>();
-            DeficienteOperacionException.tipoException = "RECHAZO POR NO ALCANZAR VELOCIDAD GOBERNADA EN TIEMPO INDICADO;(Numeral 3.1.3.13 NTC 4231)";
+            DeficienteOperacionException.tipoException = "Rechazo por no cumplir con la velocidad gobernada en el tiempo indicado o exceder el límite de ±100 RPM (Numeral 3.1.3.13 NTC 4231)";
             throw new DeficienteOperacionException();
             //RECHAZO INMEDIATO
         }

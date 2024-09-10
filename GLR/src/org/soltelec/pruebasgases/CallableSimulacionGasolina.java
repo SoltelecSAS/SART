@@ -634,9 +634,9 @@ public class CallableSimulacionGasolina implements Callable<List<List<MedicionGa
 
             if ((medicion.getValorO2() * 0.01 > LIMITE_OXIGENO) || medicion.getValorCO2() * 0.1 < LIMITE_DIOXIDO) {
                    System.out.println("Marco Dilucion en Ralenty  " );
-                panelGases.getMensaje().setText("SE HA DETECTADO DILUCION EN LA MUESTRA ..!");
+                /* panelGases.getMensaje().setText("SE HA DETECTADO DILUCION EN LA MUESTRA ..!"); */
                 Thread.sleep(1000);                
-                panelGases.getFuncion().setText("DILUCION DE MUESTRA");
+                /* panelGases.getFuncion().setText("DILUCION DE MUESTRA"); */
             }
             panelGases.getPanelFiguras().setVisible(false);
             panelGases.getPanelMensaje().setVisible(true);
@@ -735,9 +735,9 @@ public class CallableSimulacionGasolina implements Callable<List<List<MedicionGa
                 return lecturaRechazada;
             }
             if ((medicion.getValorO2() * 0.01 > LIMITE_OXIGENO) || medicion.getValorCO2() * 0.1 < LIMITE_DIOXIDO) {
-                   panelGases.getMensaje().setText("SE HA DETECTADO DILUCION EN LA MUESTRA ..!");
+                  /*  panelGases.getMensaje().setText("SE HA DETECTADO DILUCION EN LA MUESTRA ..!");
                 Thread.sleep(1000);                
-                panelGases.getFuncion().setText("DILUCION DE MUESTRA");                
+                panelGases.getFuncion().setText("DILUCION DE MUESTRA");   */              
             }
         }//end of try de cancelacion//end of try de cancelacion
         catch (InterruptedException iexc) {//Cambio de revoluciones o cancelacion de la prueba

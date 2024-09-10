@@ -190,7 +190,7 @@ public class EvaluarRegistrarPruebaGasolina {
             int modelo = rs.getInt("Modelo");
             int gasolina = rs.getInt("FUELTYPE");
             boolean pruebaAprobada = true;
-            boolean dilucion = false;
+            boolean dilucionVariable = false;
             //Verificar la Dilucion
             System.out.println("Modelo del vehiculo: " + modelo);
             System.out.println("Fuelttype: " + gasolina);
@@ -206,7 +206,7 @@ public class EvaluarRegistrarPruebaGasolina {
                     || co2Crucero < 7 || co2Ralenti < 7 
                     || co2Ralenti >= 17 || co2Crucero >= 17
                     ) {
-                    dilucion = true;
+                    dilucionVariable = true;
                     pruebaAprobada = false;
 
                     System.out.println();
@@ -269,8 +269,11 @@ public class EvaluarRegistrarPruebaGasolina {
             } catch (Exception e) {
                 serialEquipo = "Serial no encontrado";
             }
-            if (dilucion) {
+
+            String observ = "";
+            if (dilucionVariable) {
                 pruebaAprobada = false;
+                observ = "Vehiculo rechazado debido a dilucion en la muestra";
             }
             System.out.println("ESTA DENTRO DEL METODO EVALUARrEGISTRARpRUEBA");
             System.out.println(" ");
@@ -299,18 +302,14 @@ public class EvaluarRegistrarPruebaGasolina {
                 }
                 instruccion2.setLong(2, idUsuario);
                 instruccion2.setString(3, serialEquipo);
-                String observ = "";
+                
                 String flag = "";
                 if (diluRalenty == 1) {
-                    observ = "DILUCION EN LA MUESTRA DE RALENTY";
                     flag = "DILUCION DE MUESTRA";
                 }
                 if (diluCrucero == 1) {
                     if (observ.length() > 0) {
-                        observ = observ.concat("- DILUCION EN LA MUESTRA DE CRUCERO");
-                    } else {
-                        observ = "DILUCION EN LA MUESTRA DE CRUCERO";
-                    }
+                    } 
                     flag = "DILUCION DE MUESTRA";
                 }
                 instruccion2.setString(4, observ);

@@ -733,11 +733,11 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
                 return null;
             }
             Thread.sleep(100);
-            if ((medicion.getValorO2() * 0.01 > LIMITE_OXIGENO) || medicion.getValorCO2() * 0.1 < LIMITE_DIOXIDO) {
+            /* if ((medicion.getValorO2() * 0.01 > LIMITE_OXIGENO) || medicion.getValorCO2() * 0.1 < LIMITE_DIOXIDO) {
                 panel.getMensaje().setText("SE HA DETECTADO DILUCION EN LA MUESTRA ");
                 Thread.sleep(1000);
                 panel.getFuncion().setText("DILUCION DE MUESTRA");
-            }
+            } */
             //Pasar los throws segun validaciones
             if (intentos >= INTENTOS) {
                 banco.encenderBombaMuestras(false);
@@ -926,9 +926,9 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
                 }
             }//end while intentos
             if ((medicion.getValorO2() * 0.01 > LIMITE_OXIGENO) || medicion.getValorCO2() * 0.1 < LIMITE_DIOXIDO) {
-                panel.getMensaje().setText("SE HA DETECTADO DILUCION EN LA MUESTRA ");
+                /* panel.getMensaje().setText("SE HA DETECTADO DILUCION EN LA MUESTRA ");
                 Thread.sleep(1000);
-                panel.getFuncion().setText("DILUCION DE MUESTRA");
+                panel.getFuncion().setText("DILUCION DE MUESTRA"); */
             }
             if (intentos >= INTENTOS) {
                 if (isSalidaPrueba()) {
