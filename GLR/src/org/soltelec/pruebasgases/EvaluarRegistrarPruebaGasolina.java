@@ -415,6 +415,8 @@ public class EvaluarRegistrarPruebaGasolina {
         }
     }//end of method registarMedidas
 
+    
+
     private Date consultarFechaIngresoVehiculo(long idPrueba) {
         String statement = "SELECT hp.Fecha_ingreso_vehiculo FROM pruebas as p INNER JOIN hoja_pruebas as hp ON p.hoja_pruebas_for = hp.TESTSHEET INNER JOIN vehiculos as v ON hp.Vehiculo_for = v.CAR WHERE hp.TESTSHEET = ?";
         try {

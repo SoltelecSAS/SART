@@ -49,6 +49,8 @@ import org.soltelec.util.Mensajes;
 import org.soltelec.util.PortSerialUtil;
 import org.soltelec.util.RegistrarMedidas;
 import org.soltelec.util.UtilPropiedades;
+import org.soltelec.util.Utilidades;
+
 import termohigrometro.MedicionTermoHigrometro;
 import termohigrometro.TermoHigrometro;
 import termohigrometro.TermoHigrometroArtisan;
@@ -119,6 +121,8 @@ public class WorkerCruceroRalenti extends SwingWorker<Void, Void> {
         System.out.println("Equipo de Medicion :" + dialogRPMTemp.getEquipo());
         System.out.println("Metodo de Medicion :" + dialogRPMTemp.getMetodoMedicion());
         System.out.println("Multiplicador :" + dialogRPMTemp.isUsaMultiplicador());
+
+        Utilidades.setMetodoMedicionRpm(dialogRPMTemp.getMetodoMedicion());
 
         int numeroCilindros = dialogRPMTemp.getNumeroCilindros();//variable de clase??
         String equipoMedicion = dialogRPMTemp.getEquipo();

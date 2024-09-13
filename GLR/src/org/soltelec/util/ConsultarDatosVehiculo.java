@@ -76,13 +76,35 @@ public class ConsultarDatosVehiculo {
         String serialEquipo = "";
         String diseno = "";
         String catalizador = "";
-        String str2 = "SELECT p.hoja_pruebas_for, v.FUELTYPE, tg.Nombre_gasolina,p.Tipo_prueba_for, tp.Nombre_tipo_prueba,v.Tiempos_motor,v.CARTYPE, v.diseño, v.catalizador\n"
-                + "FROM pruebas p\n"
-                + "INNER JOIN hoja_pruebas hp ON p.hoja_pruebas_for = hp.TESTSHEET\n"
-                + "INNER JOIN vehiculos v ON hp.Vehiculo_for = v.CAR\n"
-                + "INNER JOIN tipo_prueba tp ON p.Tipo_prueba_for = tp.TESTTYPE\n"
-                + "INNER JOIN tipos_gasolina tg ON v.`FUELTYPE` = tg.FUELTYPE\n"
-                + "WHERE p.Id_Pruebas = ?";
+        String formaTemp = "";
+        String str2 = 
+            "SELECT \n"+
+            "    p.hoja_pruebas_for, \n"+
+            "    v.FUELTYPE, \n"+
+            "    tg.Nombre_gasolina, \n"+
+            "    p.Tipo_prueba_for, \n"+
+            "    tp.Nombre_tipo_prueba, \n"+
+            "    v.Tiempos_motor, \n"+
+            "    v.CARTYPE, \n"+
+            "    v.diseño, \n"+
+            "    v.catalizador\n"+
+            "    hp.forma_med_temp\n"+
+            "FROM \n"+
+            "    pruebas p\n"+
+            "INNER JOIN \n"+
+            "    hoja_pruebas hp \n"+
+            "    ON p.hoja_pruebas_for = hp.TESTSHEET\n"+
+            "INNER JOIN \n"+
+            "    vehiculos v \n"+
+            "    ON hp.Vehiculo_for = v.CAR\n"+
+            "INNER JOIN \n"+
+            "    tipo_prueba tp \n"+
+            "    ON p.Tipo_prueba_for = tp.TESTTYPE\n"+
+            "INNER JOIN \n"+
+            "    tipos_gasolina tg \n"+
+            "    ON v.FUELTYPE = tg.FUELTYPE\n"+
+            "WHERE \n"+
+            "    p.Id_Pruebas = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(str2);
         preparedStatement.setLong(1, idPrueba);
         ResultSet data = preparedStatement.executeQuery();
@@ -96,34 +118,58 @@ public class ConsultarDatosVehiculo {
             tipoVehiculo = data.getLong(7);
             diseno = data.getString(8);
             catalizador = data.getString(9);
+            formaTemp = data.getString(10);
         }
  
         if (idTipoPrueba == 8) {
             if (nombreCombustible.equals("DIESEL")) {
                 codigoEquipo = UtilPropiedades.cargarPropiedad("OPACIMETRO", "equipos.properties");
+                str2 = "select e.serialresolucion,resolucionambiental from equipos e where e.id_equipo = ?";
+                preparedStatement = conn.prepareStatement(str2);
+                preparedStatement.setLong(1, Long.parseLong(codigoEquipo));
+                data = preparedStatement.executeQuery();
+                while (data.next()) {
+                    serialEquipo = data.getString(1);
+                    System.out.println(" SERIAL RECUPERADO BD " + serialEquipo);
+                }
             } else if (tipoVehiculo == 4 && tiemposMotor == 2) {
                 codigoEquipo = UtilPropiedades.cargarPropiedad("GASES2T", "equipos.properties");
                 System.out.println("Levanto el id del equipo (gases 2t) es " + codigoEquipo);
             } else {
-                codigoEquipo = UtilPropiedades.cargarPropiedad("GASES", "equipos.properties");
-                System.out.println("Levanto el id del equipo (Gases) es " + codigoEquipo);
+                //codigoEquipo = UtilPropiedades.cargarPropiedad("GASES", "equipos.properties");
+                //System.out.println("Levanto el id del equipo (Gases) es " + codigoEquipo);
+                String marcaAnalizador = UtilPropiedades.cargarPropiedad("marcaAnalizador", "seriales.properties");
+                String marcaKit = UtilPropiedades.cargarPropiedad("marcaKit", "seriales.properties");
+                String marcaTermo = UtilPropiedades.cargarPropiedad("marcaTermo", "seriales.properties");
+                String pefAnalizador = UtilPropiedades.cargarPropiedad("pefAnalizador", "seriales.properties");
+                String serialAnalizador = UtilPropiedades.cargarPropiedad("serialAnalizador", "seriales.properties");
+                String serialBanco = UtilPropiedades.cargarPropiedad("serialBanco", "seriales.properties");
+                String serialRpm = UtilPropiedades.cargarPropiedad("serialKit", "seriales.properties");
+                String serialBateria = UtilPropiedades.cargarPropiedad("serialBateria", "seriales.properties");
+                String serialVibracion = UtilPropiedades.cargarPropiedad("serialVibracion", "seriales.properties");
+                String serialTemperatura = UtilPropiedades.cargarPropiedad("serialTemperatura", "seriales.properties");
+                String serialTermohigrometro = UtilPropiedades.cargarPropiedad("serialTermo", "seriales.properties");
+
+                String serialAnalizadorCompleto = 
+                    serialBanco == "" ? 
+                        pefAnalizador+"-"+serialAnalizador : pefAnalizador+"-"+serialAnalizador+"-"+serialBanco;
+                
+                String serialKitCompleto = 
+                    Utilidades.getMetodoMedicionRpm().equalsIgnoreCase("Bateria") ?
+                        serialRpm+"/"+serialTemperatura+"/"+serialBateria:
+                        serialRpm+"/"+serialTemperatura+"/"+serialVibracion;
+
+                if (formaTemp.equalsIgnoreCase("C") || diseno.equalsIgnoreCase("Scooter")) {
+                    serialKitCompleto = serialKitCompleto.replace("/"+serialTemperatura, "");
+                }
+                
+                String serialCompleto = "otto~"+
+                    marcaAnalizador+";"+marcaKit+";"+marcaTermo+"~"+
+                    serialAnalizadorCompleto+";"+serialKitCompleto+";"+serialTermohigrometro;
+
+                serialEquipo = serialCompleto;
             }
-            str2 = "select e.serialresolucion,resolucionambiental from equipos e where e.id_equipo = ?";
-            preparedStatement = conn.prepareStatement(str2);
-            preparedStatement.setLong(1, Long.parseLong(codigoEquipo));
-            data = preparedStatement.executeQuery();
-            while (data.next()) {
-                serialEquipo = data.getString(1);
-//                String[] otherEquipo = data.getString(2).split(";");
-                System.out.println(" SERIAL RECUPERADO BD " + serialEquipo);
-//                serialEquipo = serialEquipo.concat(otherEquipo[1]);
-            }
-//            if(diseno.equalsIgnoreCase("Scooter")){
-//                String[] equipos = serialEquipo.split(";");
-//                String[] bancoGases = equipos[1].split("_");
-//                serialEquipo = equipos[0] + ";" + equipos[1];
-//                System.out.println("*********serial cuando el vehiculo es Scooter o tiene Catalizado" + serialEquipo + "*********");
-//            }
+            
         } else {
             if (idTipoPrueba == 1) { //1 = Inspeccion visual
                 codigoEquipo = UtilPropiedades.cargarPropiedad("PROFUNDIMETRO", "equipos.properties");

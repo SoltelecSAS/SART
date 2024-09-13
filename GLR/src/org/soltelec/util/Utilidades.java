@@ -36,4 +36,13 @@ public class Utilidades {
          
      }
 
+    private static String metodoRpm;
+    public static void setMetodoMedicionRpm(String metodo){
+        Utilidades.metodoRpm = metodo;
+    }
+
+    public static String getMetodoMedicionRpm(){
+        return Utilidades.metodoRpm;
+    }
+
 }
