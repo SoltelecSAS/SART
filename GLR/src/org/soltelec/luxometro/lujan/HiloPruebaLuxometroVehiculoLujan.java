@@ -7,7 +7,6 @@ package org.soltelec.luxometro.lujan;
 //import com.soltelec.integrador.cliente.ClienteSicov;
 //import com.soltelec.estandar.EstadoEventosSicov;
 import org.soltelec.luxometro.*;
-import org.soltelec.pruebasgases.FrmComentario;
 
 import static com.soltelec.modulopuc.persistencia.conexion.DBUtil.execIndTrama;
 import com.soltelec.modulopuc.utilidades.Mensajes;

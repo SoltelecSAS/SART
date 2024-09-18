@@ -37,7 +37,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
-import org.soltelec.pruebasgases.FrmComentario;
 import org.soltelec.util.Conex;
 import org.soltelec.util.ConsultarDatosVehiculo;
 
