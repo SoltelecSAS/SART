@@ -415,6 +415,7 @@ public class HiloPruebaLuxometroMoto implements Runnable, ActionListener {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
         if (aprobada) {
             statement2 = "UPDATE pruebas SET Finalizada = 'Y',Aprobada ='Y',Abortada='N',usuario_for = ?,serialEquipo = ? WHERE pruebas.Id_Pruebas = ?";
@@ -452,6 +453,7 @@ public class HiloPruebaLuxometroMoto implements Runnable, ActionListener {
                 serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
             } catch (Exception e) {
                 serialEquipo = "Serial no encontrado";
+                e.printStackTrace();
             }
             //Crear el objeto de <span class="IL_AD" id="IL_AD12">conexion</span> a la base de datos
             Connection conexion = Conex.getConnection();

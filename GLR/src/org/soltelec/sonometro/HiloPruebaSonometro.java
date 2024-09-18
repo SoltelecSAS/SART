@@ -1026,6 +1026,7 @@ public class HiloPruebaSonometro implements Runnable, ActionListener {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
         //Un objeto ResultSet, almacena los datos de resultados de una <span class="IL_AD" id="IL_AD11">consulta</span>
         String statement2 = "UPDATE pruebas SET Finalizada='Y',Aprobada='Y',Abortada='N',usuario_for = ?,serialEquipo = ? WHERE pruebas.Id_Pruebas = ?";
@@ -1062,6 +1063,7 @@ public class HiloPruebaSonometro implements Runnable, ActionListener {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
         //Insertar las medidas dependiendo del numero de tiempos del motor
         String statement = "UPDATE pruebas SET Finalizada = 'Y',Aprobada='Y',Abortada='N',Comentario_aborto=?,usuario_for = ?,Fecha_aborto=?,serialEquipo = ? WHERE pruebas.Id_Pruebas = ?";

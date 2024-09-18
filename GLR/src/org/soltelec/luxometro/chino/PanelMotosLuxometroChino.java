@@ -260,6 +260,7 @@ public class PanelMotosLuxometroChino extends JPanel implements ActionListener {
                 serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
             } catch (Exception e) {
                 serialEquipo = "Serial no encontrado";
+                e.printStackTrace();
             }
             if (aprobada) {
                 statement2 = "UPDATE pruebas SET Finalizada = 'Y',Aprobada ='Y',Abortada='N',usuario_for = ?,serialEquipo = ? WHERE pruebas.Id_Pruebas = ?";

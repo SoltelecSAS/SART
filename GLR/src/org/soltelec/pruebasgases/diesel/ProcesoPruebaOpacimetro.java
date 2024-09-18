@@ -859,6 +859,7 @@ public class ProcesoPruebaOpacimetro implements Runnable, ActionListener {
                 serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
             } catch (Exception e) {
                 serialEquipo = "Serial no encontrado";
+                e.printStackTrace();
             }
             //Crear el objeto de <span class="IL_AD" id="IL_AD12">conexion</span> a la base de datos
             Connection conexion = Conex.getConnection();
@@ -1082,6 +1083,7 @@ public class ProcesoPruebaOpacimetro implements Runnable, ActionListener {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
         return serialEquipo;
     }
@@ -1185,6 +1187,7 @@ public class ProcesoPruebaOpacimetro implements Runnable, ActionListener {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
         String strFinalizarPrueba = "UPDATE pruebas SET Finalizada = 'Y',Aprobada='N',Abortada='Y',usuario_for = ?,Fecha_aborto=?,serialEquipo = ? WHERE pruebas.Id_Pruebas = ?";
         PreparedStatement psFinalizar = conexion.prepareStatement(strFinalizarPrueba);

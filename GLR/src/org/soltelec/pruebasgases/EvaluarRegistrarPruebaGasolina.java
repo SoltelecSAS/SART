@@ -267,7 +267,9 @@ public class EvaluarRegistrarPruebaGasolina {
             try {
                 serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
             } catch (Exception e) {
-                serialEquipo = "Serial no encontrado";
+                serialEquipo = "Serial no encontrado: "+ e.getMessage();
+                e.printStackTrace();
+                throw new RuntimeException("problema al cargar el serial: "+e.getMessage());
             }
 
             String observ = "";

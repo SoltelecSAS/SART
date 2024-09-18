@@ -1050,6 +1050,7 @@ public class HiloPruebaMotos implements Runnable, ActionListener {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
         String statement = "UPDATE pruebas SET Finalizada = 'Y',Aprobada='N',Abortada='Y',Comentario_aborto=?,usuario_for = ?,Fecha_aborto=?,serialEquipo = ? WHERE pruebas.Id_Pruebas = ?";
         PreparedStatement instruccion = conexion.prepareStatement(statement);
@@ -1165,6 +1166,7 @@ public class HiloPruebaMotos implements Runnable, ActionListener {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
         //Un objeto ResultSet, almacena los datos de resultados de una <span class="IL_AD" id="IL_AD11">consulta</span>
         String statement2 = "UPDATE pruebas SET Fecha_prueba = ?,Finalizada = 'Y',Aprobada=?,Abortada='N', usuario_for = ?,serialEquipo = ? WHERE pruebas.Id_Pruebas = ?";
@@ -1347,6 +1349,7 @@ public class HiloPruebaMotos implements Runnable, ActionListener {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
         String strFinalizarPrueba = "UPDATE pruebas SET Finalizada = 'Y',Aprobada='N',Abortada='Y',usuario_for = ?,Fecha_aborto=?,serialEquipo = ? WHERE pruebas.Id_Pruebas = ?";
         PreparedStatement psFinalizar = conexion.prepareStatement(strFinalizarPrueba);

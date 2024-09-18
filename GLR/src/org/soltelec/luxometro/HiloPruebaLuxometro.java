@@ -1171,6 +1171,7 @@ public class HiloPruebaLuxometro implements Runnable, ActionListener
         serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba.longValue());
       } catch (Exception e) {
         serialEquipo = "Serial no encontrado";
+        e.printStackTrace();
       }
 
       Connection conexion = Conex.getConnection();
@@ -2853,6 +2854,7 @@ public class HiloPruebaLuxometro implements Runnable, ActionListener
         serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba.longValue());
       } catch (Exception e) {
         serialEquipo = "Serial no encontrado";
+        e.printStackTrace();
       }
       serialEquipo = serialEquipo;
       boolean escrTrans = false;

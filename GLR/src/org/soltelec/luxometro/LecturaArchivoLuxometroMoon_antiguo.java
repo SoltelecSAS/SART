@@ -225,6 +225,7 @@ public class LecturaArchivoLuxometroMoon_antiguo {
                 serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
             } catch (Exception e) {
                 serialEquipo = "Serial no encontrado";
+                e.printStackTrace();
             }
             
         }else{
@@ -308,80 +309,6 @@ public class LecturaArchivoLuxometroMoon_antiguo {
     double angBajaDerecha;
     double angBajaIzquierda;
     
-        /*FrmSeleccionSumLuces frmSum = new FrmSeleccionSumLuces(luzBajaDerecha, luzAltaDerecha, luzBajaIzquierda, luzAltaIzquierda, sumaExploradoras);
-        frmSum.setLocationRelativeTo(panelLuxometro);
-        frmSum.setModal(true);
-        frmSum.setVisible(true);
-        double mayorSuma = frmSum.getAcumSumaIntensidad();
-        //Evaluar la prueba
-        String str2 = "INSERT INTO defxprueba(id_defecto,id_prueba,Tipo_defecto) VALUES (?,?,'A')";
-        PreparedStatement psDefectos = conexion.prepareStatement(str2);
-        //String str3 = "UPDATE medidas SET Condicion='*' WHERE medidas.MEASURE = ?";
-        
-        if (medidasVehiculos.getIntencidadLuzBajaDerecha() < permisibleBaja || medidasVehiculos.getIntencidadLuzBajaIzquierda() < permisibleBaja) {
-            psDefectos.clearParameters();
-            psDefectos.setInt(1, 20000);
-            psDefectos.setLong(2, idPrueba);
-            psDefectos.executeUpdate();
-            aprobada = false;
-        }
-//            } else if(luzAltaDerecha < permisibleAlta || luzAltaIzquierda < permisibleAlta) {
-//                psDefectos.clearParameters();
-//                psDefectos.setInt(1, 20003);
-//                psDefectos.setLong(2, idPrueba);
-//                psDefectos.executeUpdate();
-//                aprobada = false;
-//            }
-        if (medidasVehiculos.getInclinacionLuzBajaDerecha() < permisibleAnguloBajo || medidasVehiculos.getInclinacionLuzBajaDerecha() > permisibleAnguloAlto) {
-            psDefectos.clearParameters();
-            psDefectos.setInt(1, 20002);//codigo defecto es distinto
-            psDefectos.setLong(2, idPrueba);
-            //psDefectos.setInt(3, idHojaPrueba);
-            psDefectos.executeUpdate();
-            aprobada = false;
-        } else if (medidasVehiculos.getInclinacionLuzBajaIzquierda() < permisibleAnguloBajo || medidasVehiculos.getInclinacionLuzBajaIzquierda() > permisibleAnguloAlto) {
-            psDefectos.clearParameters();
-            psDefectos.setInt(1, 20002);//codigo defecto es distinto
-            psDefectos.setLong(2, idPrueba);
-            //psDefectos.setInt(3, idHojaPrueba);
-            psDefectos.executeUpdate();
-            aprobada = false;
-        }
-
-        if ((mayorSuma) > permisibleSumatoria) {
-            //las que se pueden prender al tiempo y se supone mayores
-            psDefectos.clearParameters();
-            psDefectos.setInt(1, 20001);
-            psDefectos.setLong(2, idPrueba);
-            psDefectos.executeUpdate();
-            aprobada = false;
-        }
-        
-        
-        String statement2;
-
-        String serialEquipo = "";
-        try {
-            serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
-        } catch (Exception e) {
-            serialEquipo = "Serial no encontrado";
-        }
-        if (aprobada) {
-            statement2 = "UPDATE pruebas SET Finalizada = 'Y',Aprobada ='Y',Abortada='N',usuario_for = ?,serialEquipo = ? WHERE pruebas.Id_Pruebas = ?";
-        } else {
-            statement2 = "UPDATE pruebas SET Finalizada = 'Y',Aprobada ='N',Abortada='N',usuario_for = ?,serialEquipo = ? WHERE pruebas.Id_Pruebas = ?";
-        }
-        PreparedStatement instruccion2 = conexion.prepareStatement(statement2);
-        instruccion2.setLong(1, idUsuario);
-        instruccion2.setString(2, serialEquipo);
-        instruccion2.setLong(3, idPrueba);
-        int executeUpdate = instruccion2.executeUpdate();
-        conexion.commit();
-        conexion.setAutoCommit(true);
-        conexion.close();
-        Mensajes.messageDoneTime("Se ha Registrado la Prueba de Luces de una manera Exitosa ..¡",3);
-        String tramaAuditoria = "{\"intensidadDerecha\":\"".concat(String.valueOf(medidasVehiculos.getIntencidadLuzBajaDerecha())).concat("\",").concat("\"inclinacionDerecha\":\"").concat(String.valueOf(medidasVehiculos.getIntencidadLuzBajaDerecha())).concat("\",").concat("\"intensidadIzquierda\":\"").concat(String.valueOf(medidasVehiculos.getIntencidadLuzBajaIzquierda())).concat("\",").concat("\"inclinacionIzquierda\":\"").concat(String.valueOf(medidasVehiculos.getInclinacionLuzBajaIzquierda())).concat("\",").concat("\"SumatoriaIntensidad\":\"").concat(String.valueOf(mayorSuma)).concat("\",").concat("\"tablaAfectada\":\"medidas\",\"idRegistro\":\"").concat(String.valueOf(idPrueba)).concat("\"}");
-        */
         tramaAuditoria = "{\"intensidadDerecha\":\"".concat(String.valueOf(medidasVehiculos.getIntensidadLuzBajaDerecha())).concat("\",").concat("\"inclinacionDerecha\":\"").concat(String.valueOf(medidasVehiculos.getIntensidadLuzBajaDerecha())).concat("\",").concat("\"intensidadIzquierda\":\"").concat(String.valueOf(medidasVehiculos.getIntensidadLuzBajaIzquierda())).concat("\",").concat("\"inclinacionIzquierda\":\"").concat(String.valueOf(medidasVehiculos.getInclinacionLuzBajaIzquierda())).concat("\",").concat("\"SumatoriaIntensidad\":\"").concat(String.valueOf(mayorSuma)).concat("\",").concat("\"tablaAfectada\":\"medidas\",\"idRegistro\":\"").concat(String.valueOf(idPrueba)).concat("\"}");
         }
         if (aprobada) {

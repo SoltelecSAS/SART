@@ -1333,6 +1333,7 @@ public class HiloLucesMoto implements Runnable, ActionListener
         } catch (Exception e) {
             System.out.println(new StringBuilder().append(" Error en el metodo :consultarSerialEquipo()").append(e).toString());
             System.out.println(new StringBuilder().append(" Serial no encontrado ").append(e).toString());
+            e.printStackTrace();
         }
         return "Serial no encontrado";
     }
@@ -1370,6 +1371,7 @@ public class HiloLucesMoto implements Runnable, ActionListener
                 serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba.longValue());
             } catch (Exception e) {
                 serialEquipo = "Serial no encontrado";
+                e.printStackTrace();
             }
 
             Connection conexion = Conex.getConnection();

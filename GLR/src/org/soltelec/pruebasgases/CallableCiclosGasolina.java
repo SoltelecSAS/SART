@@ -1100,6 +1100,7 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
                 serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
             } catch (Exception e) {
                 serialEquipo = "Serial no encontrado";
+                e.printStackTrace();
             }
             String strFinalizarPrueba = "UPDATE pruebas SET Finalizada = 'Y',Aprobada='N',Abortada='N', Comentario_aborto=?,observaciones=?,usuario_for = ?,serialEquipo = ? WHERE pruebas.Id_Pruebas = ?";
             PreparedStatement psFinalizar = conexion.prepareStatement(strFinalizarPrueba);

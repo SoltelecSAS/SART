@@ -101,7 +101,9 @@ public class UtilSicov {
             logger.info("Evento enviado con el serial: " + serialEquipo1);
             return serialEquipo1;
         } catch (Exception e) {
+            e.printStackTrace();
             logger.info("Serial no encontrado" + e.getMessage());
+            e.printStackTrace();
             return "Serial no encontrado";
         }
     }

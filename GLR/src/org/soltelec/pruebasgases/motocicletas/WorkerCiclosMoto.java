@@ -60,6 +60,7 @@ import org.soltelec.util.RegistrarMedidas;
 import org.soltelec.util.TipoDefecto;
 import org.soltelec.util.UtilInfoVehiculo;
 import org.soltelec.util.UtilPropiedades;
+import org.soltelec.util.Utilidades;
 import org.soltelec.util.capelec.BancoCapelec;
 import termohigrometro.MedicionTermoHigrometro;
 import termohigrometro.TermoHigrometro;
@@ -120,6 +121,7 @@ public class WorkerCiclosMoto extends SwingWorker<Void, Void> {
         System.out.println("Numero de cilindros :" + dlgRpm.getNumeroCilindros());
         System.out.println("Equipo de Medicion :" + dlgRpm.getEquipo());
         System.out.println("Metodo de Medicion :" + dlgRpm.getMetodoMedicion());
+        Utilidades.setMetodoMedicionRpm(dlgRpm.getMetodoMedicion());
         panel.getButtonFinalizar().setVisible(true);
         int numeroCilindros = dlgRpm.getNumeroCilindros();//variable de clase??
 

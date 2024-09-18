@@ -45,4 +45,13 @@ public class Utilidades {
         return Utilidades.metodoRpm;
     }
 
+    private static String metodoRpmDiesel;
+    public static void setMetodoMedicionRpmDiesel(String metodo){
+        Utilidades.metodoRpmDiesel = metodo;
+    }
+
+    public static String getMetodoMedicionRpmDiesel(){
+        return Utilidades.metodoRpmDiesel;
+    }
+
 }

@@ -139,6 +139,7 @@ public class HiloLucesVehiculoCapelec implements Runnable {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
         if (aprobada) {
             statement2 = "UPDATE pruebas SET Finalizada = 'Y',Aprobada ='Y',Abortada='N',usuario_for = ?,serialEquipo = ? WHERE pruebas.Id_Pruebas = ?";
@@ -176,6 +177,7 @@ public class HiloLucesVehiculoCapelec implements Runnable {
                 serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
             } catch (Exception e) {
                 serialEquipo = "Serial no encontrado";
+                e.printStackTrace();
             }
             Connection conexion = Conex.getConnection();
             //Crear objeto preparedStatement para realizar la consulta con la base de datos

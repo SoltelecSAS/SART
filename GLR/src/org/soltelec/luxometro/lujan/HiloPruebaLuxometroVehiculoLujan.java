@@ -7,6 +7,8 @@ package org.soltelec.luxometro.lujan;
 //import com.soltelec.integrador.cliente.ClienteSicov;
 //import com.soltelec.estandar.EstadoEventosSicov;
 import org.soltelec.luxometro.*;
+import org.soltelec.pruebasgases.FrmComentario;
+
 import static com.soltelec.modulopuc.persistencia.conexion.DBUtil.execIndTrama;
 import com.soltelec.modulopuc.utilidades.Mensajes;
 import gnu.io.CommPort;
@@ -732,6 +734,7 @@ int j=0;
                 serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
             } catch (Exception e) {
                 serialEquipo = "Serial no encontrado";
+                e.printStackTrace();
             }
 
             //Crear el objeto de <span class="IL_AD" id="IL_AD12">conexion</span> a la base de datos
@@ -907,6 +910,7 @@ int j=0;
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
         HiloPruebaLuxometroVehiculoLujan.serialEquipo = serialEquipo;
         boolean escrTrans = false;

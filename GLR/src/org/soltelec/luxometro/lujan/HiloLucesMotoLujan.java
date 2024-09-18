@@ -42,6 +42,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+
+import org.soltelec.pruebasgases.FrmComentario;
 import org.soltelec.util.Conex;
 import org.soltelec.util.ConsultarDatosVehiculo;
 
@@ -776,6 +778,7 @@ System.out.println(" entre en Leer Trama:" );
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
         HiloLucesMotoLujan.serialEquipo = serialEquipo;
         boolean escrTrans = false;
@@ -910,6 +913,7 @@ System.out.println(" entre en Leer Trama:" );
                 serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
             } catch (Exception e) {
                 serialEquipo = "Serial no encontrado";
+                e.printStackTrace();
             }
 
             //Crear el objeto de <span class="IL_AD" id="IL_AD12">conexion</span> a la base de datos

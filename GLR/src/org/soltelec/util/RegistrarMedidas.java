@@ -179,11 +179,10 @@ public class RegistrarMedidas {
             System.out.println(" LECTURA SERIAL");
         } catch (Exception e) {
             System.out.println(" ME CAI CON " + e.getMessage());
-            System.out.println(" CAUSA " + e.getCause());
+            e.printStackTrace(); // Imprime la traza completa para obtener más información
             serialEquipo = "SERIAL NO ENCONTRADO";
-            Logger.getLogger("********* El serial " + serialEquipo + " no se encontro *********");
         }
-        String statement2;
+        String statement2 = "";
         if (escrTrans == true) {
             System.out.println(" entre escrTrans = true");
             try {
@@ -231,6 +230,7 @@ public class RegistrarMedidas {
             System.out.println(" ME CAI CON " + e.getMessage());
             System.out.println(" CAUSA " + e.getCause());
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
         String statement2;
         if (escrTrans == true) {
@@ -278,6 +278,7 @@ public class RegistrarMedidas {
             System.out.println(" LECTURA SERIAL");
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
 
         String statement2;
@@ -310,6 +311,7 @@ public class RegistrarMedidas {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
         String statement = "UPDATE pruebas SET Finalizada = 'Y',Aprobada='N',Abortada='Y',id_tipo_aborto=?,usuario_for = ?,Fecha_aborto=?,serialEquipo = ? WHERE pruebas.Id_Pruebas = ?";
         PreparedStatement instruccion = conexion.prepareStatement(statement);
@@ -336,6 +338,7 @@ public class RegistrarMedidas {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
         String statement = "UPDATE pruebas SET Finalizada = 'N',Aprobada='N',Abortada='Y',Comentario_aborto=?,observaciones=?,usuario_for = ?,serialEquipo = ?,Fecha_final = ? WHERE pruebas.Id_Pruebas = ?";
         PreparedStatement instruccion = conexion.prepareStatement(statement);
@@ -360,6 +363,7 @@ public class RegistrarMedidas {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
         String statement = "UPDATE pruebas SET Finalizada = 'Y',Aprobada='N',Abortada='N',Comentario_aborto=?,usuario_for = ?,serialEquipo = ? WHERE pruebas.Id_Pruebas = ?";
         PreparedStatement instruccion = conexion.prepareStatement(statement);
@@ -385,6 +389,7 @@ public class RegistrarMedidas {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
         String statement = "UPDATE pruebas SET Finalizada = 'Y',Aprobada='N',Abortada='N',Comentario_aborto=?,observaciones=?,usuario_for = ?,serialEquipo = ? WHERE pruebas.Id_Pruebas = ?";
         PreparedStatement instruccion = conexion.prepareStatement(statement);
@@ -455,6 +460,7 @@ public class RegistrarMedidas {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
         String statement = "UPDATE pruebas SET Finalizada = 'Y',Aprobada='N',Abortada='N',Comentario_aborto=?,observaciones=?,usuario_for = ?,serialEquipo = ? WHERE pruebas.Id_Pruebas = ?";
         PreparedStatement instruccion = conexion.prepareStatement(statement);
@@ -542,6 +548,7 @@ public class RegistrarMedidas {
 
             } catch (Exception e) {
                 serialEquipo = "Serial no encontrado";
+                e.printStackTrace();
             }
             String strFinalizarPrueba = "UPDATE pruebas SET Finalizada = 'Y',Aprobada='N',Abortada='N',usuario_for = ?,serialEquipo = ?,observaciones = ?,Comentario_aborto = ? WHERE pruebas.Id_Pruebas = ?";
             PreparedStatement psFinalizar = cn.prepareStatement(strFinalizarPrueba);
@@ -596,6 +603,7 @@ public class RegistrarMedidas {
 
             } catch (Exception e) {
                 serialEquipo = "Serial no encontrado";
+                e.printStackTrace();
             }
             String strFinalizarPrueba = "UPDATE pruebas SET Finalizada = 'Y',Aprobada='N',Abortada='N',usuario_for = ?,serialEquipo = ?,observaciones = ?,Comentario_aborto = ? WHERE pruebas.Id_Pruebas = ?";
             PreparedStatement psFinalizar = cn.prepareStatement(strFinalizarPrueba);
@@ -811,6 +819,7 @@ public class RegistrarMedidas {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
 
         String strTemp = "UPDATE pruebas SET Finalizada = 'Y',Aprobada='N',Abortada='Y',usuario_for = ?,Comentario_aborto=?,serialEquipo = ? WHERE pruebas.Id_Pruebas = ?";

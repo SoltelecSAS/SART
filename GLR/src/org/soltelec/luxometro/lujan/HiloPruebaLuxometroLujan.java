@@ -36,6 +36,8 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+
+import org.soltelec.pruebasgases.FrmComentario;
 import org.soltelec.util.Conex;
 import org.soltelec.util.ConsultarDatosVehiculo;
 
@@ -707,6 +709,7 @@ public class HiloPruebaLuxometroLujan implements Runnable, ActionListener {
                 serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
             } catch (Exception e) {
                 serialEquipo = "Serial no encontrado";
+                e.printStackTrace();
             }
 
             //Crear el objeto de <span class="IL_AD" id="IL_AD12">conexion</span> a la base de datos
@@ -846,6 +849,7 @@ public class HiloPruebaLuxometroLujan implements Runnable, ActionListener {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
         HiloPruebaLuxometroLujan.serialEquipo = serialEquipo;
         boolean escrTrans = false;

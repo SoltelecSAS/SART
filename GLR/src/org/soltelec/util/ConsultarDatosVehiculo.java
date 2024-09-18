@@ -87,7 +87,7 @@ public class ConsultarDatosVehiculo {
             "    v.Tiempos_motor, \n"+
             "    v.CARTYPE, \n"+
             "    v.diseño, \n"+
-            "    v.catalizador\n"+
+            "    v.catalizador,\n"+
             "    hp.forma_med_temp\n"+
             "FROM \n"+
             "    pruebas p\n"+
@@ -123,7 +123,34 @@ public class ConsultarDatosVehiculo {
  
         if (idTipoPrueba == 8) {
             if (nombreCombustible.equals("DIESEL")) {
-                codigoEquipo = UtilPropiedades.cargarPropiedad("OPACIMETRO", "equipos.properties");
+
+
+                String marcaOpacimetro = UtilPropiedades.cargarPropiedad("marcaOpacimetro", "seriales.properties");
+                String marcaKit = UtilPropiedades.cargarPropiedad("marcaKit", "seriales.properties");
+                String marcaTermo = UtilPropiedades.cargarPropiedad("marcaTermo", "seriales.properties");
+                String ltoeOpacimetro = UtilPropiedades.cargarPropiedad("ltoeOpacimetro", "seriales.properties");
+                String serialOpacimetro = UtilPropiedades.cargarPropiedad("serialOpacimetro", "seriales.properties");
+                String serialRpm = UtilPropiedades.cargarPropiedad("serialKit", "seriales.properties");
+                String serialBateria = UtilPropiedades.cargarPropiedad("serialBateria", "seriales.properties");
+                String serialVibracion = UtilPropiedades.cargarPropiedad("serialVibracion", "seriales.properties");
+                String serialTemperatura = UtilPropiedades.cargarPropiedad("serialTemperatura", "seriales.properties");
+                String serialTermohigrometro = UtilPropiedades.cargarPropiedad("serialTermo", "seriales.properties");
+
+                String serialOpacimetroCompleto = ltoeOpacimetro+"-"+serialOpacimetro;
+                
+                String serialKitCompleto = 
+                    Utilidades.getMetodoMedicionRpmDiesel().equalsIgnoreCase("Bateria") ?
+                        serialRpm+"/"+serialTemperatura+"/"+serialBateria:
+                        serialRpm+"/"+serialTemperatura+"/"+serialVibracion;
+                
+                String serialCompleto = "diesel~"+
+                    marcaOpacimetro+";"+marcaKit+";"+marcaTermo+"~"+
+                    serialOpacimetroCompleto+";"+serialKitCompleto+";"+serialTermohigrometro;
+
+                serialEquipo = serialCompleto;
+
+
+                /* codigoEquipo = UtilPropiedades.cargarPropiedad("OPACIMETRO", "equipos.properties");
                 str2 = "select e.serialresolucion,resolucionambiental from equipos e where e.id_equipo = ?";
                 preparedStatement = conn.prepareStatement(str2);
                 preparedStatement.setLong(1, Long.parseLong(codigoEquipo));
@@ -131,7 +158,7 @@ public class ConsultarDatosVehiculo {
                 while (data.next()) {
                     serialEquipo = data.getString(1);
                     System.out.println(" SERIAL RECUPERADO BD " + serialEquipo);
-                }
+                } */
             } else if (tipoVehiculo == 4 && tiemposMotor == 2) {
                 codigoEquipo = UtilPropiedades.cargarPropiedad("GASES2T", "equipos.properties");
                 System.out.println("Levanto el id del equipo (gases 2t) es " + codigoEquipo);
@@ -151,7 +178,7 @@ public class ConsultarDatosVehiculo {
                 String serialTermohigrometro = UtilPropiedades.cargarPropiedad("serialTermo", "seriales.properties");
 
                 String serialAnalizadorCompleto = 
-                    serialBanco == "" ? 
+                    serialBanco.equals("")  ? 
                         pefAnalizador+"-"+serialAnalizador : pefAnalizador+"-"+serialAnalizador+"-"+serialBanco;
                 
                 String serialKitCompleto = 
