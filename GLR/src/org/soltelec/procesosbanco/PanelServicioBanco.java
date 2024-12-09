@@ -22,6 +22,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -46,8 +50,10 @@ import org.soltelec.procesosbanco.verificacion.CallableSubidaPresion;
 import org.soltelec.procesosbanco.verificacion.PanelProcesoVerificacion;
 import org.soltelec.procesosbanco.verificacion.PanelProgresoPresion;
 import org.soltelec.procesosbanco.verificacion.UtilRegistrarVerificacion;
+import org.soltelec.procesosopacimetro.PanelServicioOpacimetro;
 import org.soltelec.util.*;
 import org.soltelec.util.capelec.BancoCapelec;
+
 
 /**
  * Panel de servicio del banco de gasolina primera clase que se realizo
@@ -101,7 +107,7 @@ public class PanelServicioBanco extends JPanel implements ActionListener {
         
     private void inicializarInterfaz() {
 
-        ManejadorBotones manejador = new ManejadorBotones();//maneja los botones para el serial,estado del banco,datos,calibracion 2 ptos, infoCal, fugas,ruido
+        ManejadorBotones manejadorVariable = new ManejadorBotones();//maneja los botones para el serial,estado del banco,datos,calibracion 2 ptos, infoCal, fugas,ruido
         panelConfigPuerto = new JPanel();//panel para poner los elementos de la configuracion del puerto
         GridBagConstraints c = new GridBagConstraints();
         GridBagLayout bag = new GridBagLayout();
@@ -198,7 +204,7 @@ public class PanelServicioBanco extends JPanel implements ActionListener {
 // Para el Numero Serial
         bloquearEquipolJButton = new JButton("Bloquear");
         bloquearEquipolJButton.setEnabled(false);
-        bloquearEquipolJButton.addActionListener(manejador);
+        bloquearEquipolJButton.addActionListener(manejadorVariable);
         panelBotones.add(bloquearEquipolJButton);
 //Poner el boton Calibracion de Cero
         zeroJButton = new JButton("Cero");
@@ -207,33 +213,33 @@ public class PanelServicioBanco extends JPanel implements ActionListener {
         panelBotones.add(zeroJButton);
 //Poner el boton de Calibracion de Uno y Dos Puntos
         infoCalJButton = new JButton("InfoPtoCal");//infoCalJButton.setEnabled(false);
-        infoCalJButton.addActionListener(manejador);
+        infoCalJButton.addActionListener(manejadorVariable);
         cal2JButton = new JButton("Verif.2Ptos");
-        cal2JButton.addActionListener(manejador);
+        cal2JButton.addActionListener(manejadorVariable);
         cal2JButton.setEnabled(false);
         panelBotones.add(infoCalJButton);
         panelBotones.add(cal2JButton);
 //Poner los botones de Prueba de fugas y
         fugasJButton = new JButton("Fugas");
         fugasJButton.setEnabled(false);
-        fugasJButton.addActionListener(manejador);
+        fugasJButton.addActionListener(manejadorVariable);
         ruidoJButton = new JButton("Ruido");
         ruidoJButton.setEnabled(false);
-        ruidoJButton.addActionListener(manejador);
+        ruidoJButton.addActionListener(manejadorVariable);
         panelBotones.add(fugasJButton);
         panelBotones.add(ruidoJButton);
 //prueba de ruido
         //c.gridx = 0; c.gridy= 3;
         verificacionJButton = new JButton("Verificacion");
         verificacionJButton.setEnabled(false);
-        verificacionJButton.addActionListener(manejador);
+        verificacionJButton.addActionListener(manejadorVariable);
         panelBotones.add(verificacionJButton, c);
 //prueba exactitud
 ///////////*************************actionlistener
         //c.gridx = 0; c.gridy = 4;
         exactitudJButton = new JButton("Exactitud y Repet");
         exactitudJButton.setEnabled(false);
-        exactitudJButton.addActionListener(manejador);
+        exactitudJButton.addActionListener(manejadorVariable);
         panelBotones.add(exactitudJButton, c);
 
         //panelBotones.add(buttonSalir);
@@ -243,11 +249,11 @@ public class PanelServicioBanco extends JPanel implements ActionListener {
         panelBotones.add(limpiarJButton);
 
         buttonDesbloquear = new JButton("Desbloquear");
-        buttonDesbloquear.addActionListener(manejador);
+        buttonDesbloquear.addActionListener(manejadorVariable);
         panelBotones.add(buttonDesbloquear);
 
         ultLectGases = new JButton("Ult. Lect. Gases");
-        ultLectGases.addActionListener(manejador);
+        ultLectGases.addActionListener(manejadorVariable);
         panelBotones.add(ultLectGases, c);
         buttonSalir = new JButton("Salir");
         buttonSalir.setForeground(Color.red);
@@ -873,6 +879,60 @@ public class PanelServicioBanco extends JPanel implements ActionListener {
                 JOptionPane.showMessageDialog(null, sb.toString());
                 workerDatos.setInterrumpido(false);
             } else if (e.getSource() == fugasJButton) {
+
+                JTextField usernameField = new JTextField(15);
+                JPasswordField passwordField = new JPasswordField(15);
+
+                JPanel panel = new JPanel(new GridLayout(2, 2));
+                panel.add(new JLabel("Username:"));
+                panel.add(usernameField);
+                panel.add(new JLabel("Password:"));
+                panel.add(passwordField);
+
+                int option = JOptionPane.showConfirmDialog(null, panel, "Login", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+                String username = "";
+                String password = "";
+
+                if (option == JOptionPane.OK_OPTION) {
+                    username = usernameField.getText();
+                    password = new String(passwordField.getPassword());
+                } else {
+                    System.out.println("Login canceled");
+                    return;
+                }
+
+                System.out.println("---USUARIO---"+username+"-----");
+
+                String consulta = "SELECT * FROM usuarios WHERE LOWER(Nick_usuario) = LOWER('"+username+"') AND Contrasenia = '"+password+"';";
+                Integer idUser = null;
+
+                org.soltelec.conexion_seriales.Conexion.setConexionFromFile();
+
+                try (Connection conexion = DriverManager.getConnection(org.soltelec.conexion_seriales.Conexion.getUrl(), org.soltelec.conexion_seriales.Conexion.getUsuario(), org.soltelec.conexion_seriales.Conexion.getContrasena());
+                    PreparedStatement consultaDagma = conexion.prepareStatement(consulta)) {
+
+                    //rc representa el resultado de la consulta
+                    try (ResultSet rc = consultaDagma.executeQuery()) {
+                        int contador = 0;
+                        while (rc.next()) {
+                            System.out.println("--DENTRO DE LOS RESULTADOS--");
+                            idUser= rc.getInt("GEUSER");
+                            contador +=1;
+                            username=rc.getString("Nombre_usuario");
+                        }
+                        if(contador == 0){
+                            JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos", "Error", JOptionPane.ERROR_MESSAGE);
+                            throw new RuntimeException("Usuario no encontrado");
+                        }else{
+                            JOptionPane.showMessageDialog(null, "Bienvenido "+username, "Information", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    }
+                } catch (SQLException ex) { 
+                    ex.printStackTrace();
+                    throw new RuntimeException("No se pudo ejecutar la consulta de ingreso");
+                }
+
                 JXLoginPane pane = new JXLoginPane(new LoginServiceCDA(false));
                 pane.setLocale(new Locale("ES"));
                 pane.setBannerText("USUARIO");
@@ -888,11 +948,8 @@ public class PanelServicioBanco extends JPanel implements ActionListener {
                 dlg.setResizable(false);
                 String nombreUsuario = pane.getUserName();
                 UtilInfoUsuario utilInfoUsuario = new UtilInfoUsuario();
-                int idUsuario = 1;
-                try {
-                    idUsuario = utilInfoUsuario.obtenerIdUsuarioPorNombre(nombreUsuario);
-                } catch (Exception ex) {
-                }
+                //puto
+                int idUsuario = idUser;
 
                 WorkerFugas workerFugas = new WorkerFugas(panelProgreso.getLabelMensaje(), banco, dlg, idUsuario);
                 //SwingUtilities.invokeLater(procesoFugas);

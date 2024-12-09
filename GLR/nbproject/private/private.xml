@@ -3,7 +3,33 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/luxometro/HiloPruebaLuxometro.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/luxometro/LecturaArchivoLuxometroMoon.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/procesosbanco/PanelServicioBanco.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/luxometro/FrmLuxometroCapelec.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/luxometro/JDialogLucesMoto.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/pruebasgases/motocicletas/CallablePruebaMotos.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/pruebasgases/motocicletas/HiloPruebaMotos.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/pruebasgases/motocicletas/WorkerCiclosMoto.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/pruebasgases/PanelPruebaGases.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/pruebasgases/motocicletas/CallableSimulacionMotos.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/luxometro/lujan/FrmComentario.java</file>
             <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/util/RegistrarMedidas.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/pruebasgases/motocicletas/JDialogMotosGases.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/luxometro/PanelLuxometroMotos.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/pruebasgases/motocicletas/CallableInicioMotos.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/pruebasgases/CallableSimulacionGasolina.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/pruebasgases/motocicletas/WorkerInicioMotos.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/util/Utilidades.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/luxometro/HiloLucesMoto.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/luxometro/lujan/HiloLucesMotoLujan.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/luxometro/lujan/HiloPruebaLuxometroLujan.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/pruebasgases/diesel/CallableSimulacionDiesel.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/pruebasgases/diesel/WorkerCiclosDiesel.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/pruebasgases/CallableCiclosGasolina.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/luxometro/lujan/HiloPruebaLuxometroVehiculoLujan.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/pruebasgases/motocicletas/DialogoMotos.java</file>
+            <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/pruebasgases/SimuladorRpm.java</file>
         </group>
     </open-files>
 </project-private>

@@ -5,6 +5,7 @@
 package vistas;
 
 import com.soltelec.loginadministrador.UtilLogin;
+import com.soltelec.modulopuc.configuracion.modelo.Conexion;
 import com.soltelec.modulopuc.utilidades.Mensajes;
 import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 import dao.PruebaDefaultDAO;
@@ -13,6 +14,7 @@ import excepciones.NoPersistException;
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.GridLayout;
 import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,7 +25,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,7 +42,11 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.Timer;
 import modelo.Frenos;
 import modelo.FrenosMotos;
@@ -122,7 +135,7 @@ public class DlgFrenoMoto extends javax.swing.JDialog implements ActionListener 
         this.idPrueba = idPrueba;
         this.idUsuario = idUsuario;
         this.idHojaPrueba = idHojaPrueba;
-         this.aplicTrans= aplicTrans;
+        this.aplicTrans= aplicTrans;
         this.ipEquipo=ipEquipo;
         this.Placa=Placa;
         this.NombreUsr =NombreUsr;
@@ -586,7 +599,7 @@ public class DlgFrenoMoto extends javax.swing.JDialog implements ActionListener 
             System.out.println("estoy dentro del metodo registar Medidas: ");
             PruebaDefaultDAO.escrTrans = "@";
             try {            
-                repetirPrueba = frenosDAO.persist(frenos, idPrueba, idUsuario,aplicTrans,this.ipEquipo,"Moto","Moto","","DlgFrenoMoto");
+                repetirPrueba = frenosDAO.persist(frenos, idPrueba, idUsuario,aplicTrans,this.ipEquipo,"Moto","Moto",this.Placa,"DlgFrenoMoto");
             } catch (ClassNotFoundException ex) {    }
             if (repetirPrueba == false) {
                 
@@ -669,14 +682,42 @@ public class DlgFrenoMoto extends javax.swing.JDialog implements ActionListener 
             Mensajes.mostrarExcepcion(ex);
         }
     }
+    
+    private String cancelarFrenos(Long idPrueba, String comentarioAborto, int idUsuario) {
+        String consulta =   "UPDATE pruebas p\n" + 
+                            "SET p.Aprobada = 'N', p.Abortada = 'Y', p.Finalizada = 'Y', p.observaciones = ?, p.usuario_for = ?, p.Fecha_aborto = ?\n" + 
+                            "WHERE p.Id_Pruebas = ?;";
+        
+        conexion.Conexion.setConexionFromFile();
+        String urlDb = conexion.Conexion.getUrl();
+        String userDb=conexion.Conexion.getUsuario();
+        String passwordDb = conexion.Conexion.getContrasena();
+        
+        try (Connection conexion = DriverManager.getConnection(urlDb, userDb, passwordDb);
+            PreparedStatement consultaPruebas = conexion.prepareStatement(consulta)) {
+        
+            // Capturar la fecha y hora actuales según la zona horaria de Colombia
+            ZonedDateTime fechaAborto = ZonedDateTime.now(ZoneId.of("America/Bogota"));
+            
+            // Añadir parámetros de la consulta (los que aparecen como ? en la consulta)
+            consultaPruebas.setString(1, comentarioAborto);
+            consultaPruebas.setInt(2, idUsuario);
+            consultaPruebas.setTimestamp(3, Timestamp.valueOf(fechaAborto.toLocalDateTime()));  // Convertir ZonedDateTime a Timestamp
+            consultaPruebas.setLong(4, idPrueba);
+        
+            // Ejecutar la consulta de actualización
+            int filasAfectadas = consultaPruebas.executeUpdate();  // Este método devuelve el número de filas afectadas
 
-    private void registrarCancelacion(String comentario) throws ClassNotFoundException, SQLException {
+            JOptionPane.showMessageDialog(null, "Prueba cancelada con éxito. \nPor seguridad cerraremos el programa", "Error", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Cuadro de diálogo de aviso en caso de error en la base de datos
+            JOptionPane.showMessageDialog(null, "Error al cancelar la prueba.\n Contactese con soporte Soltelec", "Error", JOptionPane.ERROR_MESSAGE);
+        }
 
-        PruebasDAO pruebasDAO = new PruebasDAO();
-        Date d = new Date();
-        Calendar c = new GregorianCalendar();
-        c.setTime(d);
-        pruebasDAO.cancelarPrueba(comentario, idPrueba, idUsuario, new java.sql.Date(c.getTimeInMillis()));
+        return "*";
     }
 
     /**
@@ -1263,15 +1304,11 @@ public class DlgFrenoMoto extends javax.swing.JDialog implements ActionListener 
     private void BotonEnviarCancelacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonEnviarCancelacionActionPerformed
         // TODO add your handling code here:
         motivoCancelacion = jTextArea1.getText();
-        try {
-            registrarCancelacion(motivoCancelacion);
-        } catch (ClassNotFoundException | SQLException ex) {
-            Mensajes.mostrarExcepcion(ex);
-        }
+        //registrarCancelacion(motivoCancelacion);
+        cancelarFrenos((long)idPrueba , motivoCancelacion, idUsuario);
         System.out.println("La prueba fue cancelada por: " + motivoCancelacion);
         dialogCancelacion.dispose();
         this.dispose();
-
     }//GEN-LAST:event_BotonEnviarCancelacionActionPerformed
     public static int byteToInt(byte b) {
         String cadenaLSB = Integer.toBinaryString(b & 0xFF);

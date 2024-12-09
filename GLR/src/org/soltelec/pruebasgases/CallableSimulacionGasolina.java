@@ -12,7 +12,9 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import static java.lang.System.out;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,6 +28,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import org.apache.log4j.Logger;
+import org.soltelec.conexion_seriales.Conexion;
 import org.soltelec.medicionrpm.MedidorRevTemp;
 import org.soltelec.procesosbanco.BancoGasolina;
 import org.soltelec.procesosbanco.PanelCero;
@@ -483,7 +486,8 @@ public class CallableSimulacionGasolina implements Callable<List<List<MedicionGa
             Thread.sleep(1500);
 
             //DISMINUCION DE OXIGENO
-            int intentos = 0;
+            int intentosVariable = 0;
+            int intentosBajoFlujo = 0;
 
             medicion = banco.obtenerDatos();
             //panel.mostrarBotonDilucion();///terminar por Dilucion no cancelar habilitado
@@ -533,10 +537,10 @@ public class CallableSimulacionGasolina implements Callable<List<List<MedicionGa
             panelGases.getProgressBar().setValue(0);
             panelGases.getProgressBar().setVisible(true);
             panelGases.getLinearTemperatura().setValue(medidorRevTemp.getTemp());
-            intentos = 0;
+            intentosVariable = 0;
             timer.start();
             String mensajeProblemas = "";
-            while (intentos < 3) {
+            while (intentosVariable < 3) {
                 contadorTemporizacion = 0;
                 medicion = banco.obtenerDatos();
                 panelGases.getRadialTacometro().setBackgroundColor(BackgroundColor.BLACK);
@@ -591,7 +595,7 @@ public class CallableSimulacionGasolina implements Callable<List<List<MedicionGa
                         if (mensajeProblemas.length() > 1) {
                             panelGases.getMensaje().setText(mensajeProblemas);
                         } else {
-                            panelGases.getMensaje().setText("Manteniendo Crucero (2250 a 2750) RPM  en  " + intentos + " Intentos");
+                            panelGases.getMensaje().setText("Manteniendo Crucero (2250 a 2750) RPM  en  " + intentosVariable + " Intentos");
                         }
                         medicion.setLect5Seg(false);
                     }
@@ -606,19 +610,25 @@ public class CallableSimulacionGasolina implements Callable<List<List<MedicionGa
                 }//end while condiciones ok
                 
                 if (contadorTemporizacion < 30 /*|| medicion.isBajoFlujo() || oxigeno >= LIMITE_OXIGENO*/) {
-                    intentos++;
+                    intentosVariable++;
+                }else if(medicion.isBajoFlujo()){
+                    intentosVariable++;
+                    intentosBajoFlujo++;
                 } else {
                     break;
                 }
             }//end while intentos
-            System.out.println("INTENTO: " + intentos);
+            System.out.println("INTENTO: " + intentosVariable);
             Thread.sleep(10);
-            if (intentos >= 3) {
+            if (intentosVariable >= 3) {
                 StringBuilder sb = new StringBuilder();
-                if (medicion.isBajoFlujo()) {
+                if (medicion.isBajoFlujo() || intentosBajoFlujo > 2) {
                     sb.append(" BAJO FLUJO");
                     Mensajes.messageWarningTime(" Se ha detectado BAJO FLUJO en el Proceso; Esta prueba sera ABORTADA", 5);
                     panelGases.getFuncion().setText("Detencion BAJO FLUJO ");
+                    registrarAborto(idPrueba, "Bajo flujo", "", idUsuario);
+                    JOptionPane.showMessageDialog(null, "Prueba abortada debido a bajo flujo. \nPor seguridad cerraremos el programa", "Información", JOptionPane.INFORMATION_MESSAGE);
+                    System.exit(0);
                 }
                 //if(medicion.getValorHC())
                 medicion.getCadenaHC();
@@ -650,7 +660,7 @@ public class CallableSimulacionGasolina implements Callable<List<List<MedicionGa
 
             panelGases.getPanelMensaje().setVisible(false);
             panelGases.getPanelFiguras().setVisible(true);
-            while (intentos < 3) {
+            while (intentosVariable < 3) {
                 simuladorRpm.setSimularCrucero(false);//empieza a simular las revoluciones de ralenti
                 contadorTemporizacion = 0;
                 panelGases.getRadialTacometro().setBackgroundColor(BackgroundColor.BLACK);
@@ -698,7 +708,7 @@ public class CallableSimulacionGasolina implements Callable<List<List<MedicionGa
                         if (mensajeProblemas.length() > 0) {
                             panelGases.getMensaje().setText(mensajeProblemas);
                         } else {
-                          panelGases.getMensaje().setText("\"Manteniendo Ralenti ("+CallableCiclosGasolina.rngIniRpm +" - "+ CallableCiclosGasolina.rngFinRpm+") RPM  en  " + intentos + " Intentos");
+                          panelGases.getMensaje().setText("\"Manteniendo Ralenti ("+CallableCiclosGasolina.rngIniRpm +" - "+ CallableCiclosGasolina.rngFinRpm+") RPM  en  " + intentosVariable + " Intentos");
                         }
                         medicion.setLect5Seg(false);
                     }
@@ -713,17 +723,23 @@ public class CallableSimulacionGasolina implements Callable<List<List<MedicionGa
                 }//end while temporizacion
                 /*rpmFiltrada = filtroRPM(revolucionesSimuladas);*/
               
-                if (contadorTemporizacion < 30 || medicion.isBajoFlujo() /*|| oxigeno > BancoGasolina.LIMITE_OXIGENO*/) {
-                    intentos++;
+                if (contadorTemporizacion < 30 /*|| medicion.isBajoFlujo() || oxigeno >= LIMITE_OXIGENO*/) {
+                    intentosVariable++;
+                }else if(medicion.isBajoFlujo()){
+                    intentosVariable++;
+                    intentosBajoFlujo++;
                 } else {
                     break;
                 }
             }//end while intentos
            
-            if (intentos > 2) {
-                if (medicion.isBajoFlujo()) {
+            if (intentosVariable > 2) {
+                if (medicion.isBajoFlujo() || intentosBajoFlujo > 2) {
                     Mensajes.messageWarningTime(" SE HA DETECTADO BAJO FLUJO EN EL EQUIPO MEDICION; Esta prueba sera ABORTADA", 5);
                     panelGases.getFuncion().setText("BAJO FLUJO DEL EQUIPO");
+                    registrarAborto(idPrueba, "Bajo flujo", "", idUsuario);
+                    JOptionPane.showMessageDialog(null, "Prueba abortada debido a bajo flujo. \nPor seguridad cerraremos el programa", "Información", JOptionPane.INFORMATION_MESSAGE);
+                    System.exit(0);
                 } else {
                     JOptionPane.showMessageDialog(null, "HUBO UN FALLO EN LA PRUEBA DE RALENTI\n POR FAVOR VERIFIQUE SI SE PRESENTO 1) RPM FUERA RANGO ");
                 }
@@ -757,6 +773,49 @@ public class CallableSimulacionGasolina implements Callable<List<List<MedicionGa
         return arregloListas;
     }//end of call
 
+    private void registrarAborto(long idPrueba, String causalAborto, String comentarioAborto, long idUsuario) {
+    
+        int idEquipo = LeerArchivo.getIdEquipoFromEquiposProperties();
+
+        String sqlUpdatePrueba = "UPDATE pruebas SET Comentario_aborto = ?, Abortada = ?, Finalizada = ?, serialEquipo = ?, observaciones = ?, usuario_for = ? WHERE id_pruebas = ?";
+        String sqlFindSerial = "SELECT serialresolucion FROM equipos WHERE id_equipo = ?";
+        Conexion.setConexionFromFile();
+    
+        try (Connection conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContrasena());
+             PreparedStatement updatePruebasStmt = conexion.prepareStatement(sqlUpdatePrueba);
+             PreparedStatement findSerial = conexion.prepareStatement(sqlFindSerial)) {
+            
+            findSerial.setInt(1, idEquipo);
+            
+            String serial = null;
+            //rc representa el resultado de la consulta
+            try (ResultSet rc = findSerial.executeQuery()) {
+                while (rc.next()) {
+                    serial = rc.getString("serialresolucion");
+                }
+            }
+    
+            // Establecer los parámetros para la actualización
+            updatePruebasStmt.setString(1, comentarioAborto);
+            updatePruebasStmt.setString(2, "Y");
+            updatePruebasStmt.setString(3, "Y");
+            updatePruebasStmt.setString(4, serial);
+            updatePruebasStmt.setString(5, causalAborto);
+            updatePruebasStmt.setLong(6, idUsuario);
+            updatePruebasStmt.setLong(7, idPrueba);
+    
+            // Ejecutar la actualización
+            updatePruebasStmt.executeUpdate();
+    
+            // Mostrar mensaje y esperar 3 segundos antes de cerrar la aplicación
+            JOptionPane.showMessageDialog(null, "Prueba abortada y finalizada con éxito.", "Información", JOptionPane.INFORMATION_MESSAGE);
+            
+        } catch (SQLException ex) { 
+            ex.printStackTrace();
+            System.out.println("Error al tratar de abortar y finalizar la prueba por: " + ex.getMessage());
+        }
+    }
+
     private Future iniciarSimulador() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         return executor.submit(simuladorRpm);
@@ -778,6 +837,7 @@ public class CallableSimulacionGasolina implements Callable<List<List<MedicionGa
             String serialEquipo = "";
             try {
                 serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+                System.out.println("-----Serial encontrado:\n"+serialEquipo);
             } catch (Exception e) {
                 serialEquipo = "Serial no encontrado";
                 e.printStackTrace();

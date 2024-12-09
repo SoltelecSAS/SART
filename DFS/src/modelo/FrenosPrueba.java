@@ -562,16 +562,17 @@ System.out.println("Valor calculado eficacia FRENOS sin recorte decimal"+Frenos.
         }
     }
 
-    private String aproximacion(double valor){
+    private String aproximacion(double valor) {
         DecimalFormat df = new DecimalFormat("0.0#");
+    
         if (valor >= 100) {
             df = new DecimalFormat("0");
-            return df.format(valor);
-        }if(valor >=10){
+        } else if (valor >= 10) {
             df = new DecimalFormat("0.#");
-            return df.format(valor);
         }
-        return df.format(valor);
+        
+        // Formatear el valor y reemplazar la coma por un punto
+        return df.format(valor).replace(",", ".");
     }
 
 

@@ -5,6 +5,8 @@
 package org.soltelec.pruebasgases;
 
 import gnu.io.SerialPort;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -30,6 +32,7 @@ import org.soltelec.util.Mensajes;
 import org.soltelec.util.PortSerialUtil;
 import org.soltelec.util.RegistrarMedidas;
 import org.soltelec.util.UtilPropiedades;
+import org.soltelec.util.Utilidades;
 import org.soltelec.util.capelec.BancoCapelec;
 import termohigrometro.MedicionTermoHigrometro;
 import termohigrometro.TermoHigrometro;
@@ -62,6 +65,7 @@ public class WorkerInicioPruebaGases extends SwingWorker<Void, Void> {
         this.placas = placas;
         em = eManager;
         this.termoHigrometroArtisan = termoHigrometroArtisan;
+        Utilidades.setIdUsuarioMotos(idUsuario);
     }
 
     @Override
@@ -88,6 +92,8 @@ public class WorkerInicioPruebaGases extends SwingWorker<Void, Void> {
                     MedicionTermoHigrometro medicion = termoHigrometro.obtenerValores();
                     tempAmbiente = medicion.getValorTemperatura();//no se puede saber si demora un poco la cosa
                     humedadAmbiente = medicion.getValorHumedad();
+                    Utilidades.setHumedadAmbiente(humedadAmbiente);
+                    Utilidades.setTempAmbiente(tempAmbiente);
                 }
 
                 try {
@@ -135,7 +141,12 @@ public class WorkerInicioPruebaGases extends SwingWorker<Void, Void> {
             CallableInicioGases hilo = new CallableInicioGases(panel, idPrueba, idUsuario, banco, idHojaPrueba, placas, tempAmbiente, humedadAmbiente);
             ExecutorService exec = Executors.newSingleThreadExecutor();
             Future<Void> submit = exec.submit(hilo);
-            panel.getButtonFinalizar().addActionListener(new ListenerCancelacionGases(submit, idPrueba, banco, null, panel, idUsuario));
+            panel.getButtonFinalizar().addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        panel.cancelacion(); // Aquí llamas a tu método que realiza la cancelación.
+                    }
+                });
             Void get = submit.get();
         } catch (CancellationException ce) {
             System.out.println("Prueba de Gases cancelada");

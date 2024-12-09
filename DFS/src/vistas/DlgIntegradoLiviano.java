@@ -868,70 +868,118 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                     regdatosffd1.write(new StringBuilder().append("el span de fuerza derecha es: ").append(this.spanfd).toString());
                     regdatosffd1.newLine();
                     regdatosffd1.flush();
-                    for (this.t = 0; this.t < s; this.t += 1) {
-                        this.regdatosffd1.write(new StringBuilder().append(((Double) this.Datosfil1.get(this.t)).toString()).append("  ").append(this.Datos1.get(this.t)).toString());
-                        this.regdatosffd1.newLine();
+                    
+                    int minSize = Math.min(Datosfil1.size(), Datos1.size());
+                    int maxIndex = (int) Math.min(s, minSize);
+        
+                    for (this.t = 0; this.t < maxIndex; this.t++) {
+                        regdatosffd1.write(new StringBuilder()
+                            .append(this.Datosfil1.get(this.t).toString())
+                            .append("  ")
+                            .append(this.Datos1.get(this.t))
+                            .toString());
+                        regdatosffd1.newLine();
                     }
-                    this.regdatosffd1.close();
+                    regdatosffd1.close();
                 } else if (this.ejemedido == 2) {
                     if (!isFrenmano()) {
                         regdatosffd2.write(new StringBuilder().append("el cero de fuerza derecha es: ").append(this.valcalcero1).toString());
-                        this.regdatosffd2.newLine();
-                        this.regdatosffd2.write(new StringBuilder().append("el span de fuerza derecha es: ").append(this.spanfd).toString());
-                        this.regdatosffd2.newLine();
-                        this.regdatosffd2.flush();
-                        for (this.t = 0; this.t < s; this.t += 1) {
-                            this.regdatosffd2.write(new StringBuilder().append(((Double) this.Datosfil1.get(this.t)).toString()).append("  ").append(this.Datos1.get(this.t)).toString());
-                            this.regdatosffd2.newLine();
+                        regdatosffd2.newLine();
+                        regdatosffd2.write(new StringBuilder().append("el span de fuerza derecha es: ").append(this.spanfd).toString());
+                        regdatosffd2.newLine();
+                        regdatosffd2.flush();
+                        
+                        int minSize = Math.min(Datosfil1.size(), Datos1.size());
+                        int maxIndex = (int) Math.min(s, minSize);
+        
+                        for (this.t = 0; this.t < maxIndex; this.t++) {
+                            regdatosffd2.write(new StringBuilder()
+                                .append(this.Datosfil1.get(this.t).toString())
+                                .append("  ")
+                                .append(this.Datos1.get(this.t))
+                                .toString());
+                            regdatosffd2.newLine();
                         }
-                        this.regdatosffd2.close();
+                        regdatosffd2.close();
                     } else {
-                        this.regdatosffda.write(new StringBuilder().append("(Freno Mano) El cero de fuerza derecha es: ").append(this.valcalcero1).toString());
-                        this.regdatosffda.newLine();
-                        this.regdatosffda.write(new StringBuilder().append("(Freno Mano) El span de fuerza derecha es: ").append(this.spanfd).toString());
-                        this.regdatosffda.newLine();
-                        this.regdatosffda.flush();
-                        for (this.t = 0; this.t < s; this.t += 1) {
-                            this.regdatosffda.write(new StringBuilder().append(((Double) this.Datosfil1.get(this.t)).toString()).append("  ").append(this.Datos1.get(this.t)).toString());
-                            this.regdatosffda.newLine();
+                        regdatosffda.write(new StringBuilder().append("(Freno Mano) El cero de fuerza derecha es: ").append(this.valcalcero1).toString());
+                        regdatosffda.newLine();
+                        regdatosffda.write(new StringBuilder().append("(Freno Mano) El span de fuerza derecha es: ").append(this.spanfd).toString());
+                        regdatosffda.newLine();
+                        regdatosffda.flush();
+                        
+                        int minSize = Math.min(Datosfil1.size(), Datos1.size());
+                        int maxIndex = (int) Math.min(s, minSize);
+        
+                        for (this.t = 0; this.t < maxIndex; this.t++) {
+                            regdatosffda.write(new StringBuilder()
+                                .append(this.Datosfil1.get(this.t).toString())
+                                .append("  ")
+                                .append(this.Datos1.get(this.t))
+                                .toString());
+                            regdatosffda.newLine();
                         }
-                        this.regdatosffda.close();
+                        regdatosffda.close();
                     }
                 }
                 if (this.ejemedido == 1) {
-                    this.regdatosffi1.write(new StringBuilder().append("el cero de fuerza izquierda es: ").append(this.valcalcero2).toString());
-                    this.regdatosffi1.newLine();
-                    this.regdatosffi1.write(new StringBuilder().append("el span de fuerza izquierda es: ").append(this.spanfi).toString());
-                    this.regdatosffi1.newLine();
-                    this.regdatosffi1.flush();
-                    for (this.t = 0; this.t < s; this.t += 1) {
-                        this.regdatosffi1.write(new StringBuilder().append(((Double) this.Datosfil1.get(this.t)).toString()).append("  ").append(this.Datos2.get(this.t)).toString());
-                        this.regdatosffi1.newLine();
+                    regdatosffi1.write(new StringBuilder().append("el cero de fuerza izquierda es: ").append(this.valcalcero2).toString());
+                    regdatosffi1.newLine();
+                    regdatosffi1.write(new StringBuilder().append("el span de fuerza izquierda es: ").append(this.spanfi).toString());
+                    regdatosffi1.newLine();
+                    regdatosffi1.flush();
+                    
+                    int minSize = Math.min(Datosfil1.size(), Datos2.size());
+                    int maxIndex = (int) Math.min(s, minSize);
+        
+                    for (this.t = 0; this.t < maxIndex; this.t++) {
+                        regdatosffi1.write(new StringBuilder()
+                            .append(this.Datosfil1.get(this.t).toString())
+                            .append("  ")
+                            .append(this.Datos2.get(this.t))
+                            .toString());
+                        regdatosffi1.newLine();
                     }
                     regdatosffi1.close();
                 } else if (this.ejemedido == 2) {
                     if (!isFrenmano()) {
-                        this.regdatosffi2.write(new StringBuilder().append("el cero de fuerza izquierda es: ").append(this.valcalcero2).toString());
-                        this.regdatosffi2.newLine();
-                        this.regdatosffi2.write(new StringBuilder().append("el span de fuerza izquierda es: ").append(this.spanfi).toString());
-                        this.regdatosffi2.newLine();
-                        this.regdatosffi2.flush();
-                        for (this.t = 0; this.t < s; this.t += 1) {
-                            this.regdatosffi2.write(new StringBuilder().append(((Double) this.Datosfil1.get(this.t)).toString()).append("  ").append(this.Datos2.get(this.t)).toString());
-                            this.regdatosffi2.newLine();
+                        regdatosffi2.write(new StringBuilder().append("el cero de fuerza izquierda es: ").append(this.valcalcero2).toString());
+                        regdatosffi2.newLine();
+                        regdatosffi2.write(new StringBuilder().append("el span de fuerza izquierda es: ").append(this.spanfi).toString());
+                        regdatosffi2.newLine();
+                        regdatosffi2.flush();
+                        
+                        int minSize = Math.min(Datosfil1.size(), Datos2.size());
+                        int maxIndex = (int) Math.min(s, minSize);
+        
+                        for (this.t = 0; this.t < maxIndex; this.t++) {
+                            regdatosffi2.write(new StringBuilder()
+                                .append(this.Datosfil1.get(this.t).toString())
+                                .append("  ")
+                                .append(this.Datos2.get(this.t))
+                                .toString());
+                            regdatosffi2.newLine();
                         }
-                        this.regdatosffi2.close();
+                        regdatosffi2.close();
                     } else {
-                        this.regdatosffia.write(new StringBuilder().append("(Freno Mano) El cero de fuerza izquierda es: ").append(this.valcalcero2).toString());
-                        this.regdatosffia.newLine();
-                        this.regdatosffia.write(new StringBuilder().append("(Freno Mano) El span de fuerza izquierda es: ").append(this.spanfi).toString());
-                        this.regdatosffia.newLine();
-                        this.regdatosffia.flush();
-                        for (this.t = 0; this.t < s; this.t += 1) {
-                            this.regdatosffia.write(new StringBuilder().append(((Double) this.Datosfil1.get(this.t)).toString()).append("  ").append(this.Datos2.get(this.t)).toString());
-                            this.regdatosffia.newLine();
+                        regdatosffia.write(new StringBuilder().append("(Freno Mano) El cero de fuerza izquierda es: ").append(this.valcalcero2).toString());
+                        regdatosffia.newLine();
+                        regdatosffia.write(new StringBuilder().append("(Freno Mano) El span de fuerza izquierda es: ").append(this.spanfi).toString());
+                        regdatosffia.newLine();
+                        regdatosffia.flush();
+                        
+                        int minSize = Math.min(Datosfil1.size(), Datos2.size());
+                        int maxIndex = (int) Math.min(s, minSize);
+        
+                        for (this.t = 0; this.t < maxIndex; this.t++) {
+                            regdatosffia.write(new StringBuilder()
+                                .append(this.Datosfil1.get(this.t).toString())
+                                .append("  ")
+                                .append(this.Datos2.get(this.t))
+                                .toString());
+                            regdatosffia.newLine();
                         }
-                        this.regdatosffia.close();
+                        regdatosffia.close();
                     }
                 }
             } catch (IOException ex) {

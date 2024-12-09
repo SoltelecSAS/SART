@@ -109,7 +109,8 @@ public class WorkerCiclosMoto extends SwingWorker<Void, Void> {
         dlgRpm = new DialogoRPMTempMoto();//dialogo para seleccionar el dispositivo de medicion de rpms
         this.tempAmbiente = tempAmbiente;
         this.humedadAmbiente = humedadAmbiente;
-
+        Utilidades.setHumedadAmbiente(humedadAmbiente);
+        Utilidades.setTempAmbiente(tempAmbiente);
     }
 
     @Override
@@ -158,13 +159,11 @@ public class WorkerCiclosMoto extends SwingWorker<Void, Void> {
                 Future<List<MedicionGases>> future = executor.submit(new CallableSimulacionMotos(panel, banco, (MedidorRevTemp) banco, numeroTiempos, numeroEscapes, idPrueba, idUsuario, this.placas));
                 panel.getButtonFinalizar().addActionListener(new ListenerCancelacionGases(future, idPrueba, banco, null, panel, idUsuario));//para la cancelacion
                 panel.getButtonRpm().addActionListener(new ListenerCambioRpms(future, null, banco, panel, idUsuario));//para cambio de rpms
-                panel.getBtnWorkerCicloMotos().addActionListener(new ListenerCancelacionPorRpm(future, idPrueba, banco, null, panel, idUsuario, tempAmbiente, humedadAmbiente));
                 lstDatoasMedicion = future.get();
                 System.out.println("Sali del Hilo de Simulaciones con " + lstDatoasMedicion.size());
             } else if (equipoMedicion.equals("banco") && simulacion == false) {
                 System.out.println("Equipo de Medicion is banco ");
                 Future<List<MedicionGases>> future = executor.submit(new CallablePruebaMotos(banco, (MedidorRevTemp) banco, panel, numeroEscapes, idPrueba, this.placas, activarBotonRPMBolleano, tempAmbiente, humedadAmbiente));//el cast es para que el banco funcione como medidor de rpms
-                panel.getBtnWorkerCicloMotos().addActionListener(new ListenerCancelacionPorRpm(future, idPrueba, banco, null, panel, idUsuario, tempAmbiente, humedadAmbiente));
                 panel.getButtonFinalizar().addActionListener(new ListenerCancelacionGases(future, idPrueba, banco, null, panel, idUsuario));
                 panel.getButtonRpm().addActionListener(new ListenerCambioRpms(future, null, banco, panel, idUsuario));
 
@@ -197,7 +196,6 @@ public class WorkerCiclosMoto extends SwingWorker<Void, Void> {
                 Future<List<MedicionGases>> future = executor.submit(new CallablePruebaMotos(banco, tb8600, panel, numeroEscapes, idPrueba, this.placas, activarBotonRPMBolleano, tempAmbiente, humedadAmbiente));
                 panel.getButtonFinalizar().addActionListener(new ListenerCancelacionGases(future, idPrueba, banco, tb8600, panel, idUsuario));
                 panel.getButtonRpm().addActionListener(new ListenerCambioRpms(future, tb8600, banco, panel, idUsuario));
-                panel.getBtnWorkerCicloMotos().addActionListener(new ListenerCancelacionPorRpm(future, idPrueba, banco, null, panel, idUsuario, tempAmbiente, humedadAmbiente));
                 lstDatoasMedicion = future.get();
             } else if (equipoMedicion.equals("kit") && simulacion == false) {
                 String nombrePuerto = UtilPropiedades.cargarPropiedad("PuertoKit", "propiedades.properties");
@@ -214,7 +212,6 @@ public class WorkerCiclosMoto extends SwingWorker<Void, Void> {
                 Future<List<MedicionGases>> future = executor.submit(new CallablePruebaMotos(banco, tb8500, panel, numeroEscapes, idPrueba, this.placas, activarBotonRPMBolleano, tempAmbiente, humedadAmbiente));
                 panel.getButtonFinalizar().addActionListener(new ListenerCancelacionGases(future, idPrueba, banco, tb8500, panel, idUsuario));
                 panel.getButtonRpm().addActionListener(new ListenerCambioRpms(future, tb8500, banco, panel, idUsuario));
-                panel.getBtnWorkerCicloMotos().addActionListener(new ListenerCancelacionPorRpm(future, idPrueba, banco, null, panel, idUsuario, tempAmbiente, humedadAmbiente));
                 lstDatoasMedicion = future.get();
             }
             System.out.println("Sali del Hilo de ejecucion de pruebas");
@@ -249,7 +246,7 @@ public class WorkerCiclosMoto extends SwingWorker<Void, Void> {
                     boolean pruebaAprobada = evaluarPrueba(medidas, info.getModelo());
                     System.out.println("VOY A PERSISITR LA LISTA DE MEDIDAS" + pruebaAprobada);
                     boolean escrTrans = false;
-                    if (WorkerCiclosMoto.aplicTrans == 1 && pruebaAprobada == true) {
+                    if (WorkerCiclosMoto.aplicTrans == 1 && pruebaAprobada) {
                         escrTrans = true;
                         System.out.println("Paso no necesito aplicar artificio ");
                     }

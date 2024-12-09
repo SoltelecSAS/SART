@@ -55,6 +55,7 @@ import org.soltelec.util.ShiftRegister;
 import org.soltelec.util.UtilGasesModelo;
 import org.soltelec.util.UtilPropiedades;
 import org.soltelec.util.UtilidadAbortoPrueba;
+import org.soltelec.util.Utilidades;
 import org.soltelec.util.VariablesOpacidad;
 import org.soltelec.conexion_seriales.Conexion;
 
@@ -87,7 +88,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
     private PanelPruebaGases panel;
     private int contadorTemporizacion;
     private Timer timer;
-    private DialogoCiclosAceleracion dialogo;
+    private DialogoCiclosAceleracion dialogoVariable;
     private int T_ANTES_ACELERAR = 20;
     private int velocidadRalenti = 750;
     private double velocidadCrucero = 4500;
@@ -175,7 +176,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
         this.opacimetro = opacimetro;
         this.medidorRevTemp = medidorRevTemp;
         this.panel = panel;
-        this.dialogo = dialogo;
+        this.dialogoVariable = dialogo;
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -330,19 +331,19 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                     simuladorRpm.setSimularCrucero(false);
                 }
                 mostrarDlgCiclos();
-                dialogo.repintarRangos(velocidadRalenti, velocidadCrucero);
-                dialogo.getDisplayTemperatura().setLcdValue(temp);
+                dialogoVariable.repintarRangos(velocidadRalenti, velocidadCrucero);
+                dialogoVariable.getDisplayTemperatura().setLcdValue(temp);
 
                 //--------------------------------
                 //tres posibles ciclos para cada prueba unitaria
                 while (ciclos < 4 && numeroPruebasUnitarias < 3) {
 //                  T_ANTES_ACELERAR = 10;
                     T_ANTES_ACELERAR = 3;
-                    dialogo.getDisplayTiempo().setLcdColor(LcdColor.STANDARD_LCD);
-                    dialogo.getLabelMensaje().setText("CICLO: " + ciclos);
-                    dialogo.getLedRojo().setLedBlinking(false);
-                    dialogo.getLedRojo().setLedOn(true);
-                    dialogo.getLedVerde().setLedOn(false);
+                    dialogoVariable.getDisplayTiempo().setLcdColor(LcdColor.STANDARD_LCD);
+                    dialogoVariable.getLabelMensaje().setText("CICLO: " + ciclos);
+                    dialogoVariable.getLedRojo().setLedBlinking(false);
+                    dialogoVariable.getLedRojo().setLedOn(true);
+                    dialogoVariable.getLedVerde().setLedOn(false);
 
                     if (simulacion == true) {
                         simuladasRalenti = true;//subida aceleracion = false EL SIMULADOR EMPIEZA A RETORNAR LA VELOCIDAD RALENTI                        
@@ -357,27 +358,27 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                     while ((rpm < (velocidadRalenti - Opacimetro.LIMITE_RANGO_CICLOS) || rpm > (velocidadRalenti + Opacimetro.LIMITE_RANGO_CICLOS)) && contadorTemporizacion < T_RALENTI) {
                         Thread.sleep(100);
                         System.out.println("Vehiculo fuera del rango de ralenti +-100 rpms");
-                        dialogo.getLabelMensaje().setText("FUERA RANGO RALENTI");
-                        dialogo.getDisplayTiempo().setLcdValue(contadorTemporizacion);
+                        dialogoVariable.getLabelMensaje().setText("FUERA RANGO RALENTI");
+                        dialogoVariable.getDisplayTiempo().setLcdValue(contadorTemporizacion);
                         if (simulacion == true) {
                             simuladasRalenti = true;//subida aceleracion = false EL SIMULADOR EMPIEZA A RETORNAR LA VELOCIDAD RALENTI                        
                             rpm = (int) rpmSimuladas;
                         } else {
                             rpm = medidorRevTemp.getRpm();
                         }
-                        dialogo.getRadialTacometro().setValue(rpm);
-                        dialogo.getDisplayTemperatura().setLcdValue(medidorRevTemp.getTemp());
+                        dialogoVariable.getRadialTacometro().setValue(rpm);
+                        dialogoVariable.getDisplayTemperatura().setLcdValue(medidorRevTemp.getTemp());
                     }//end of while
 
                     Thread.sleep(10);//punto de cancelacion
                     //si pasan 20 segundos y el vehiculo no entro a ralenti ... gastar un intento
                     if (contadorTemporizacion >= T_RALENTI) {
-                        JOptionPane.showMessageDialog(dialogo, "EL VEHICULO NO ENTRA A RALENTI");
+                        JOptionPane.showMessageDialog(dialogoVariable, "EL VEHICULO NO ENTRA A RALENTI");
                         ciclos = 0;
                         continue;
 
                     }//end if
-                    dialogo.getLabelMensaje().setText("POR FAVOR MANTENGA RALENTI");
+                    dialogoVariable.getLabelMensaje().setText("POR FAVOR MANTENGA RALENTI");
 
                     if (simulacion == true) {
                         simuladasRalenti = true;//subida aceleracion = false EL SIMULADOR EMPIEZA A RETORNAR LA VELOCIDAD RALENTI                        
@@ -386,13 +387,13 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                         rpm = medidorRevTemp.getRpm();
                     }
 
-                    dialogo.getDisplayTiempo().setLcdColor(LcdColor.BLACK_LCD);
+                    dialogoVariable.getDisplayTiempo().setLcdColor(LcdColor.BLACK_LCD);
                     contadorTemporizacion = 0;
                     while ((rpm >= velocidadRalenti - Opacimetro.LIMITE_RANGO_CICLOS && rpm <= velocidadRalenti + Opacimetro.LIMITE_RANGO_CICLOS) && contadorTemporizacion <= T_ANTES_ACELERAR) {
                         Thread.sleep(100);
                         semaforo();
-                        dialogo.getDisplayTiempo().setLcdValue(T_ANTES_ACELERAR - contadorTemporizacion);
-                        dialogo.getRadialTacometro().setValue(rpm);
+                        dialogoVariable.getDisplayTiempo().setLcdValue(T_ANTES_ACELERAR - contadorTemporizacion);
+                        dialogoVariable.getRadialTacometro().setValue(rpm);
                         if (simulacion == true) {
                             simuladasRalenti = true;//subida aceleracion = false EL SIMULADOR EMPIEZA A RETORNAR LA VELOCIDAD RALENTI                        
                             rpm = (int) rpmSimuladas;
@@ -403,7 +404,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
 
                     Thread.sleep(10);
                     if (!(contadorTemporizacion >= T_ANTES_ACELERAR)) {
-                        JOptionPane.showMessageDialog(dialogo, "MANTENGA EL VEHICULO EN RALENTI HASTA QUE SE LE INDIQUE QUE ACELERE\n ");
+                        JOptionPane.showMessageDialog(dialogoVariable, "MANTENGA EL VEHICULO EN RALENTI HASTA QUE SE LE INDIQUE QUE ACELERE\n ");
                         ciclos = 0;
                         continue;
                     }
@@ -427,7 +428,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                         rpm = medidorRevTemp.getRpm();
                     }
                     System.err.println("CICLO: " + ciclos);
-                    dialogo.getDisplayTiempo().setLcdValue(contadorTemporizacion);
+                    dialogoVariable.getDisplayTiempo().setLcdValue(contadorTemporizacion);
                     if (simulacion == true) {
                         rpm = (int) rpmSimuladas;
                     } else {
@@ -439,20 +440,20 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                     //----------------------------------------------------------
                     contadorTemporizacion = 0;
                     while (contadorTemporizacion < 5 && rpm <= (velocidadCrucero - Opacimetro.LIMITE_RANGO_CICLOS)) {
-                        dialogo.getDisplayTiempo().setLcdValue(contadorTemporizacion);
+                        dialogoVariable.getDisplayTiempo().setLcdValue(contadorTemporizacion);
                         if (simulacion == true) {
                             rpm = (int) rpmSimuladas;
                         } else {
                             rpm = medidorRevTemp.getRpm();
                         }
-                        dialogo.getRadialTacometro().setValue(rpm);
+                        dialogoVariable.getRadialTacometro().setValue(rpm);
                         Thread.sleep(10);
 
                     }//end of while
 
                     Thread.sleep(10);
                     if (contadorTemporizacion >= 5) {
-                        JOptionPane.showMessageDialog(dialogo, "SE LE INFORMA QUE EL VEHICULO NO ALCANZA LAS RPM GOBERNADAS EN MENOS DE 5 SEGUNDOS ");
+                        JOptionPane.showMessageDialog(dialogoVariable, "SE LE INFORMA QUE EL VEHICULO NO ALCANZA LAS RPM GOBERNADAS EN MENOS DE 5 SEGUNDOS ");
                         //dialogo.setVisible(false);
                         d.setVisible(false);
                         numeroPruebasUnitarias++;
@@ -461,8 +462,8 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                         if (procesandoValorMinimo()) {
                             if (procesandoValorMaximo()) {
                                 mostrarDlgCiclos();
-                                dialogo.repintarRangos(velocidadRalenti, velocidadCrucero);
-                                dialogo.getDisplayTemperatura().setLcdValue(temp);
+                                dialogoVariable.repintarRangos(velocidadRalenti, velocidadCrucero);
+                                dialogoVariable.getDisplayTemperatura().setLcdValue(temp);
                                 continue;
                             } else {
                                 throw new FallaAjusteInicialException();
@@ -472,8 +473,8 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                         }
                     }
 
-                    dialogo.getLabelMensaje().setText("CICLO: " + ciclos + " GOBERNADAS");
-                    dialogo.getDisplayTiempo().setLcdColor(LcdColor.BLUE2_LCD);
+                    dialogoVariable.getLabelMensaje().setText("CICLO: " + ciclos + " GOBERNADAS");
+                    dialogoVariable.getDisplayTiempo().setLcdColor(LcdColor.BLUE2_LCD);
                     if (simulacion == true) {
                         rpm = (int) rpmSimuladas;
                     } else {
@@ -492,8 +493,8 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                         double tiempoTranscurrido = (((tiempoActual - tiempoGobernada)+500) / 1000);
                         
                         Thread.sleep(10);
-                        dialogo.getDisplayTiempo().setLcdValue(tiempoTranscurrido);
-                        dialogo.getRadialTacometro().setValue(rpm);
+                        dialogoVariable.getDisplayTiempo().setLcdValue(tiempoTranscurrido);
+                        dialogoVariable.getRadialTacometro().setValue(rpm);
                         if (simulacion == true) {
                             rpm = (int) rpmSimuladas;
                         } else {
@@ -514,15 +515,15 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                     }//end while
                     Thread.sleep(10);//punto de cancelacion
                     if (contadorTemporizacion < 2) {
-                        JOptionPane.showMessageDialog(dialogo, "VEHICULO SOLO MANTUVO RPM GOBERNADAS DURANTE : " + contadorTemporizacion + "SEGUNDO(S)");
+                        JOptionPane.showMessageDialog(dialogoVariable, "VEHICULO SOLO MANTUVO RPM GOBERNADAS DURANTE : " + contadorTemporizacion + "SEGUNDO(S)");
                         numeroPruebasUnitarias++;
                         actualizarCausasAborto(CausasAbortoDiesel.FALLA_ACELERACION_GOBERNADA);
                         ciclos = 0;
                         // break;
                     }//end if
-                    dialogo.getDisplayTiempo().setLcdColor(LcdColor.RED_LCD);
-                    dialogo.getLedRojo().setLedOn(true);
-                    dialogo.getLedVerde().setLedOn(false);
+                    dialogoVariable.getDisplayTiempo().setLcdColor(LcdColor.RED_LCD);
+                    dialogoVariable.getLedRojo().setLedOn(true);
+                    dialogoVariable.getLedVerde().setLedOn(false);
                     if (simulacion == true) {
                         contadorSimulacion = 0;
                         simuladasRalenti = true;
@@ -531,7 +532,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                     } else {
                         rpm = medidorRevTemp.getRpm();
                     }
-                    dialogo.getLabelMensaje().setText("CICLO: " + ciclos + " SUELTE EL PEDAL POR FAVOR");
+                    dialogoVariable.getLabelMensaje().setText("CICLO: " + ciclos + " SUELTE EL PEDAL POR FAVOR");
                     long tiempoInicial = System.currentTimeMillis();
                     while (true) {
                         // Calcular el tiempo transcurrido en segundos
@@ -546,10 +547,10 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                             rpm = medidorRevTemp.getRpm();
                         }
 
-                        dialogo.getRadialTacometro().setValue(rpm);
-                        dialogo.getDisplayTiempo().setLcdValue(tiempoTranscurrido);
+                        dialogoVariable.getRadialTacometro().setValue(rpm);
+                        dialogoVariable.getDisplayTiempo().setLcdValue(tiempoTranscurrido);
                         temp = medidorRevTemp.getTemp();
-                        dialogo.getDisplayTemperatura().setLcdValue(temp);
+                        dialogoVariable.getDisplayTemperatura().setLcdValue(temp);
 
                         // Salir del bucle después de 15 segundos
                         if (tiempoTranscurrido >= 15) {
@@ -569,7 +570,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                     Thread.sleep(50);
                     if (ciclos == 0) {
                         System.out.println("Esperando a que la recoleccion termine");
-                        dialogo.getLabelMensaje().setText("Esperando Datos ...");
+                        dialogoVariable.getLabelMensaje().setText("Esperando Datos ...");
                         listaCiclo0 = hiloTomaDatos.getListaOpacidad();
                         //gob0 =rpm;
                         System.out.println("Datos del ciclo 0 Recolectados");
@@ -578,7 +579,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                     if (ciclos == 1) {
                         //listaCiclo1 = hiloTomaDatos.getListaOpacidad();
                         System.out.println("Esperando a que la recoleccion termine");
-                        dialogo.getLabelMensaje().setText("ESPERANDO DATOS CICLO 1...!");
+                        dialogoVariable.getLabelMensaje().setText("ESPERANDO DATOS CICLO 1...!");
                         listaCiclo1 = hiloTomaDatos.getListaOpacidad();//se bloquea hasta que el otro hilo se detenga,,, ¿que pasa si ya termino?
                         //gob1=rpm;
                         System.out.println("Datos del ciclo 1 Recolectados");
@@ -586,7 +587,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                     }
                     if (ciclos == 2) {
                         System.out.println("Esperando a que la recoleccion termine");
-                        dialogo.getLabelMensaje().setText("ESPERANDO DATOS CICLO 2...!");
+                        dialogoVariable.getLabelMensaje().setText("ESPERANDO DATOS CICLO 2...!");
                         listaCiclo2 = hiloTomaDatos.getListaOpacidad();
                         //gob2=rpm;
                         System.out.println("Datos del ciclo 2 recolectados");
@@ -594,7 +595,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                     }
                     if (ciclos == 3) {
                         System.out.println("Esperando a que la recoleccion termine");
-                        dialogo.getLabelMensaje().setText("ESPERANDO DATOS CICLO 3...!");
+                        dialogoVariable.getLabelMensaje().setText("ESPERANDO DATOS CICLO 3...!");
                         listaCiclo3 = hiloTomaDatos.getListaOpacidad();
                         //gob3=rpm;
                         System.out.println("Datos del ciclo 3 Recolectados");
@@ -703,7 +704,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                 //-------------------------------------------------------------
                 med = opacimetro.obtenerDatos();
                 contadorTemporizacion = 0;
-                dialogo.setVisible(false);
+                dialogoVariable.setVisible(false);
 
                 ShiftRegister shiftRegister = new ShiftRegister(10, 0);
                 while (contadorTemporizacion <= 5) {
@@ -732,6 +733,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                         String serialEquipo = "";
                         try {
                             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+                            System.out.println("-----Serial encontrado:\n"+serialEquipo);
                         } catch (Exception e) {
                             serialEquipo = "Serial no Encontrado ";
                         }
@@ -906,8 +908,8 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
             throw new CancellationException("Prueba Cancelada");
         } finally {
             timer.stop();
-            if (dialogo != null) {
-                dialogo.cerrar();
+            if (dialogoVariable != null) {
+                dialogoVariable.cerrar();
                 d.dispose();
             }
             liberarRecursos();
@@ -918,25 +920,25 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
     private void semaforo() {
 
         if (contadorTemporizacion == (T_ANTES_ACELERAR - 5)) {
-            dialogo.getLabelMensaje().setText("5s  RESTANTES");
-            dialogo.getDisplayTiempo().setLcdColor(LcdColor.RED_LCD);
-            dialogo.getLedRojo().setLedOn(true);
-            dialogo.getLedAmarillo().setLedOn(false);
-            dialogo.getLedVerde().setLedOn(false);
+            dialogoVariable.getLabelMensaje().setText("5s  RESTANTES");
+            dialogoVariable.getDisplayTiempo().setLcdColor(LcdColor.RED_LCD);
+            dialogoVariable.getLedRojo().setLedOn(true);
+            dialogoVariable.getLedAmarillo().setLedOn(false);
+            dialogoVariable.getLedVerde().setLedOn(false);
         }
         if (contadorTemporizacion == (T_ANTES_ACELERAR - 2)) {
-            dialogo.getLabelMensaje().setText("PREPARESE");
-            dialogo.getLedAmarillo().setLedOn(true);
+            dialogoVariable.getLabelMensaje().setText("PREPARESE");
+            dialogoVariable.getLedAmarillo().setLedOn(true);
             //dialogo.getDisplayTiempo().setLcdColor(LcdColor.YELLOW_LCD);
-            dialogo.getLedRojo().setLedOn(false);
-            dialogo.getLedVerde().setLedOn(false);
+            dialogoVariable.getLedRojo().setLedOn(false);
+            dialogoVariable.getLedVerde().setLedOn(false);
         }
         if (contadorTemporizacion == (T_ANTES_ACELERAR)) {
-            dialogo.getDisplayTiempo().setLcdColor(LcdColor.YELLOW_LCD);
-            dialogo.getLedVerde().setLedOn(true);
-            dialogo.getLedRojo().setLedOn(false);
-            dialogo.getLedAmarillo().setLedOn(false);
-            dialogo.getLabelMensaje().setText("POR FAVOR ACELERE!!!");
+            dialogoVariable.getDisplayTiempo().setLcdColor(LcdColor.YELLOW_LCD);
+            dialogoVariable.getLedVerde().setLedOn(true);
+            dialogoVariable.getLedRojo().setLedOn(false);
+            dialogoVariable.getLedAmarillo().setLedOn(false);
+            dialogoVariable.getLabelMensaje().setText("POR FAVOR ACELERE!!!");
         }
     }
 
@@ -1224,11 +1226,11 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
         recuadroSiNo(
             "3.1.3.12.1. ¿Observo alguna anomalia visible o sonora durante la etapa de aceleracion lenta y controlada?"//mensaje recuadro
             , 
-            "Condiciones anormales en la etapa de ralenti segun el numeral 3.1.3.12.1"//defecto que se insertara los comentarios del fur
+            "Indicación visible o sonora que pone en duda las condiciones normales del motor 3.1.3.12.1"//defecto que se insertara los comentarios del fur
         );
         recuadroSiNo(   
             "3.1.3.12.2 ¿Hubo algún indicio de que la capacidad limitadora del sistema de inyección de"+ 
-            "combustible no está operando, o que se esté presentando algún daño en el motor o alguna"+
+            "combustible no está operando, o que se esté presentando algún daño en el motor o alguna "+
             "condición insegura para el personal o el equipo ?" //mensaje recuadro
             , 
             "Problemas en el sistema de inyección de combustible que limita la velocidad maxima "+
@@ -1282,6 +1284,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
         String serialEquipo = "";
         try {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+            System.out.println("-----Serial encontrado:\n"+serialEquipo);
         } catch (Exception e) {
             serialEquipo = "Serial no Encontrado ";
         }
@@ -1862,7 +1865,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
         }
         String dia = String.valueOf(cal.get(Calendar.DATE));
         String hora = " Hora: ".concat(String.valueOf(cal.get(Calendar.HOUR_OF_DAY)).concat(":").concat(String.valueOf(cal.get(Calendar.MINUTE))));
-        pw.printf("%s\t\n", " SERIAL DEL OPACIMETRO " + String.valueOf(WorkerCiclosDiesel.serialEquipo) + "\n");
+        pw.printf("%s\t\n", " SERIAL DEL OPACIMETRO " + String.valueOf(WorkerCiclosDiesel.serialEquipoVariable) + "\n");
         pw.printf("%s%s%s%s\t\n", "Fecha Generacion: ".concat(fecha.trim()), mes.trim(), dia, hora + "\n");
         try {
             //Generar el archivo txt de la entrada, la entrada corregida y la salida
@@ -1889,7 +1892,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
-        pw.printf("%s\t\n", " SERIAL DEL OPACIMETRO " + String.valueOf(WorkerCiclosDiesel.serialEquipo) + "");
+        pw.printf("%s\t\n", " SERIAL DEL OPACIMETRO " + String.valueOf(WorkerCiclosDiesel.serialEquipoVariable) + "");
         pw.printf("%s%s%s%s\t\n", "Fecha Generacion: ".concat(fecha.trim()), mes.trim(), dia, hora + "");
         try {
             pw.printf("%s\t\n", "-.** Prueba Aplicada a la Placa:  .-** ".concat(WorkerCiclosDiesel.placas).concat(".-** \n"));
@@ -1916,7 +1919,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
             ex.printStackTrace(System.err);
         }
         try {
-            pw.printf("%s\t\n", " SERIAL DEL OPACIMETRO " + String.valueOf(WorkerCiclosDiesel.serialEquipo) + "\n");
+            pw.printf("%s\t\n", " SERIAL DEL OPACIMETRO " + String.valueOf(WorkerCiclosDiesel.serialEquipoVariable) + "\n");
             pw.printf("%s\t\n", "-.** Prueba Aplicada a la Placa:  .-** ".concat(WorkerCiclosDiesel.placas).concat(".-** \n"));
             double tR = 0.0;
             pw.printf("%s%s%s%s\t\n", "Fecha Generacion: ".concat(fecha.trim()), mes.trim(), dia, hora + "\n");
@@ -1941,7 +1944,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
             ex.printStackTrace(System.err);
         }
         try {
-            pw.printf("%s\t\n", " SERIAL DEL OPACIMETRO " + String.valueOf(WorkerCiclosDiesel.serialEquipo) + "\n");
+            pw.printf("%s\t\n", " SERIAL DEL OPACIMETRO " + String.valueOf(WorkerCiclosDiesel.serialEquipoVariable) + "\n");
             pw.printf("%s\t\n", "-.** Prueba Aplicada a la Placa:  .-** ".concat(WorkerCiclosDiesel.placas).concat(".-** \n"));
             double tR = 0.0;
             pw.printf("%s%s%s%s\t\n", "Fecha Generacion: ".concat(fecha.trim()), mes.trim(), dia, hora + "\n");
@@ -2206,20 +2209,21 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
     private void mostrarDlgCiclos() {
 
         d = new JDialog();
-        dialogo = new DialogoCiclosAceleracion(900, 1200);
-        d.getContentPane().add(dialogo);
+        dialogoVariable = new DialogoCiclosAceleracion(900, 1200);
+        d.getContentPane().add(dialogoVariable);
         d.setSize(d.getToolkit().getScreenSize());
         d.setResizable(false);
         d.setTitle(" SART 1.7.3 PRUEBA DE DIESEL EVALUACION DE CICLOS");
         d.setModal(true);
-        d.setLocationRelativeTo(dialogo);
+        d.setLocationRelativeTo(dialogoVariable);
         d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         for (ActionListener al : panel.getButtonFinalizar().getActionListeners()) {
-            dialogo.getButtonCancelar().addActionListener(al);
+            Utilidades.setIdUsuarioMotos(idUsuario);
+            dialogoVariable.getButtonCancelar().addActionListener(al);
         }
-        dialogo.getButtonCambiarRpms().setText("Falla subita del motor");
+        dialogoVariable.getButtonCambiarRpms().setText("Falla subita del motor");
         for (ActionListener al : panel.getButtonRpm().getActionListeners()) {
-            dialogo.getButtonCambiarRpms().addActionListener(al);
+            dialogoVariable.getButtonCambiarRpms().addActionListener(al);
         }
         SwingUtilities.invokeLater(new Runnable() {
             @Override

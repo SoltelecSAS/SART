@@ -61,7 +61,7 @@ public class PruebaDefaultDAO {
        
         System.out.println("VOY A GUARDAR MEDIDAS ..");
         repetirPrueba = medidasDAO.guardarMedidas(prueba, idPrueba, lugarTomaDatos);
-         System.out.println("YA DEBI  GUARDAR MEDIDAS ..!");
+         System.out.println("YA DEBI  GUARDAR MEDIDAS para la placa:  "+placa+"  ..!");
          List<Integer> lstDef = prueba.getDefectos(placa);
         boolean escTran = true;
         if (aplicTrans == 1 && prueba.getAprobada().equalsIgnoreCase("N")) 

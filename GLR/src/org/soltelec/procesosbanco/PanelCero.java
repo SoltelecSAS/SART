@@ -60,7 +60,7 @@ public class PanelCero extends JFrame implements ActionListener, Runnable {
         barraTiempo = new JProgressBar();
         barraTiempo.setBorderPainted(true);
         barraTiempo.setStringPainted(true);
-        barraTiempo.setMaximum(30);
+        barraTiempo.setMaximum(100);
         this.add(barraTiempo, c);
     }
 
@@ -79,9 +79,10 @@ public class PanelCero extends JFrame implements ActionListener, Runnable {
                 banco.encenderBombaMuestras(true);
                 barraTiempo.setStringPainted(true);
                 while (contadorTimer < 31) {
+                    int porcentaje = (int) ((contadorTimer / 30.0) * 100);
                     System.out.println("Contando .." + contadorTimer);
                     barraTiempo.setValue(contadorTimer);
-                    barraTiempo.setString(String.valueOf(contadorTimer).concat("%."));
+                    barraTiempo.setString(String.valueOf(porcentaje).concat("%."));
                     Thread.sleep(120);
                     if (contadorTimer > 27) {
                         labelMensaje.setText("Estabilizando");
@@ -91,6 +92,7 @@ public class PanelCero extends JFrame implements ActionListener, Runnable {
                         labelMensaje.setText("Enviando Comando de Cero");
                     }
                 }
+                
                 MedicionGases medicion = banco.obtenerDatos();
                 Thread.sleep(300);
                 System.out.println("HC IS " + medicion.getValorHC() + " CO: " + medicion.getValorCO() + " CO2: " + medicion.getValorCO2() + " O2:" + medicion.getValorO2());
@@ -105,12 +107,12 @@ public class PanelCero extends JFrame implements ActionListener, Runnable {
                 timer.stop();
             } else if (banco instanceof BancoCapelec) {
                 labelMensaje.setText("Ingresando aire limpio");
-                barraTiempo.setMaximum(30);
+                barraTiempo.setMaximum(100);
 
                 timer.start();
                 banco.encenderSolenoideUno(true);
                 banco.encenderBombaMuestras(true);
-                while (contadorTimer < 31) {
+                /* while (contadorTimer < 31) {
                     System.out.println("Contando .." + contadorTimer);
                     barraTiempo.setValue(contadorTimer);
                     barraTiempo.setString(String.valueOf(contadorTimer).concat("%."));
@@ -120,6 +122,24 @@ public class PanelCero extends JFrame implements ActionListener, Runnable {
                         banco.encenderBombaMuestras(false);
                         banco.encenderSolenoideUno(false);
                     } else if (contadorTimer > 27) {
+                        labelMensaje.setText("Enviando Comando de Cero");
+                        barraTiempo.setString(" ");
+                    }
+                } */
+                while (contadorTimer < 31) {
+                    int porcentaje = (int) ((contadorTimer / 30.0) * 100); // Conversión a porcentaje
+                    System.out.println("Contando .. " + contadorTimer);
+                    
+                    barraTiempo.setValue(porcentaje); // Establece el valor de la barra en porcentaje
+                    barraTiempo.setString(porcentaje + "%. "+contadorTimer+"s");
+                    
+                    Thread.sleep(120);
+                    
+                    if (contadorTimer > 27) {
+                        labelMensaje.setText("Estabilizando");
+                        banco.encenderBombaMuestras(false);
+                        banco.encenderSolenoideUno(false);
+                    } else if (contadorTimer > 27) { // Esta condición es redundante, la he ajustado más abajo
                         labelMensaje.setText("Enviando Comando de Cero");
                         barraTiempo.setString(" ");
                     }

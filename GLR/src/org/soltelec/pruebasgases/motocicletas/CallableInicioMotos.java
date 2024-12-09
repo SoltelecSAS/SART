@@ -261,10 +261,8 @@ public class CallableInicioMotos implements Callable<Void> {
 //                    }
 //                });
                 //panel.getBtnWorkerCicloMotos().doClick();
-                panel.getBtnWorkerCicloMotos().setVisible(true);
 
                 panel.getButtonRpm().setVisible(true);
-                panel.getBtnWorkerCicloMotos().setVisible(true);
                 panel.getButtonRpm().addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {

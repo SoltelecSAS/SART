@@ -93,7 +93,7 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
     private final DecimalFormat df2;
     public static int aplicTrans = 1;
     public static String ipEquipo = "";
-    public static String serialEquipo = "";
+    public static String serialEquipoVariable = "";
     public static String placas = "";
     public MedidorRevTemp medidorRevTemp;
     public double temp_motor;
@@ -121,7 +121,7 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
         }
         df2.setMinimumFractionDigits(2);//muestre siempre dos digitos decimales
         df2.setMaximumFractionDigits(2);//muestre siempre dos digitos decimales
-        serialEquipo = cargarSerial();
+        
         this.tempAmbiente = tempAmbiente;
         this.humedadAmbiente = humedadAmbiente;
     }
@@ -135,7 +135,6 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
         df2.setMinimumFractionDigits(2);//muestre siempre dos digitos decimales
         df2.setMaximumFractionDigits(2);//muestre siempre dos digitos decimales
          */
-        serialEquipo = cargarSerial();
         try {
             mostrarDialogoRPM();//Abre un dialogo par la seleccion del dispositivo con el que se miden las revoluciones.
             
@@ -147,6 +146,8 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
             System.out.println("Multiplicador :" + dialogRPMTemp.isUsaMultiplicador());
 
             Utilidades.setMetodoMedicionRpmDiesel(dialogRPMTemp.getMetodoMedicion());
+
+            serialEquipoVariable = cargarSerial();
 
             int numeroCilindros = dialogRPMTemp.getNumeroCilindros();//variable de clase??
             String equipoMedicion = dialogRPMTemp.getEquipo();
@@ -198,6 +199,7 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
             int numeroCilindros = dialogRPMTemp.getNumeroCilindros();//variable de clase??
             String equipoMedicion = dialogRPMTemp.getEquipo();
             String metodoMedicion = dialogRPMTemp.getMetodoMedicion();
+            Utilidades.setMetodoMedicionRpmDiesel(dialogRPMTemp.getMetodoMedicion());
             boolean multiplicador = dialogRPMTemp.isUsaMultiplicador();
             boolean simulacion = dialogRPMTemp.simulacion;
             List<MedidaGeneral> listaMedidas = null;//Una lista de listas conteniendo las medidas de los tres ciclos de opacidad.
@@ -776,7 +778,7 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
                 instruccion2.setString(1, "N");
             }
             instruccion2.setLong(2, idUsuario);
-            instruccion2.setString(3, serialEquipo);
+            instruccion2.setString(3, serialEquipoVariable);
             instruccion2.setLong(4, idPrueba);
             instruccion2.executeUpdate();
             //insertar el unico defecto que corresponde con gases
@@ -791,10 +793,18 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
             statement2 = "UPDATE pruebas SET Autorizada = 'A',usuario_for = ?,serialEquipo = ? WHERE pruebas.Id_Pruebas = ?";
             PreparedStatement instruccion2 = conexion.prepareStatement(statement2);
             instruccion2.setLong(1, idUsuario);
-            instruccion2.setString(2, serialEquipo);
+            instruccion2.setString(2, serialEquipoVariable);
             instruccion2.setLong(3, idPrueba);
             int executeUpdate = instruccion2.executeUpdate();
         }
+
+        serialEquipoVariable = cargarSerial();
+        statement2 = "UPDATE pruebas SET serialEquipo = ? WHERE Id_Pruebas = ?";
+        PreparedStatement instruccion2 = conexion.prepareStatement(statement2);
+        instruccion2.setString(1, serialEquipoVariable);
+        instruccion2.setLong(2, idPrueba);
+        instruccion2.executeUpdate();
+
         conexion.commit();
         conexion.setAutoCommit(true);
         conexion.close();
@@ -817,10 +827,22 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
             conexionGlobal.setAutoCommit(false);
             // actualizarDiametroExostoVehiculo(idHojaPrueba, diametroExosto);
             insertarMedidas(cargarTipoYMedida(listaMedidas), idPrueba);
-            updatePruebaDB(idUsuario, serialEquipo, idPrueba);
+            updatePruebaDB(idUsuario, serialEquipoVariable, idPrueba);
             conexionGlobal.commit();
             conexionGlobal.setAutoCommit(true);
             conexionGlobal.close();
+
+            try {
+                serialEquipoVariable = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+            } catch (IOException ex) {
+                java.util.logging.Logger.getLogger(WorkerCiclosDiesel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            String updateSerial = "UPDATE pruebas SET serialEquipo = ? WHERE Id_Pruebas = ?";
+            PreparedStatement instruccion2 = Conex.getConnection().prepareStatement(updateSerial);
+            instruccion2.setString(1, serialEquipoVariable);
+            instruccion2.setLong(2, idPrueba);
+            instruccion2.executeUpdate();
+
             System.out.println("Medidas Registradas con Exito");
         } catch (SQLException e) {
             System.out.println("Error en el metodo : registrarMedidasRechazada()");

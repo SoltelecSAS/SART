@@ -176,6 +176,7 @@ public class RegistrarMedidas {
         System.out.println("--------------------------REGISTRANDO EN registrarPruebaFinalizada---------------------------------");
         try {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+            System.out.println("-----Serial encontrado:\n"+serialEquipo);
             System.out.println(" LECTURA SERIAL");
         } catch (Exception e) {
             System.out.println(" ME CAI CON " + e.getMessage());
@@ -225,6 +226,7 @@ public class RegistrarMedidas {
         System.out.println("--------------------------REGISTRANDO EN registrarPruebaFinalizadaConObservacion---------------------------------");
         try {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+            System.out.println("-----Serial encontrado:\n"+serialEquipo);
             System.out.println(" LECTURA SERIAL");
         } catch (Exception e) {
             System.out.println(" ME CAI CON " + e.getMessage());
@@ -275,7 +277,7 @@ public class RegistrarMedidas {
         System.out.println("--------------------------REGISTRANDO EN registrarPruebaSoloConObservacion---------------------------------");
         try {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
-            System.out.println(" LECTURA SERIAL");
+            System.out.println("-----Serial encontrado:\n"+serialEquipo);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
             e.printStackTrace();
@@ -309,6 +311,7 @@ public class RegistrarMedidas {
         String serialEquipo = "";
         try {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+            System.out.println("-----Serial encontrado:\n"+serialEquipo);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
             e.printStackTrace();
@@ -336,6 +339,7 @@ public class RegistrarMedidas {
         String serialEquipo = "";
         try {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+            System.out.println("-----Serial encontrado:\n"+serialEquipo);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
             e.printStackTrace();
@@ -361,6 +365,7 @@ public class RegistrarMedidas {
         String serialEquipo = "";
         try {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+            System.out.println("-----Serial encontrado:\n"+serialEquipo);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
             e.printStackTrace();
@@ -387,6 +392,7 @@ public class RegistrarMedidas {
         String serialEquipo = "";
         try {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+            System.out.println("-----Serial encontrado:\n"+serialEquipo);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
             e.printStackTrace();
@@ -458,6 +464,7 @@ public class RegistrarMedidas {
         String serialEquipo = "";
         try {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+            System.out.println("-----Serial encontrado:\n"+serialEquipo);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
             e.printStackTrace();
@@ -545,6 +552,7 @@ public class RegistrarMedidas {
             String serialEquipo = "";
             try {
                 serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+                System.out.println("-----Serial encontrado:\n"+serialEquipo);
 
             } catch (Exception e) {
                 serialEquipo = "Serial no encontrado";
@@ -600,6 +608,7 @@ public class RegistrarMedidas {
             String serialEquipo = "";
             try {
                 serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+                System.out.println("-----Serial encontrado:\n"+serialEquipo);
 
             } catch (Exception e) {
                 serialEquipo = "Serial no encontrado";
@@ -817,6 +826,7 @@ public class RegistrarMedidas {
         String serialEquipo = "";
         try {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+            System.out.println("-----Serial encontrado:\n"+serialEquipo);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
             e.printStackTrace();

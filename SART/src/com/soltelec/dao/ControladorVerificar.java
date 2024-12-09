@@ -8,6 +8,7 @@ import com.soltelec.ci2.ClienteCi2;
 import com.soltelec.ci2.Pin;
 import com.soltelec.ci2.RespuestaDTO;
 import com.soltelec.ci2.Mensajes;
+import com.soltelec.conexion_seriales.Conexion;
  
 
 import com.soltelec.dao.conexion.PersistenceController;
@@ -20,6 +21,7 @@ import com.soltelec.model.TipoPrueba;
 import com.soltelec.model.Usuarios;
 import com.soltelec.model.Vehiculos;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -102,7 +104,8 @@ public class ControladorVerificar {
     }//end of method
 
     public int extraerIdPrueba(int idHojaPrueba, int tipoPrueba, EntityManager em)  {       
-        int idPrueba=-1;       
+        if (tipoPrueba == 8 && esAprobadaEnGases(idHojaPrueba)) return -2;
+        int idPrueba=-1;  
         try {
             idPrueba = getPruebaNoFinalizadaTipo(idHojaPrueba, tipoPrueba, em);
         } catch (Exception ex) {
@@ -110,6 +113,38 @@ public class ControladorVerificar {
         }
         System.out.println("id de la prueba cuando se busca suspension: "+ idPrueba  );
         return idPrueba;
+    }
+
+
+    public boolean esAprobadaEnGases(int idHojaPrueba) {
+        String consulta =   "SELECT p.* FROM pruebas p \n" + //
+                            "INNER JOIN hoja_pruebas hp on hp.TESTSHEET = p.hoja_pruebas_for\n" + //
+                            "WHERE hp.TESTSHEET = ? AND p.Aprobada = 'Y' AND p.Abortada = 'N' AND p.Tipo_prueba_for = 8\n" + //
+                            "ORDER BY p.Fecha_prueba DESC;";
+    
+        Conexion.setConexionFromFile();
+    
+        try (Connection conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContrasena());
+             PreparedStatement consultaPruebas = conexion.prepareStatement(consulta)) {
+    
+            // Añadir parámetros de la consulta (los que aparecen como ? en la consulta)
+            consultaPruebas.setInt(1, idHojaPrueba);
+    
+            // rc representa el resultado de la consulta
+            try (ResultSet rc = consultaPruebas.executeQuery()) {
+                while (rc.next()) {
+    
+                    return true;
+    
+                    
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        // Si todas las pruebas han sido vistas y aprobadas
+        return false;
     }
 
     public Vehiculos getTipoVehiculo(String placa, EntityManager em) {

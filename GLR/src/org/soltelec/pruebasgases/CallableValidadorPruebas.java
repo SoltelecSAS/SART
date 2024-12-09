@@ -57,7 +57,7 @@ public class CallableValidadorPruebas implements Callable<List<String>> {
     private int contadorTemporizacion;
     private final BancoGasolina banco;
     private Boolean converCatalitico;
-    String forMed;
+    String forMedTemp;
     Integer tempStored = 0;
     private SimuladorRpm simuladorRpm;//clase para simular las revoluciones
     boolean simulacion =false;
@@ -114,12 +114,12 @@ public class CallableValidadorPruebas implements Callable<List<String>> {
             switch (strSeleccion) {
                 case "Temperatura de Aceite":
                     LIM_TEMP = BancoGasolina.LIM_TEMP;
-                    forMed = "A";
+                    forMedTemp = "A";
                     converCatalitico = false;
                     break;
                 case "Temperatura de Bloque":
                     LIM_TEMP = BancoGasolina.LIM_TEMP_BLOQUE;
-                    forMed = "B";
+                    forMedTemp = "B";
                     converCatalitico = false;
                     break;
                 default:
@@ -127,7 +127,7 @@ public class CallableValidadorPruebas implements Callable<List<String>> {
                     if (result == 0) {
                         LIM_TEMP = 0;
                     }
-                    forMed = "C";
+                    forMedTemp = "C";
                     converCatalitico = true;
                     break;
             }// fin del switch
@@ -152,13 +152,13 @@ public class CallableValidadorPruebas implements Callable<List<String>> {
                 }
             }
             if (LIM_TEMP == 0) {
-                forMed = "C";
+                forMedTemp = "C";
                 tempStored = 0;
                 converCatalitico = true;
             }
         } catch (InterruptedException ex) {     }
         List<String> lstValMisc = new ArrayList();
-        lstValMisc.add(forMed);
+        lstValMisc.add(forMedTemp);
         lstValMisc.add(tempStored.toString());
         lstValMisc.add(converCatalitico.toString());
         if (this.simulacion == true) {

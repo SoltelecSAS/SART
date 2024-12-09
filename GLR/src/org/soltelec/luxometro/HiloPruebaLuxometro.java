@@ -39,6 +39,7 @@ import org.soltelec.componenteluces.LuzExploradora;
 import org.soltelec.pruebasgases.FrmComentario;
 import org.soltelec.util.Conex;
 import org.soltelec.util.ConsultarDatosVehiculo;
+import org.soltelec.util.Utilidades;
 
 public class HiloPruebaLuxometro implements Runnable, ActionListener
 {
@@ -2858,7 +2859,7 @@ public class HiloPruebaLuxometro implements Runnable, ActionListener
       }
       serialEquipo = serialEquipo;
       boolean escrTrans = false;
-      if ((aplicTrans == 1) && (aprobada == true))
+      if ((aplicTrans == 1) && (aprobada))
       {
         escrTrans = true;
       }
@@ -2868,62 +2869,84 @@ public class HiloPruebaLuxometro implements Runnable, ActionListener
 
       registrarMedidasSimultaneas(mayorSuma, simultaneas);
       int i;
-      if (escrTrans == true)
-      {
-        String statement2;
-        if (aprobada)
-          statement2 = "UPDATE pruebas SET Finalizada = 'Y',Aprobada ='Y',Abortada='N',usuario_for = ?,serialEquipo = ? ,observaciones = ? WHERE pruebas.Id_Pruebas = ?";
-        else {
-          statement2 = "UPDATE pruebas SET Finalizada = 'Y',Aprobada ='N',Abortada='N',usuario_for = ?,serialEquipo = ? ,observaciones = ? WHERE pruebas.Id_Pruebas = ?";
-        }
-        PreparedStatement instruccion2 = this.conexion.prepareStatement(statement2);
-        instruccion2.setLong(1, idUsuario);
-        instruccion2.setString(2, serialEquipo);
-        instruccion2.setString(3, this.lblObservacion.concat(this.lblExploradoras));
-        instruccion2.setLong(4, idPrueba.longValue());
-        i = instruccion2.executeUpdate();
-      }
-      else {
-        String statement2 = "UPDATE pruebas SET Autorizada = 'A',usuario_for = ?,serialEquipo = ? ,observaciones = ? WHERE pruebas.Id_Pruebas = ?";
-        PreparedStatement instruccion2 = this.conexion.prepareStatement(statement2);
-        instruccion2.setLong(1, idUsuario);
-        instruccion2.setString(2, serialEquipo);
-        instruccion2.setString(3, this.lblObservacion.concat(this.lblExploradoras));
-        instruccion2.setLong(4, idPrueba.longValue());
-        i = instruccion2.executeUpdate();
+      String statement;
+      boolean comentarioValido = false;
+      String comentario = null;
+
+      // Crear la consulta básica, y luego completarla según las condiciones
+      statement = "UPDATE pruebas SET usuario_for = ?, serialEquipo = ?, observaciones = ?, Finalizada = ?, Aprobada = ?, Abortada = ?, Autorizada = ? WHERE pruebas.Id_Pruebas = ?";
+
+      // Validar si se requiere comentario
+      if (org.soltelec.util.Mensajes.mensajePregunta("¿Desea Agregar un Comentario a la Prueba?")) {
+          comentario = obtenerComentarioValido();
+      } 
+
+      // En caso de no haber comentario, establecer las observaciones como nulas
+      String observacionFinal = (comentario != null) ? comentario : this.lblObservacion.concat(this.lblExploradoras);
+
+      // Determinar valores según la transacción
+      String finalizada = Utilidades.getIsEditable() == 1 && !aprobada ? "N" : "Y" ;
+      String esAprobada = aprobada ? "Y" : "N";
+      String abortada = "N";
+      String autorizada = Utilidades.getIsEditable() == 1 && !aprobada ? "A" : "N";
+
+      // Realizar el único `UPDATE` necesario
+      try (PreparedStatement instruccion = this.conexion.prepareStatement(statement)) {
+          instruccion.setLong(1, idUsuario);  // usuario_for
+          instruccion.setString(2, serialEquipo);  // serialEquipo
+          instruccion.setString(3, observacionFinal);  // observaciones
+          instruccion.setString(4, finalizada);  // Finalizada
+          instruccion.setString(5, esAprobada);  // Aprobada
+          instruccion.setString(6, abortada);  // Abortada
+          instruccion.setString(7, autorizada);  // Autorizada
+          instruccion.setLong(8, idPrueba.longValue());  // Id_Pruebas
+          
+          i = instruccion.executeUpdate();
+          this.conexion.commit();
+      } catch (SQLException e) {
+          this.conexion.rollback();
+          throw e;
+      } finally {
+          this.conexion.setAutoCommit(true);
+          this.conexion.close();
       }
 
-      this.conexion.commit();
-      this.conexion.setAutoCommit(true);
-      this.conexion.close();
+      // Actualizar lblObservacion solo una vez
       this.lblObservacion = this.lblObservacion.concat(this.lblExploradoras);
-      
-      /* if (org.soltelec.util.Mensajes.mensajePregunta("¿Desea Agregar un Comentario a la Prueba ?")) 
-      {
-        FrmComentario frm = new FrmComentario(SwingUtilities.getWindowAncestor(this.panelLuxometro), idPrueba, JDialog.DEFAULT_MODALITY_TYPE, this.lblObservacion);
-        frm.setVisible(true);
-        frm.setModal(true);
-      }else{ */
-          String statement2 = "UPDATE pruebas SET Autorizada = 'A',usuario_for = ?,serialEquipo = ? ,observaciones = NULL WHERE pruebas.Id_Pruebas = ?";
-        PreparedStatement instruccion2 = this.conexion.prepareStatement(statement2);
-        instruccion2.setLong(1, idUsuario);
-        instruccion2.setString(2, serialEquipo);
-          System.out.println("se realizo la edicion NULL");
-        //instruccion2.setString(3, this.lblObservacion.concat(this.lblExploradoras));
-        instruccion2.setLong(3, idPrueba.longValue());
-        i = instruccion2.executeUpdate();
-      //}
-      System.out.println("comentario es: " + this.lblObservacion);
-      if (escrTrans == true)
-        escrTrans1 = "E";
-      else {
-        escrTrans1 = "A";
+
+      // Determinar el valor de escrTrans1
+      escrTrans1 = (escrTrans) ? "E" : "A";
+
+      if (Utilidades.getIsEditable() == 0) {
+        Utilidades.verificarMedidasLuces(idPrueba);
       }
+
+      // Mostrar mensaje final
       com.soltelec.modulopuc.utilidades.Mensajes.messageDoneTime("Se ha REGISTRADO la Prueba de Luces para el Vehiculo de una manera Exitosa ..¡", 3);
     }
     catch (Exception localException1)
     {
     }
+  }
+
+  private String obtenerComentarioValido() {
+    String comentario = null;
+    boolean comentarioValido = false;
+
+    while (!comentarioValido) {
+        comentario = JOptionPane.showInputDialog(null, "Ingrese su comentario:", "Agregar Comentario", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Su comentario es: " + comentario + ".\nPresione aceptar para continuar.", "Información", JOptionPane.INFORMATION_MESSAGE);
+
+        if (comentario == null) {
+            JOptionPane.showMessageDialog(null, "Debe ingresar un comentario para continuar.", "Error", JOptionPane.ERROR_MESSAGE);
+        } else if (comentario.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "El comentario no puede estar vacío. Por favor ingrese un comentario válido.", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            comentarioValido = true;
+        }
+    }
+
+    return comentario;
   }
 
   private boolean utileriaGerencia() throws ClassNotFoundException, SQLException

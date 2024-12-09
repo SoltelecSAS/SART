@@ -370,11 +370,13 @@ public class CallableInicioDiesel implements Callable<Void> {
             panel.getPanelMensaje().updateUI();
             panel.getPanelMensaje().repaint();
             Thread.sleep(100);
-            panel.getPanelMensaje().setText("3.1.3.1 INSPECCION PREVIA \n ASEGURESE DE QUE : \n VEHICULO EN NEUTRO O EN POSICION DE PARQUEO "
-                    + "EMBRAGUE LIBRE DURANTE TODA LA PRUEBA  "
-                    + "RUEDAS DEL VEHICULO BLOQUEADAS, LUCES DEL VEHICULO ENCENDIDAS  "
-                    + "AIRE ACONDICIONADO Y PRECALENTAMIENTO DE AIRE APAGADOS, "
-                    + "FRENO DE MOTOR O ESCAPE DESACTIVADO.-");
+            panel.getPanelMensaje().setText("3.1.3 INSPECCION PREVIA \n ASEGURESE DE QUE CUMPLA CON 3.1.3.x:\n"
+                    + "1. y 2. Vehiculo en neutro y/o posicion de parqueo.\n"
+                    + "3. Ruedas del vehiculo deben estar bloqueadas o el vehiculo inmovil.\n"
+                    + "4. Las luces del vehiculo deben estar encendidas.\n"
+                    + "5. El sistema de aire acondicionado debe estar apagado.\n"
+                    + "6. Desactive el freno de motor o escape, si lo tiene.\n"
+                    + "7. Apague el sistema de precalentamiento del aire de admisión.\n");
             Thread.sleep(3900);
             panel.getPanelMensaje().add(icono, 0);
             fAlt = new Font(Font.SERIF, Font.BOLD, 61);

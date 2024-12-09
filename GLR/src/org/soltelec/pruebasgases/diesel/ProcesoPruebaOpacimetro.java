@@ -69,6 +69,7 @@ import org.soltelec.util.Conex;
 import org.soltelec.util.ConsultarDatosVehiculo;
 import org.soltelec.util.Mensajes;
 import org.soltelec.util.UtilPropiedades;
+import org.soltelec.util.Utilidades;
 
 /**
  * Clase para implementar el proceso de prueba de gases para vehiculos diesel
@@ -280,6 +281,7 @@ public class ProcesoPruebaOpacimetro implements Runnable, ActionListener {
                 numeroCilindros = dialogRPMTemp.getNumeroCilindros();
                 equipoMedicion = dialogRPMTemp.getEquipo();
                 metodoMedicion = dialogRPMTemp.getMetodoMedicion();
+                Utilidades.setMetodoMedicionRpmDiesel(dialogRPMTemp.getMetodoMedicion());
                 multiplicador = dialogRPMTemp.isUsaMultiplicador();
                 simulacion = dialogRPMTemp.simulacion;
                 if (simulacion) {//Proceso de la simulacion            
@@ -857,6 +859,7 @@ public class ProcesoPruebaOpacimetro implements Runnable, ActionListener {
             String serialEquipo = "";
             try {
                 serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+                System.out.println("-----Serial encontrado:\n"+serialEquipo);
             } catch (Exception e) {
                 serialEquipo = "Serial no encontrado";
                 e.printStackTrace();
@@ -1081,6 +1084,7 @@ public class ProcesoPruebaOpacimetro implements Runnable, ActionListener {
         String serialEquipo = "";
         try {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+            System.out.println("-----Serial encontrado:\n"+serialEquipo);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
             e.printStackTrace();
@@ -1185,6 +1189,7 @@ public class ProcesoPruebaOpacimetro implements Runnable, ActionListener {
         String serialEquipo = "";
         try {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+            System.out.println("-----Serial encontrado:\n"+serialEquipo);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
             e.printStackTrace();

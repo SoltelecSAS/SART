@@ -99,6 +99,7 @@ public class WorkerCruceroRalenti extends SwingWorker<Void, Void> {
         crearNuevoTimer();
         this.tempAmbiente = tempAmbiente;
         this.humedadAmbiente = humedadAmbiente;
+        Utilidades.setIdUsuarioMotos(usuario);
     }
 
     @Override
@@ -176,18 +177,15 @@ public class WorkerCruceroRalenti extends SwingWorker<Void, Void> {
 //        }  
         }
         try {
-            /* if (simulacion) {
-                Future<List<List<MedicionGases>>> futureSimulacion = executor.submit(new CallableSimulacionGasolina(panel, banco, idPrueba, idUsuario, idHojaPrueba));
-                panel.getButtonRpm().addActionListener(new ListenerCambioRpms(futureSimulacion, (MedidorRevTemp) banco, banco, panel, idUsuario));
-                panel.getButtonFinalizar().addActionListener(new ListenerCancelacionGases(futureSimulacion, idPrueba, banco, null, panel, idUsuario));
-                while (!futureSimulacion.isDone()) {
-                }
-                listaMedicionGases = futureSimulacion.get();//este metodo bloquea
-            }*/
 
             if (equipoMedicion.equals("banco") && simulacion == false) {
                 Future<List<String>> futureValidador = executor.submit(new CallableValidadorPruebas(panel, banco, (MedidorRevTemp) banco, simulacion));
-                panel.getButtonFinalizar().addActionListener(new ListenerCancelacionGases(futureValidador, idPrueba, banco, null, panel, idUsuario));
+                panel.getButtonFinalizar().addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        panel.cancelacion(); // Aquí llamas a tu método que realiza la cancelación.
+                    }
+                });
                 panel.getButtonRpm().addActionListener(new ListenerCambioRpms(futureValidador, (MedidorRevTemp) banco, banco, panel, idUsuario));
 
                 lstValMisc = futureValidador.get();
@@ -202,7 +200,12 @@ public class WorkerCruceroRalenti extends SwingWorker<Void, Void> {
                 }
 
                 Future<List<List<MedicionGases>>> futureBanco = executor.submit(new CallableCiclosGasolina(panel, banco, (MedidorRevTemp) banco, idPrueba, idUsuario, idHojaPrueba, lstValMisc.get(0), Integer.parseInt(lstValMisc.get(1)), Boolean.parseBoolean(lstValMisc.get(2)), this.placas, simulacion,tempAmbiente, humedadAmbiente));
-                panel.getButtonFinalizar().addActionListener(new ListenerCancelacionGases(futureBanco, idPrueba, banco, null, panel, idUsuario));
+                panel.getButtonFinalizar().addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        panel.cancelacion(); // Aquí llamas a tu método que realiza la cancelación.
+                    }
+                });
                 panel.getButtonRpm().addActionListener(new ListenerCambioRpms(futureBanco, (MedidorRevTemp) banco, banco, panel, idUsuario));
                 listaMedicionGases = futureBanco.get();
 
@@ -228,7 +231,12 @@ public class WorkerCruceroRalenti extends SwingWorker<Void, Void> {
                 JDialogReconfiguracionKit dlgReconfiguracion = new JDialogReconfiguracionKit(capelec, serialPort);
                 dlgReconfiguracion.setVisible(true);//se bloquea hasta que el kit este correctamente configurado
                 Future<List<String>> futureValidador = executor.submit(new CallableValidadorPruebas(panel, banco, capelec, simulacion));
-                panel.getButtonFinalizar().addActionListener(new ListenerCancelacionGases(futureValidador, idPrueba, banco, null, panel, idUsuario));
+                panel.getButtonFinalizar().addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        panel.cancelacion(); // Aquí llamas a tu método que realiza la cancelación.
+                    }
+                });
                 panel.getButtonRpm().addActionListener(new ListenerCambioRpms(futureValidador, capelec, banco, panel, idUsuario));
                 lstValMisc = futureValidador.get();
                 for (ActionListener al : panel.getButtonFinalizar().getActionListeners()) {
@@ -239,7 +247,12 @@ public class WorkerCruceroRalenti extends SwingWorker<Void, Void> {
                 }
                 this.medidorRevTemp = (MedidorRevTemp) capelec;
                 Future<List<List<MedicionGases>>> futureKit = executor.submit(new CallableCiclosGasolina(panel, banco, capelec, idPrueba, idUsuario, idHojaPrueba, lstValMisc.get(0), Integer.parseInt(lstValMisc.get(1)), Boolean.parseBoolean(lstValMisc.get(2)), this.placas, simulacion,tempAmbiente, humedadAmbiente));
-                panel.getButtonFinalizar().addActionListener(new ListenerCancelacionGases(futureKit, idPrueba, banco, null, panel, idUsuario));
+                panel.getButtonFinalizar().addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        panel.cancelacion(); // Aquí llamas a tu método que realiza la cancelación.
+                    }
+                });
                 panel.getButtonRpm().addActionListener(new ListenerCambioRpms(futureKit, (MedidorRevTemp) banco, banco, panel, idUsuario));
                 listaMedicionGases = futureKit.get();
                 capelec.stop();
@@ -257,7 +270,12 @@ public class WorkerCruceroRalenti extends SwingWorker<Void, Void> {
                     tb8500 = new TB85000();
                 }
                 Future<List<String>> futureValidador = executor.submit(new CallableValidadorPruebas(panel, banco, tb8500, simulacion));
-                panel.getButtonFinalizar().addActionListener(new ListenerCancelacionGases(futureValidador, idPrueba, banco, null, panel, idUsuario));
+                panel.getButtonFinalizar().addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        panel.cancelacion(); // Aquí llamas a tu método que realiza la cancelación.
+                    }
+                });
                 panel.getButtonRpm().addActionListener(new ListenerCambioRpms(futureValidador, (MedidorRevTemp) banco, banco, panel, idUsuario));
                 lstValMisc = futureValidador.get();
 
@@ -275,7 +293,12 @@ public class WorkerCruceroRalenti extends SwingWorker<Void, Void> {
                 System.out.println("Numero Cilindros: " + (numeroCilindros));
                 Future<List<List<MedicionGases>>> futureCentral = executor.submit(new CallableCiclosGasolina(panel, banco, tb8500, idPrueba, idUsuario, idHojaPrueba, lstValMisc.get(0), Integer.parseInt(lstValMisc.get(1)), Boolean.parseBoolean(lstValMisc.get(2)), this.placas, simulacion,tempAmbiente, humedadAmbiente));
                 panel.getButtonRpm().addActionListener(new ListenerCambioRpms(futureCentral, (MedidorRevTemp) banco, banco, panel, idUsuario));
-                panel.getButtonFinalizar().addActionListener(new ListenerCancelacionGases(futureCentral, idPrueba, banco, null, panel, idUsuario));
+                panel.getButtonFinalizar().addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        panel.cancelacion(); // Aquí llamas a tu método que realiza la cancelación.
+                    }
+                });
                 listaMedicionGases = futureCentral.get();
                 if (simulacion == false) {
                     tb8500.stop();
@@ -288,7 +311,12 @@ public class WorkerCruceroRalenti extends SwingWorker<Void, Void> {
                 tb86000.setNumeroCilindros(numeroCilindros);
                 System.out.println("Numero Cilindros: " + ((numeroCilindros > 4) ? numeroCilindros : 4));
                 Future<List<String>> futureValidador = executor.submit(new CallableValidadorPruebas(panel, banco, tb86000, simulacion));
-                panel.getButtonFinalizar().addActionListener(new ListenerCancelacionGases(futureValidador, idPrueba, banco, null, panel, idUsuario));
+                panel.getButtonFinalizar().addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        panel.cancelacion(); // Aquí llamas a tu método que realiza la cancelación.
+                    }
+                });
                 panel.getButtonRpm().addActionListener(new ListenerCambioRpms(futureValidador, (MedidorRevTemp) banco, banco, panel, idUsuario));
                 lstValMisc = futureValidador.get();
                 try {
@@ -303,7 +331,12 @@ public class WorkerCruceroRalenti extends SwingWorker<Void, Void> {
                 this.medidorRevTemp = (MedidorRevTemp) tb86000;
                 Future<List<List<MedicionGases>>> futureTB86000 = executor.submit(new CallableCiclosGasolina(panel, banco, tb86000, idPrueba, idUsuario, idHojaPrueba, lstValMisc.get(0), Integer.parseInt(lstValMisc.get(1)), Boolean.parseBoolean(lstValMisc.get(2)), this.placas, simulacion,tempAmbiente, humedadAmbiente));
                 panel.getButtonRpm().addActionListener(new ListenerCambioRpms(futureTB86000, (MedidorRevTemp) banco, banco, panel, idUsuario));
-                panel.getButtonFinalizar().addActionListener(new ListenerCancelacionGases(futureTB86000, idPrueba, banco, null, panel, idUsuario));
+                panel.getButtonFinalizar().addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        panel.cancelacion(); // Aquí llamas a tu método que realiza la cancelación.
+                    }
+                });
                 listaMedicionGases = futureTB86000.get();
                 try {
                     tb86000.getPuertoSerial().close();

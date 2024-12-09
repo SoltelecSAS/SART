@@ -204,7 +204,6 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
                 Boolean validTemp = false;
                 while (validTemp == false) {
                     temp = medidorRevTemp.getTemp();
-
                     Thread.sleep(100);
                     if (temp >= 40) {
                         System.out.println("----------temp: " + temp + " -------------------------");
@@ -224,7 +223,8 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
             System.out.println("se ha registrado la temperatura del motor");
             panel.getButtonFinalizar().setVisible(true);
             panel.getButtonRpm().setVisible(LeerArchivo.rechazarPorRpm());
-            panel.getButtonRpm().setText("Rechazar por RPM ");
+            panel.getButtonRpm().setText("Rechazar moto por RPM ");
+            panel.getButtonRpm().setVisible(false);
             tempStored = medidorRevTemp.getTemp();
             System.out.println("-----------------tempStored: " + tempStored + " ----------------------");
             panel.getLinearTemperatura().setValue(tempStored);

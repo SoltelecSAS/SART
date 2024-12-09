@@ -39,6 +39,7 @@ import org.soltelec.pruebasgases.WorkerCruceroRalenti;
 import org.soltelec.util.PortSerialUtil;
 import org.soltelec.util.RegistrarMedidas;
 import org.soltelec.util.UtilPropiedades;
+import org.soltelec.util.Utilidades;
 import org.soltelec.util.capelec.BancoCapelec;
 import termohigrometro.MedicionTermoHigrometro;
 import termohigrometro.TermoHigrometro;
@@ -79,6 +80,8 @@ public class WorkerInicioMotos extends SwingWorker<Void, Void> {
         this.panel.setIdPrueba(idPrueba);
         this.placas = placas;
         this.termoHigrometroArtisan = termoHigrometroArtisan;
+        Utilidades.setIdUsuarioMotos(idUsuario);
+        Utilidades.setIdPrueba(idPrueba);
     }
 
     @Override
@@ -151,7 +154,10 @@ public class WorkerInicioMotos extends SwingWorker<Void, Void> {
             }
             // if (tempAmbiente >= BancoGasolina.LIM_TEMP_AMB_MIN && tempAmbiente <= BancoGasolina.LIM_TEMP_AMB_MAX && humedadAmbiente >= BancoGasolina.LIM_HUMEDAD_MIN && humedadAmbiente <= BancoGasolina.LIM_HUMEDAD_MAX) {
             //JOptionPane.showMessageDialog(null,"VALORES VALIDOS\n"+"Temperatura: "+tempAmbiente+" Humedad: "+humedadAmbiente);
+            Utilidades.setTempAmbiente(tempAmbiente);
+            Utilidades.setHumedadAmbiente(humedadAmbiente);
             if (tempAmbiente >= 5 && tempAmbiente <= 55 && humedadAmbiente <= 90 && humedadAmbiente >= 30) {
+
                 Mensajes.messageDoneTime("VALORES VALIDOS\n" + "Temperatura: " + tempAmbiente + " Humedad: " + humedadAmbiente, 3);
                 BancoGasolina banco = null;
                 String marcaBanco = UtilPropiedades.cargarPropiedad("MarcaBanco", "propiedades.properties");
@@ -168,7 +174,6 @@ public class WorkerInicioMotos extends SwingWorker<Void, Void> {
                 try {
                     Future<Void> futureInicio = exec.submit(new CallableInicioMotos(banco, panel, idHojaPrueba, idPrueba, idUsuario, placas, tempAmbiente, humedadAmbiente));
                     panel.getButtonFinalizar().addActionListener(new ListenerCancelacionGases(futureInicio, idPrueba, banco, null, panel, idUsuario));
-                    panel.getBtnWorkerCicloMotos().addActionListener(new ListenerCancelacionPorRpm(futureInicio, idPrueba, banco, null, panel, idUsuario, tempAmbiente, humedadAmbiente));
 
 
                     Void get = futureInicio.get();

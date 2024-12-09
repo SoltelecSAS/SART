@@ -46,4 +46,41 @@ public class LeerArchivo {
         if (resultado != null) return Integer.parseInt(resultado);
         return 0;
     }
+
+    public static String getSerialOtto() throws IOException{
+        String marcaAnalizador = UtilPropiedades.cargarPropiedad("marcaAnalizador", "seriales.properties");
+        String modeloAnalizador = UtilPropiedades.cargarPropiedad("modeloAnalizador", "seriales.properties");
+        String modeloBanco = UtilPropiedades.cargarPropiedad("modeloBanco", "seriales.properties");
+        String marcaKit = UtilPropiedades.cargarPropiedad("marcaKit", "seriales.properties");
+        String marcaTermo = UtilPropiedades.cargarPropiedad("marcaTermo", "seriales.properties");
+        String pefAnalizador = UtilPropiedades.cargarPropiedad("pefAnalizador", "seriales.properties");
+        String serialAnalizador = UtilPropiedades.cargarPropiedad("serialAnalizador", "seriales.properties");
+        String serialBanco = UtilPropiedades.cargarPropiedad("serialBanco", "seriales.properties");
+        String serialRpm = UtilPropiedades.cargarPropiedad("serialKit", "seriales.properties");
+        String serialBateria = UtilPropiedades.cargarPropiedad("serialBateria", "seriales.properties");
+        String serialVibracion = UtilPropiedades.cargarPropiedad("serialVibracion", "seriales.properties");
+        String serialTemperatura = UtilPropiedades.cargarPropiedad("serialTemperatura", "seriales.properties");
+        String serialTermohigrometro = UtilPropiedades.cargarPropiedad("serialTermo", "seriales.properties");
+
+        String serialAnalizadorCompleto = 
+            serialBanco.equals("")  ? 
+                pefAnalizador+"-"+serialAnalizador : pefAnalizador+"-"+serialAnalizador+"-"+serialBanco;
+        
+        String serialKitCompleto = 
+            Utilidades.getMetodoMedicionRpm().equalsIgnoreCase("Bateria") ?
+                serialRpm+"/"+serialTemperatura+"/"+serialBateria:
+                serialRpm+"/"+serialTemperatura+"/"+serialVibracion;
+
+        //if (formaTemp.equalsIgnoreCase("C") || diseno.equalsIgnoreCase("Scooter")) {
+        //    serialKitCompleto = serialKitCompleto.replace("/"+serialTemperatura, "");
+        //}
+        
+        String serialCompleto = "otto~"+
+            marcaAnalizador+";"+marcaKit+";"+marcaTermo+"~"+
+            serialAnalizadorCompleto+";"+serialKitCompleto+";"+serialTermohigrometro+"~"
+            +modeloAnalizador+";"+modeloBanco;
+
+        return serialCompleto;
+    }
+    
 }

@@ -1048,6 +1048,7 @@ public class HiloPruebaMotos implements Runnable, ActionListener {
         String serialEquipo = "";
         try {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+            System.out.println("-----Serial encontrado:\n"+serialEquipo);
         } catch (Exception e) {
             serialEquipo = "Serial no encontrado";
             e.printStackTrace();

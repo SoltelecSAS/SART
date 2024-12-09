@@ -12,6 +12,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,6 +29,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import org.apache.log4j.Logger;
+import org.soltelec.conexion_seriales.Conexion;
 import org.soltelec.medicionrpm.MedidorRevTemp;
 import org.soltelec.procesosbanco.BancoGasolina;
 import org.soltelec.procesosbanco.PanelCero;
@@ -72,7 +74,7 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
     private boolean reiniciarProceso = false;
     private boolean converCatalitico;
     private PanelVerificacion pv;
-    String forMed;
+    String forMedTemp;
     Integer tempStored = 0;
     public static int rngIniRpm = 0;
     public static int rngFinRpm = 0;
@@ -111,7 +113,7 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
         this.idPrueba = idPrueba;
         this.idUsuario = idUsuario;
         this.idHojaPrueba = idHojaPrueba;
-        this.forMed = forMed;
+        this.forMedTemp = forMed;
         this.tempStored = tempStored;
         this.converCatalitico = converCatalitico;
         this.placas = placas;
@@ -224,7 +226,7 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
             panel.getRadialTacometro().setBackgroundColor(BackgroundColor.BLACK);
             timer.start();
             boolean aceleracionHumoNegroTerminada = false;
-            panel.getMensaje().setText("Por Favor ACELERE en el Rango de (2250 a 2750) RPM  DURANTE 20 Seg.");
+            panel.getMensaje().setText("Por Favor acelere hasta llegar a 2500 rpms, tiene 30 segundos");
             Thread.sleep(500);
 
             if (this.simulacion == true) {
@@ -242,14 +244,18 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
                 panel.getProgressBar().setString("0 Seg.");
                 panel.getProgressBar().setValue(0);
                 panel.getRadialTacometro().setBackgroundColor(BackgroundColor.BLACK);
-                while ((medidorRevTemp.getRpm() <= 2250) && medidorRevTemp.getRpm() <= 2750) {//rango de rpm para avansar el progreso 
+
+                contadorTemporizacion = 0;
+                while (medidorRevTemp.getRpm() <= 2500 && contadorTemporizacion < 30) {//rango de rpm para avanzar el progreso 
                     Thread.sleep(120);
-                    panel.getMensaje().setText("Por Favor ACELERE en el Rango de (2250 a 2750) RPM   DURANTE 20 Seg.");
+                    panel.getMensaje().setText("Por favor, acelere hasta llegar a 2500 rpms, tiene 30 segundos");
+                    panel.getProgressBar().setValue(contadorTemporizacion);
                     if (isSalidaPrueba()) {
                         return null;
                     }
-                    if (this.simulacion == true) {
+                    if (this.simulacion) {
                         panel.getRadialTacometro().setValue(simuladorRpm.getRpm());
+                        if (medidorRevTemp.getRpm() <= 2250) break;
                     } else {
                         panel.getRadialTacometro().setValue(medidorRevTemp.getRpm());
                     }
@@ -265,44 +271,96 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
                         }
                     }//end if
                 }//end while de calentamiento temperatura y alcanzar revoluciones
+                panel.getProgressBar().setValue(0);
+
+                if (contadorTemporizacion >= 30 && !this.simulacion) {
+                    // Mostramos un mensaje indicando que las RPM están fuera del rango
+                    int respuesta = JOptionPane.showConfirmDialog(panel,
+                    "No se han alcanzado las 2500 rpms en 30 segundos.\n" +
+                    "¿Desea rechazarlo por RPM?",
+                    "Advertencia: RPM fuera de rango",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+
+                    panel.getButtonRpm().setVisible(true);
+                    panel.getButtonRpm().setEnabled(true);
+                    // Si el usuario acepta (responde "Sí"), ejecutamos el método rechazoRpmMetodo
+                    if (respuesta == JOptionPane.YES_OPTION) {
+                        contadorTemporizacion = 0;
+                        panel.getButtonRpm().doClick();
+                    } else {
+                        // Si el usuario no acepta (responde "No"), simplemente salimos del bucle
+                        contadorTemporizacion = 0;
+                    }
+                }
 
                 System.out.println(" RPM X INTERFACE IS " + medidorRevTemp.getRpm());
-                contadorTemporizacion = 0;
-                while (medidorRevTemp.getRpm() >= (BancoGasolina.LIM_CRUCERO - 250) && (contadorTemporizacion <= 20) && medidorRevTemp.getRpm() <= 2750) {//recuerda blinker != null
-                    if (contadorTemporizacion <= 20) {
+                if (medidorRevTemp.getRpm() >= (BancoGasolina.LIM_CRUCERO - 250) && medidorRevTemp.getRpm() <= 2750) {
+                    contadorTemporizacion = 0;
+                    while (contadorTemporizacion <= 20) {//recuerda blinker != null
                         panel.getProgressBar().setValue(contadorTemporizacion);
                         panel.getProgressBar().setStringPainted(true);
                         panel.getProgressBar().setString(String.valueOf(contadorTemporizacion).concat(" Seg."));
-                        panel.getMensaje().setText(" Aceleracion se MANTIENE en el rango  de (2250 a 2750) RPM ");
-                    }
-                    Thread.sleep(120);
-                    if (isSalidaPrueba()) {
-                        return null;
-                    }
-                    if (this.simulacion == true) {
-                        panel.getRadialTacometro().setValue(simuladorRpm.getRpm());
-                    } else {
-                        panel.getRadialTacometro().setValue(medidorRevTemp.getRpm());
-                    }
-                    pintarAnterior = pintarVerde;
-                    if (/*rpmFiltrada*/medidorRevTemp.getRpm() >= 2250 && /*rpmFiltrada*/ medidorRevTemp.getRpm() <= 2750) {
-                        pintarVerde = true;
-                        //plot.
-                    } else {
-                        pintarVerde = false;
-                    }
-                    if (pintarAnterior != pintarVerde) {//necesidad de repintar
-                        if (pintarVerde) {
-                            panel.getRadialTacometro().setBackgroundColor(BackgroundColor.GREEN);
-                        } else {
-                            panel.getRadialTacometro().setBackgroundColor(BackgroundColor.BLACK);
+                        panel.getMensaje().setText("Mantenga RPMS en el rango de (2250 a 2750) RPM ");
+                        
+                        Thread.sleep(120);
+
+                        if (medidorRevTemp.getRpm() < (BancoGasolina.LIM_CRUCERO - 250) || medidorRevTemp.getRpm() > 2750) {
+                            contadorTemporizacion = -10000;
+                            // Mostramos un mensaje indicando que las RPM están fuera del rango
+                            int respuesta = JOptionPane.showConfirmDialog(panel,
+                            "Se ha salido del rango de RPM (" + (BancoGasolina.LIM_CRUCERO - 250) + " a " + 2750 + ").\n" +
+                            "¿Desea rechazarlo por RPM?",
+                            "Advertencia: RPM fuera de rango",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE);
+        
+                            panel.getButtonRpm().setVisible(true);
+                            panel.getButtonRpm().setEnabled(true);
+                            // Si el usuario acepta (responde "Sí"), ejecutamos el método rechazoRpmMetodo
+                            if (respuesta == JOptionPane.YES_OPTION) {
+                                contadorTemporizacion = 0;
+                                panel.getButtonRpm().doClick();
+                            } else {
+                                // Si el usuario no acepta (responde "No"), simplemente salimos del bucle
+                                contadorTemporizacion = 0;
+                                break;
+                            }
                         }
-                    }//end if
-                }//end while de calen               
+
+                        if (isSalidaPrueba()) {
+                            return null;
+                        }
+                        if (this.simulacion == true) {
+                            panel.getRadialTacometro().setValue(simuladorRpm.getRpm());
+                        } else {
+                            panel.getRadialTacometro().setValue(medidorRevTemp.getRpm());
+                        }
+                        pintarAnterior = pintarVerde;
+                        if (/*rpmFiltrada*/medidorRevTemp.getRpm() >= 2250 && /*rpmFiltrada*/ medidorRevTemp.getRpm() <= 2750) {
+                            pintarVerde = true;
+                            //plot.
+                        } else {
+                            pintarVerde = false;
+                        }
+                        if (pintarAnterior != pintarVerde) {//necesidad de repintar
+                            if (pintarVerde) {
+                                panel.getRadialTacometro().setBackgroundColor(BackgroundColor.GREEN);
+                            } else {
+                                panel.getRadialTacometro().setBackgroundColor(BackgroundColor.BLACK);
+                            }
+                        }//end if
+                    }//end while de calen
+                }
+                               
                 if (contadorTemporizacion >= 20) {
                     aceleracionHumoNegroTerminada = true;
                 }
             }
+
+            panel.getButtonRpm().setVisible(LeerArchivo.rechazarPorRpm());
+            panel.getButtonRpm().setEnabled(LeerArchivo.rechazarPorRpm());
+
             if (isSalidaPrueba()) {
                 return null;
             }
@@ -342,8 +400,14 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
                 panel.getBtnContHumo().setText("10 Seg.");
                 contVerHumo = 0;
             }
+
+            contadorTemporizacion = 0;
             while (!aceleracionHumoNegroTerminada) {
-                panel.getMensaje().setText("Por Favor MANTENGA RALENTI  entre " + CallableCiclosGasolina.rngIniRpm + " a " + CallableCiclosGasolina.rngFinRpm + " RPM \n DURANTE 20 Seg.");
+                panel.getButtonRpm().setVisible(false);
+                panel.getButtonRpm().setEnabled(false);
+
+                panel.getMensaje().setText("Por favor, lleve el vehículo a ralentí, manteniéndolo entre " 
+                + CallableCiclosGasolina.rngIniRpm + " y " + CallableCiclosGasolina.rngFinRpm + " RPM \n durante 20 segundos.");
                 panel.getRadialTacometro().setValue(medidorRevTemp.getRpm());
                 panel.getProgressBar().setString("0 Seg.");
                 panel.getProgressBar().setValue(0);
@@ -357,11 +421,34 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
                 if (isSalidaPrueba()) {
                     return null;
                 }
-                contadorTemporizacion = 0;
-                while (medidorRevTemp.getRpm() >= CallableCiclosGasolina.rngIniRpm && (contadorTemporizacion <= 20) && (medidorRevTemp.getRpm() <= CallableCiclosGasolina.rngFinRpm)) {//recuerda blinker != null
-                    if (contadorTemporizacion <= 20) {
+
+                if (medidorRevTemp.getRpm() >= CallableCiclosGasolina.rngIniRpm && medidorRevTemp.getRpm() <= CallableCiclosGasolina.rngFinRpm) {
+                    contadorTemporizacion = 0;
+                    while ( (contadorTemporizacion <= 20)) {//recuerda blinker != null
+                        if (medidorRevTemp.getRpm() < CallableCiclosGasolina.rngIniRpm || medidorRevTemp.getRpm() > CallableCiclosGasolina.rngFinRpm) {
+                            contadorTemporizacion = -10000;
+                            // Mostramos un mensaje indicando que las RPM están fuera del rango
+                            int respuesta = JOptionPane.showConfirmDialog(panel,
+                            "Se ha salido del rango de RPM (" + CallableCiclosGasolina.rngIniRpm + " a " + CallableCiclosGasolina.rngFinRpm + ").\n" +
+                            "¿Desea rechazarlo por RPM?",
+                            "Advertencia: RPM fuera de rango",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE);
+
+                            panel.getButtonRpm().setVisible(true);
+                            panel.getButtonRpm().setEnabled(true);
+                            // Si el usuario acepta (responde "Sí"), ejecutamos el método rechazoRpmMetodo
+                            if (respuesta == JOptionPane.YES_OPTION) {
+                                contadorTemporizacion = 0;
+                                panel.getButtonRpm().doClick();
+                            } else {
+                                // Si el usuario no acepta (responde "No"), simplemente salimos del bucle
+                                contadorTemporizacion = 0;
+                                break;
+                            }
+                        }
                         panel.getProgressBar().setVisible(true);
-                        panel.getMensaje().setText("El Ralenti  se MANTIENE en el Rango de (" + CallableCiclosGasolina.rngIniRpm + " a " + CallableCiclosGasolina.rngFinRpm + ") RPM ");
+                        panel.getMensaje().setText("Manteniendo ralentí en el Rango de (" + CallableCiclosGasolina.rngIniRpm + " a " + CallableCiclosGasolina.rngFinRpm + ") RPM ");
                         panel.getProgressBar().setValue(contadorTemporizacion);
                         panel.getProgressBar().setStringPainted(true);
                         panel.getProgressBar().setString(String.valueOf(contadorTemporizacion).concat(" Seg."));
@@ -369,17 +456,22 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
                         if (isSalidaPrueba()) {
                             return null;
                         }
-                    }
-                    Thread.sleep(50);
-                    panel.getRadialTacometro().setValue(medidorRevTemp.getRpm());
-                    Thread.sleep(120);
+                        Thread.sleep(50);
+                        panel.getRadialTacometro().setValue(medidorRevTemp.getRpm());
+                        Thread.sleep(120);
 
-                }//end while de calen                
+                    }//end while de calen
+                }
+
                 if (contadorTemporizacion >= 20) {
+                    panel.getProgressBar().setVisible(false);
                     aceleracionHumoNegroTerminada = true;
                 }
-                panel.getProgressBar().setVisible(false);
             }
+
+            panel.getButtonRpm().setVisible(LeerArchivo.rechazarPorRpm());
+            panel.getButtonRpm().setEnabled(LeerArchivo.rechazarPorRpm());
+
             if (tempVerfHumo.isRunning()) {
                 tempVerfHumo.stop();
             }
@@ -421,9 +513,9 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
                 List<List<MedicionGases>> lecturaRechazada = new ArrayList<List<MedicionGases>>();
                 return lecturaRechazada;
 
-            } else {
-                //no haga nada
-            }
+            } 
+
+
             MedicionGases medicion;
             panel.getPanelMensaje().setVisible(true);
             panel.getPanelFiguras().setVisible(false);
@@ -526,16 +618,16 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
             Thread.sleep(1500);
             //DISMINUCION DE OXIGENO
             System.out.println("Ingreso al proceso: DISMINUCION DE OXIGENO");
-            int intentos = 0;
+            int intentosVariable = 0;
+            int intentosBajoFlujo = 0;
 
             medicion = banco.obtenerDatos();//TODO descomentar banco
             //Thread.sleep(1500); //sugerencia colocar tiempo de espera
-            intentos = 0;
 
             panel.getProgressBar().setValue(0);
             panel.getProgressBar().setString(String.valueOf(0));
             boolean oxigenoDisminuyo = false;
-            while (!oxigenoDisminuyo && intentos < 2) {
+            while (!oxigenoDisminuyo && intentosVariable < 2) {
                 int contadorO2 = 0;
                 while (medicion.getValorO2() * 0.01 > BancoGasolina.LIMITE_OXIGENO && contadorO2 < BancoGasolina.RETARDOO2) {
                     Thread.sleep(420);
@@ -568,11 +660,11 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
             panel.getButtonFinalizar().setVisible(true);
             panel.getButtonRpm().setVisible(true);
             panel.getLinearTemperatura().setValue(medidorRevTemp.getTemp());
-            intentos = 0;
+            intentosVariable = 0;
             timer.start();
             this.lista50Datos = new ArrayList<>();
             this.lista10Datos = new ArrayList<>();
-            while (intentos < INTENTOS) {
+            while (intentosVariable < INTENTOS) {
                 String mensajeProblemas = "";
                 medicion = banco.obtenerDatos();
                 rpm = medidorRevTemp.getRpm();
@@ -680,6 +772,8 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
                 //Condiciones OK
                 //&& temp >= LIM_TEMP
                 panel.getProgressBar().setVisible(true);
+
+
                 while (rpm >= 2250 && rpm <= 2750 && contadorTemporizacion < 30) {
                     panel.getRadialTacometro().setBackgroundColor(BackgroundColor.GREEN);
                     medicion = banco.obtenerDatos();
@@ -707,9 +801,9 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
                         this.lista50Datos.add(medicion);  //se activa cuando hayan auditoria ambientales 
                         this.lista50Datos.add(medicion);
                         if (medicion.isBajoFlujo()) {
-                            panel.getMensaje().setText("ADVERTENCIA SE DETECTA BAJO FLUJO, Manteniendo Crucero (2250 a 2750) RPM  en  " + intentos + " Intentos");
+                            panel.getMensaje().setText("ADVERTENCIA SE DETECTA BAJO FLUJO, Manteniendo Crucero (2250 a 2750) RPM  en  " + intentosVariable + " Intentos");
                         } else {
-                            panel.getMensaje().setText("Manteniendo Crucero (2250 a 2750) RPM  en  " + intentos + " Intentos");
+                            panel.getMensaje().setText("Manteniendo Crucero (2250 a 2750) RPM  en  " + intentosVariable + " Intentos");
                         }
                     }
 
@@ -723,8 +817,12 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
                     /*rpmFiltrada = filtroRPM(revolucionesSimuladas);*/
                 }//end while condiciones ok
                 Thread.sleep(10);//punto de cancelacion
-                if (contadorTemporizacion < 30 || medicion.isBajoFlujo()/* || oxigeno >= BancoGasolina.LIMITE_OXIGENO*/) {
-                    intentos++;
+
+                if (contadorTemporizacion < 30 ) {
+                    intentosVariable++;
+                }else if(medicion.isBajoFlujo()){
+                    intentosVariable++;
+                    intentosBajoFlujo++;
                 } else {
                     break;
                 }
@@ -733,37 +831,39 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
                 return null;
             }
             Thread.sleep(100);
-            /* if ((medicion.getValorO2() * 0.01 > LIMITE_OXIGENO) || medicion.getValorCO2() * 0.1 < LIMITE_DIOXIDO) {
-                panel.getMensaje().setText("SE HA DETECTADO DILUCION EN LA MUESTRA ");
-                Thread.sleep(1000);
-                panel.getFuncion().setText("DILUCION DE MUESTRA");
-            } */
             //Pasar los throws segun validaciones
-            if (intentos >= INTENTOS) {
+            if (intentosVariable >= INTENTOS) {
                 banco.encenderBombaMuestras(false);
                 Thread.sleep(100);
                 timer.stop();
                 if (isSalidaPrueba()) {
                     return null;
                 }
-                if (medicion.isBajoFlujo()) {
+
+                List<List<MedicionGases>> lecturaRechazada = new ArrayList<List<MedicionGases>>();
+                if (medicion.isBajoFlujo() || intentosBajoFlujo > 2) {
                     Mensajes.messageWarningTime(" Se ha detectado BAJO FLUJO en el Proceso; Esta prueba sera ABORTADA", 5);
                     panel.getFuncion().setText("BAJO FLUJO DEL EQUIPO");
                     panel.getFuncion().setText("abortado");
+                    registrarAborto(idPrueba, "Bajo flujo", "", idUsuario);
+                    JOptionPane.showMessageDialog(null, "Prueba abortada debido a bajo flujo. \nPor seguridad cerraremos el programa", "Información", JOptionPane.INFORMATION_MESSAGE);
+                    System.exit(0);
                 }
 
                 if (medidorRevTemp.getRpm() > (BancoGasolina.LIM_CRUCERO)) {
                     Mensajes.messageWarningTime("  Se ha detectado REVOLUCIONES POR ENCIMA  de lo establecido por la norma NTC 4983 (Prueba Crucero) \n esta prueba queda RECHAZADA  ", 5);
                     panel.getFuncion().setText("rechazo");
                     panel.getFuncion().setText("3.1.1.1.10 Revoluciones fuera de rango.");
+                    return lecturaRechazada;
                 }
                 if (medidorRevTemp.getRpm() < 2100) {
                     Mensajes.messageWarningTime("  Se ha detectado REVOLUCIONES POR DEBAJO  de lo establecido por la norma NTC 4983 (Prueba Crucero) \n esta prueba quedara RECHAZADA  ", 5);
                     panel.getFuncion().setText("rechazo");
                     panel.getFuncion().setText("3.1.1.1.10 Revoluciones fuera de rango.");
+                    return lecturaRechazada;
                 }
-                List<List<MedicionGases>> lecturaRechazada = new ArrayList<List<MedicionGases>>();
-                return lecturaRechazada;
+                
+                
             }//end if intentos
             System.out.println("<<FIN PRUEBA CRUCERO>>");
             generarArchivoGases(this.placas, banco, 0);
@@ -782,14 +882,14 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
             panel.getPanelMensaje().setVisible(false);
             panel.getPanelFiguras().setVisible(true);
             panel.getButtonRpm().setVisible(true);
-            intentos = 0;
+            intentosVariable = 0;
             this.lista50Datos = new ArrayList<>();
             this.lista10Datos = new ArrayList<>();
             if (this.simulacion == true) {
                 simuladorRpm.setSimularCrucero(true);//se debe mantener en ralenti                
                 simuladorRpm.setREVOLUCIONES_CRUCERO(1100);
             }
-            while (intentos < INTENTOS) {
+            while (intentosVariable < INTENTOS) {
                 boolean dioxValidad = false;
                 //simuladorRpm.setSimularCrucero(false);
                 if (isSalidaPrueba()) {
@@ -873,7 +973,7 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
                         return null;
                     }
                     if (medicion.isBajoFlujo()) {
-                        panel.getMensaje().setText("SE DETECTA BAJO FLUJO en  " + intentos + " Intentos;  Tiempo " + contadorTemporizacion + "Seg.");
+                        panel.getMensaje().setText("SE DETECTA BAJO FLUJO en  " + intentosVariable + " Intentos;  Tiempo " + contadorTemporizacion + "Seg.");
                     }
 
                     while (dioxValidad == false) {
@@ -898,9 +998,9 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
                     } else {
                         medicion.setLect5Seg(false);
                         if (medicion.isBajoFlujo()) {
-                            panel.getMensaje().setText("Advertencia, SE DETECTA BAJO FLUJO;  Manteniendo Ralenti (" + CallableCiclosGasolina.rngIniRpm + " - " + CallableCiclosGasolina.rngFinRpm + ") RPM  en  " + intentos + " Intentos");
+                            panel.getMensaje().setText("Advertencia, SE DETECTA BAJO FLUJO;  Manteniendo Ralenti (" + CallableCiclosGasolina.rngIniRpm + " - " + CallableCiclosGasolina.rngFinRpm + ") RPM  en  " + intentosVariable + " Intentos");
                         } else {
-                            panel.getMensaje().setText("Manteniendo Ralenti (" + CallableCiclosGasolina.rngIniRpm + " - " + CallableCiclosGasolina.rngFinRpm + ") RPM  en  " + intentos + " Intentos");
+                            panel.getMensaje().setText("Manteniendo Ralenti (" + CallableCiclosGasolina.rngIniRpm + " - " + CallableCiclosGasolina.rngFinRpm + ") RPM  en  " + intentosVariable + " Intentos");
                         }
                         this.lista50Datos.add(medicion);
                         this.lista50Datos.add(medicion);
@@ -919,8 +1019,11 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
                     panel.getLinearTemperatura().setValue(temp);
                 }//end while temporizacion
                 Thread.sleep(10);//punto de cancelacion
-                if (contadorTemporizacion < 30 || medicion.isBajoFlujo()) {
-                    intentos++;
+                if (contadorTemporizacion < 30 ) {
+                    intentosVariable++;
+                }else if(medicion.isBajoFlujo()){
+                    intentosVariable++;
+                    intentosBajoFlujo++;
                 } else {
                     break;
                 }
@@ -930,16 +1033,20 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
                 Thread.sleep(1000);
                 panel.getFuncion().setText("DILUCION DE MUESTRA"); */
             }
-            if (intentos >= INTENTOS) {
+            if (intentosVariable >= INTENTOS) {
                 if (isSalidaPrueba()) {
                     return null;
                 }
                 banco.encenderBombaMuestras(false);
                 Thread.sleep(100);
                 timer.stop();
-                if (medicion.isBajoFlujo()) {
+                if (medicion.isBajoFlujo() || intentosBajoFlujo > 2) {
                     Mensajes.messageWarningTime(" Se ha detectado BAJO FLUJO en el Proceso; Esta prueba sera ABORTADA", 5);
+                    panel.getFuncion().setText("BAJO FLUJO DEL EQUIPO");
                     panel.getFuncion().setText("abortado");
+                    registrarAborto(idPrueba, "Bajo flujo", "", idUsuario);
+                    JOptionPane.showMessageDialog(null, "Prueba abortada debido a bajo flujo. \nPor seguridad cerraremos el programa", "Información", JOptionPane.INFORMATION_MESSAGE);
+                    System.exit(0);
                 }
                 if ((medicion.getValorO2() * 0.01 > LIMITE_OXIGENO) || medicion.getValorCO2() * 0.1 < LIMITE_DIOXIDO) {
                     Mensajes.messageWarningTime(" Se ha detectado que la SONDA DE MUESTRA no esta INSTALADA correctamente", 5);
@@ -979,7 +1086,7 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
         try {
             conexion = Conex.getConnection();
             PreparedStatement instruccion = conexion.prepareStatement("UPDATE hoja_pruebas SET forma_med_temp =? where hoja_pruebas.TESTSHEET=?");
-            instruccion.setString(1, forMed);
+            instruccion.setString(1, forMedTemp);
             instruccion.setLong(2, idHojaPrueba);
             int n = instruccion.executeUpdate();
         } catch (ClassNotFoundException cexc) {
@@ -1042,6 +1149,49 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
         }
     }
 
+    private void registrarAborto(long idPrueba, String causalAborto, String comentarioAborto, long idUsuario) {
+    
+        int idEquipo = LeerArchivo.getIdEquipoFromEquiposProperties();
+
+        String sqlUpdatePrueba = "UPDATE pruebas SET Comentario_aborto = ?, Abortada = ?, Finalizada = ?, serialEquipo = ?, observaciones = ?, usuario_for = ? WHERE id_pruebas = ?";
+        String sqlFindSerial = "SELECT serialresolucion FROM equipos WHERE id_equipo = ?";
+        Conexion.setConexionFromFile();
+    
+        try (Connection conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContrasena());
+             PreparedStatement updatePruebasStmt = conexion.prepareStatement(sqlUpdatePrueba);
+             PreparedStatement findSerial = conexion.prepareStatement(sqlFindSerial)) {
+            
+            findSerial.setInt(1, idEquipo);
+            
+            String serial = null;
+            //rc representa el resultado de la consulta
+            try (ResultSet rc = findSerial.executeQuery()) {
+                while (rc.next()) {
+                    serial = rc.getString("serialresolucion");
+                }
+            }
+    
+            // Establecer los parámetros para la actualización
+            updatePruebasStmt.setString(1, comentarioAborto);
+            updatePruebasStmt.setString(2, "Y");
+            updatePruebasStmt.setString(3, "Y");
+            updatePruebasStmt.setString(4, serial);
+            updatePruebasStmt.setString(5, causalAborto);
+            updatePruebasStmt.setLong(6, idUsuario);
+            updatePruebasStmt.setLong(7, idPrueba);
+    
+            // Ejecutar la actualización
+            updatePruebasStmt.executeUpdate();
+    
+            // Mostrar mensaje y esperar 3 segundos antes de cerrar la aplicación
+            JOptionPane.showMessageDialog(null, "Prueba abortada y finalizada con éxito.", "Información", JOptionPane.INFORMATION_MESSAGE);
+            
+        } catch (SQLException ex) { 
+            ex.printStackTrace();
+            System.out.println("Error al tratar de abortar y finalizar la prueba por: " + ex.getMessage());
+        }
+    }
+
     private void sacarPromMedidas(int ctxPrueba) {
         List<MedicionGases> listaPromedios = new ArrayList<MedicionGases>();
         double mediaHC = 0;
@@ -1098,6 +1248,7 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
             String serialEquipo = "";
             try {
                 serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
+                System.out.println("-----Serial encontrado:\n"+serialEquipo);
             } catch (Exception e) {
                 serialEquipo = "Serial no encontrado";
                 e.printStackTrace();

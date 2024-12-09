@@ -1941,7 +1941,13 @@ public class Frm_Placas extends javax.swing.JDialog {
                 controladorVerificar.clearContextoPrueba(idPrueba, em);
             }
 
-            if (idPrueba < 0) {
+            if (idPrueba ==-2) {
+                JOptionPane.showMessageDialog(null, "Este vehiculo ya realizo esta prueba antes y esta aprobada");
+                doClose(0);
+                return;
+            }
+
+            if (idPrueba < 0 && idPrueba !=-2) {
                 JOptionPane.showMessageDialog(null, "Este vehiculo no tiene autorizada la prueba");
                 doClose(0);
                 return;
@@ -2287,7 +2293,7 @@ public class Frm_Placas extends javax.swing.JDialog {
             WorkerCiclosDiesel.aplicTrans = aplicTrans;
             WorkerCiclosDiesel.ipEquipo = ipEquipo;
             WorkerCiclosDiesel.placas = cam_placas.getText();
-            WorkerCiclosDiesel.serialEquipo = serialEquipo;
+            WorkerCiclosDiesel.serialEquipoVariable = serialEquipo;
 
             System.out.println("placas " + cam_placas.getText());
             JDialogDiesel dlgDialogDiesel = new JDialogDiesel(frame, true, idPrueba, idUsuario, idHojaPruebaLocal);
@@ -2363,7 +2369,7 @@ public class Frm_Placas extends javax.swing.JDialog {
             WorkerCiclosDiesel.ipEquipo = ipEquipo;
             WorkerCiclosDiesel.placas = cam_placas.getText();
             System.out.println("placas " + cam_placas.getText());
-            WorkerCiclosDiesel.serialEquipo = serialEquipo;
+            WorkerCiclosDiesel.serialEquipoVariable = serialEquipo;
 
             JDialogDiesel dlgDialogDiesel = new JDialogDiesel(frame, true, idPrueba, idUsuario, idHojaPruebaLocal);
             dlgDialogDiesel.setVisible(true);

@@ -35,6 +35,7 @@ import org.soltelec.componenteluces.LuzExploradora;
 import org.soltelec.pruebasgases.FrmComentario;
 import org.soltelec.util.Conex;
 import org.soltelec.util.ConsultarDatosVehiculo;
+import org.soltelec.util.Utilidades;
 
 public class HiloLucesMoto implements Runnable, ActionListener 
 {
@@ -123,8 +124,7 @@ public class HiloLucesMoto implements Runnable, ActionListener
         return true;
     }
 
-    private void cargarLongitudTramaLeer() 
-    {
+    private void cargarLongitudTramaLeer() {
         
         System.out.println("--------------------------------------------------");
         System.out.println("---------  Cargar Longitud Trama Leer  -----------");
@@ -358,8 +358,7 @@ public class HiloLucesMoto implements Runnable, ActionListener
                     }
                     System.out.println("FINALICE PROCESAMIENTO DE LA TRAMA DEBO SALIR DE LA FAROLA2:");
                     break;
-                   }else
-                   {
+                    }else{
                       System.out.println(new StringBuilder().append("syst medICION ").append(unidadMed).toString());
                       if ((this.valorMedidaAltaDerecha[i] == -100.0D) || (this.valorMedidaAltaDerecha[i] == -1.0D)) 
                       {
@@ -1168,7 +1167,7 @@ public class HiloLucesMoto implements Runnable, ActionListener
                 registrarDefectos(codigo, idPrueba);
             }
 
-            if (this.aplicaModificacion == 0) {
+            if (Utilidades.getIsEditable() == 0) {
                 if (isAprobada) {
                     actualizarPruebas(idUsuario, idPrueba, "UPDATE pruebas SET Finalizada = 'Y',Aprobada ='Y',Abortada='N',usuario_for = ?,serialEquipo = ? WHERE pruebas.Id_Pruebas = ?");
                 } else {

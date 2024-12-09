@@ -70,7 +70,7 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
     private int contadorTemporizacion, contadorSimulacion, contadorHC;
     private Double rpmsSimuladas;
     private Random random;
-    private int temp;
+    private int temperaturaMotorSimulacion;
     private List<MedicionGases> listaDeListas;
     private List<MedicionGases> lista;
     private MedicionGases medicion;
@@ -155,8 +155,8 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
             Mensajes.messageDoneTime(">>> TEMPERATURA VALIDA PARA CONTINUAR PRUEBA  <<<", 4);
             if (infoVehiculo.getDiseño().equalsIgnoreCase("Scooter")) {
                 if (Mensajes.mensajePregunta("¿El motor de la Moto se ha mantenido\n encendido por 10 min?")) {
-                    temp = 0;
-                    panel.getLinearTemperatura().setValue(temp);
+                    temperaturaMotorSimulacion = 0;
+                    panel.getLinearTemperatura().setValue(temperaturaMotorSimulacion);
                     LIM_TEMP = 0;
                 } else {
                     JOptionPane.showMessageDialog(null, "Por Favor Reanude la prueba cuando la Moto este listo");
@@ -166,13 +166,13 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
                     return null;
                 }
             } else {
-                temp = 41 + random.nextInt(25);
-                panel.getLinearTemperatura().setValue(temp);
+                temperaturaMotorSimulacion = 41 + random.nextInt(25);
+                panel.getLinearTemperatura().setValue(temperaturaMotorSimulacion);
             }
             System.out.println("voy a entrar a primera Aceleracion");
             Boolean retorno = primeraAceleracion();
             if (retorno == true) {                
-                 CallablePruebaMotos.tempStored= temp;
+                 CallablePruebaMotos.tempStored= temperaturaMotorSimulacion;
                 List<MedicionGases> lecturaRechazada = new ArrayList<>();
                 return lecturaRechazada;
             }
@@ -443,7 +443,7 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
 
                 panel.getRadialTacometro().setBackgroundColor(BackgroundColor.BLACK);
                 panel.getRadialTacometro().setValue((int) Math.floor(rpmsSimuladas));
-                panel.getLinearTemperatura().setValue(temp);
+                panel.getLinearTemperatura().setValue(temperaturaMotorSimulacion);
                 banco.encenderBombaMuestras(true);
                 medicion = banco.obtenerDatos();
                 System.out.println("RECOGIENDO INFORMACION DEL BANCO DE GASES");
@@ -456,14 +456,14 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
                     contadorTemporizacion = 0;
                     //Mientras el valor de revoluciones este por fuera de 1050 y 2000 espere o mientras sea la temperatura espere
                     panel.getRadialTacometro().setBackgroundColor(BackgroundColor.BLACK);
-                    while ((rpmsSimuladas < 800.0) || (rpmsSimuladas > 1800.0) || (medicion.getValorO2() * 0.01 > 18.0) || (temp < LIM_TEMP) || ((medicion.isBajoFlujo()) && (contadorTemporizacion < 60))) {
+                    while ((rpmsSimuladas < 800.0) || (rpmsSimuladas > 1800.0) || (medicion.getValorO2() * 0.01 > 18.0) || (temperaturaMotorSimulacion < LIM_TEMP) || ((medicion.isBajoFlujo()) && (contadorTemporizacion < 60))) {
                         panel.getRadialTacometro().setValue((int) Math.floor(rpmsSimuladas));
-                        panel.getLinearTemperatura().setValue(temp);
+                        panel.getLinearTemperatura().setValue(temperaturaMotorSimulacion);
                         StringBuilder mensaje = new StringBuilder("");
                         if (rpmsSimuladas <= BancoGasolina.LIM_RALENTI_MOTOS_SUP - 900 || rpmsSimuladas >= BancoGasolina.LIM_RALENTI_MOTOS_SUP - 50) {
                             mensaje.append("DETECTO REV FUERA DE RANGO ");
                         }
-                        if (temp < LIM_TEMP) {
+                        if (temperaturaMotorSimulacion < LIM_TEMP) {
                             mensaje.append(".-DETECTO TEMP BAJA ");
                         }
                         if (medicion.isBajoFlujo()) {
@@ -526,12 +526,12 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
                     contadorTemporizacion = 0;
                     panel.getRadialTacometro().setBackgroundColor(BackgroundColor.RED);
                     int valorO2 = 0;
-                    while ((rpmsSimuladas >= 800.0) && (rpmsSimuladas <= 1800.0) && (!medicion.isBajoFlujo()) && (temp >= LIM_TEMP) && (contadorTemporizacion < 30) && (medicion.getValorO2() * 0.01 < 18.0)) {
+                    while ((rpmsSimuladas >= 800.0) && (rpmsSimuladas <= 1800.0) && (!medicion.isBajoFlujo()) && (temperaturaMotorSimulacion >= LIM_TEMP) && (contadorTemporizacion < 30) && (medicion.getValorO2() * 0.01 < 18.0)) {
 //                    while ((rpmsSimuladas >= BancoGasolina.LIM_RALENTI_MOTOS_SUP - 1000 && rpmsSimuladas <= BancoGasolina.LIM_RALENTI_MOTOS_SUP) && !medicion.isBajoFlujo()
 //                            && temp >= LIM_TEMP && contadorTemporizacion < 30) {
                         //mientras este en rango
                         panel.getRadialTacometro().setValue((int) Math.floor(rpmsSimuladas));
-                        panel.getLinearTemperatura().setValue(temp);
+                        panel.getLinearTemperatura().setValue(temperaturaMotorSimulacion);
                         while (dioxValidad == false) {
                             medicion = banco.obtenerDatos();
                            
@@ -553,7 +553,7 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
                         medicion = banco.obtenerDatos();
                         medicion.setValorRPM((int) Math.floor(rpmsSimuladas));
                         System.out.println("LEEO DE NUEVO EN EL BANCO MEDICION REF " + medicion.toString());
-                        medicion.setValorTAceite(temp);
+                        medicion.setValorTAceite(temperaturaMotorSimulacion);
                         if (contadorTemporizacion >= 25) {
                             System.out.println("valor del contado de temporizaciones: " + contadorTemporizacion);
                             panel.getMensaje().setText("Tomando Medidas ..!");

@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 
+import Utilidades.CMensajes;
+import Utilidades.Utilidades2;
+
 /**
  *
  * @author GerenciaDesarrollo
@@ -90,28 +93,33 @@ public class FrenosMotos implements PruebaDefault {
     }
 
     @Override
-    public void verificarDefectos(String tipoVehiculo) {
+    public void verificarDefectos(String placa) {
+
+        System.out.println("-------------placa vehiculo: "+placa);
+
+        String tipoVehiculo = Utilidades2.obtenerTipoVehiculoPorPlaca(placa);
+
+        
+
         aprobada = "Y";
         defectos = new ArrayList<>();
 
-        if (tipoVehiculo.equalsIgnoreCase("Moto")) {
+        if (tipoVehiculo.equalsIgnoreCase("4")) {
+            System.out.println("-------------tipo vehiculo: "+tipoVehiculo+" Osea moto");
             defectos = getDefectosMoto();
         } else {
             defectos = getDefectosCicloMotor();
-        }
-
-        if (eficacia < minimoEficaciaA) {
-            aprobada = "N";
-            defectos.add(54010);
+            System.out.println("-------------tipo vehiculo: "+tipoVehiculo+" Osea ciclomotor");
         }
     }
 
     private List<Integer> getDefectosMoto(){
         List<Integer> defects = new ArrayList<>();
         minimoEficaciaA = 30;
-        if (eficacia < minimoEficaciaA) {
+        if (eficacia < 30) {
             aprobada = "N";
             defects.add(54010);
+            //CMensajes.mensajeAdvertencia("LA PRUEBA SERA RECHAZADA POR eficacia de :"+eficacia);
         }
         return defects;
     }
@@ -119,18 +127,19 @@ public class FrenosMotos implements PruebaDefault {
     private List<Integer> getDefectosCicloMotor(){
         List<Integer> defects = new ArrayList<>();
         minimoEficaciaA = 40;
-        if (eficacia < minimoEficaciaA) {
+        if (eficacia < 40) {
             defects.add(56000);//cambiar permisible = 54010
             aprobada = "N";
+            //CMensajes.mensajeAdvertencia("LA PRUEBA SERA RECHAZADA POR eficacia de :"+eficacia);
         } 
         return defects;
     }
 
     @Override
-    public List<Integer> getDefectos(String placa) {
+    public List<Integer> getDefectos(String tipoVehiculo) {
         if (defectos == null) {
             calcularEficacia();
-            verificarDefectos(placa);
+            verificarDefectos(tipoVehiculo);
         }
         return defectos;
     }

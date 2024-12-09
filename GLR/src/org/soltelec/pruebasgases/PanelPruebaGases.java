@@ -55,6 +55,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,10 +68,13 @@ import org.jdesktop.swingx.JXLoginPane;
 
 
 import org.soltelec.pruebasgases.motocicletas.JDialogMotosGases;
+import org.soltelec.util.Conex;
+import org.soltelec.util.ConsultarDatosVehiculo;
 import org.soltelec.util.LeerArchivo;
 import org.soltelec.util.Mensajes;
 
 import org.soltelec.util.RegistrarMedidas;
+import org.soltelec.util.Utilidades;
 
 public class PanelPruebaGases extends JPanel implements ActionListener {
 
@@ -161,10 +167,47 @@ public class PanelPruebaGases extends JPanel implements ActionListener {
         c.gridx = 3;
         c.gridy = 4;
         this.add(buttonRpm, c);
-        btnWorkerCicloMotos = new JButton("Rechazar por RPM");
+        btnWorkerCicloMotos = new JButton("Rechazar moto por RPM");
         btnWorkerCicloMotos.setVisible(LeerArchivo.rechazarPorRpm());
         btnWorkerCicloMotos.setForeground(Color.CYAN);
         btnWorkerCicloMotos.setFont(fBotones);
+
+        btnWorkerCicloMotos.addActionListener(e -> {
+
+            String serial = "Serial no encontrado";
+            try {
+                serial = ConsultarDatosVehiculo.buscarSerialEquipo(Utilidades.getIdPrueba());
+            } catch (SQLException ex) {
+                Logger.getLogger(PanelPruebaGases.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(PanelPruebaGases.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(PanelPruebaGases.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            //putttttt
+
+            if(Utilidades.getIsEditable() == 0){
+                Utilidades.cargarDefectos(84018, Utilidades.getIdPrueba());
+                Utilidades.actualizarPrueba(true, false, Utilidades.getIdUsuarioMotos(), serial, Utilidades.getIdPrueba());
+            }else{
+                Utilidades.actualizarPrueba(false, false, Utilidades.getIdUsuarioMotos(), serial, Utilidades.getIdPrueba());
+            }
+
+            // Crear el JFrame principal
+            JFrame frame = new JFrame("Ejemplo Auto-Cierre");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(300, 200);
+            frame.setLocationRelativeTo(null);
+            
+            // Botón para abrir el cuadro de diálogo
+            JButton button = new JButton("Mostrar diálogo");
+            button.addActionListener(ee -> Utilidades.mostrarDialogoAutoCierre(frame));
+            
+            frame.add(button);
+            frame.setVisible(true);
+        });
+
+
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         c.gridx = 4;
@@ -239,6 +282,10 @@ public class PanelPruebaGases extends JPanel implements ActionListener {
     }
 
     public void cancelacion() {
+        if (Utilidades.getIntentos() != 0) {
+            return;
+        }
+        Utilidades.setIntentos(0);
         cerrar();
         String causarAborto = null;
         try {
@@ -267,47 +314,55 @@ public class PanelPruebaGases extends JPanel implements ActionListener {
 
         frmC.setVisible(true);
         JXLoginPane.Status status = JXLoginPane.showLoginDialog(frmC, pane);
+        //aqui otro
         while (true) {
             if (status == JXLoginPane.Status.SUCCEEDED) {
-                String nombreUsuario = pane.getUserName(); // El nombre de usuario que se acaba de autenticar
-                System.out.println("Usuario: " + nombreUsuario);
-        
-                // Preguntar el motivo de la cancelación
-                boolean pressMotivo = false;
-                Object objSeleccion = null;
-                objSeleccion = JOptionPane.showInputDialog(
-                        null,
-                        "Motivo del Aborto Prueba Gases",
-                        "Abortar Prueba desde panel:",
-                        JOptionPane.QUESTION_MESSAGE,
-                        null, // null para icono por defecto
-                        new Object[]{
+                //ok aqui
+                    String nombreUsuario = pane.getUserName(); // El nombre de usuario que se acaba de autenticar
+                    System.out.println("Usuario: " + nombreUsuario);
+                    
+                    // Preguntar el motivo de la cancelación
+                    boolean pressMotivo = false;
+                    Object objSeleccion = null;
+                    objSeleccion = JOptionPane.showInputDialog(
+                            null,
+                            "Motivo del Aborto Prueba Gases",
+                            "Abortar Prueba desde panel:",
+                            JOptionPane.QUESTION_MESSAGE,
+                            null, // null para icono por defecto
+                            new Object[]{
                                 "Fallas del equipo de medición",
                                 "Falla súbita de fluido eléctrico del equipo de medición",
                                 "Bloqueo forzado del equipo de medición",
                                 "Ejecución incorrecta de la prueba"
-                        },
-                        "Causales de Aborto");
-        
-                causarAborto = (String) objSeleccion;
-        
-                // Solicitar comentario opcional
-                String observacion = JOptionPane.showInputDialog(
-                        null,
-                        "¿Desea agregar un comentario? (Aceptar para si, Cancelar para no)",
-                        "Comentario adicional",
-                        JOptionPane.QUESTION_MESSAGE);
-        
-                // Si el comentario es null (usuario presionó cancelar) o vacío, asignar un string vacío
-                if (observacion == null || observacion.trim().isEmpty()) {
-                    observacion = ""; // String vacío
-                }
-        
-                // Registrar el aborto de la prueba con el motivo y comentario
-                registrarAborto(idPrueba, causarAborto, observacion);
-        
-                panelCancelacion.cerrar();
-                break;
+                            },
+                            "Causales de Aborto");
+                    
+                    causarAborto = (String) objSeleccion;
+                    
+                    // Solicitar comentario opcional
+                    String observacion = JOptionPane.showInputDialog(
+                            null,
+                            "¿Desea agregar un comentario? (Aceptar para si, Cancelar para no)",
+                            "Comentario adicional",
+                            JOptionPane.QUESTION_MESSAGE);
+                    
+                    // Si el comentario es null (usuario presionó cancelar) o vacío, asignar un string vacío
+                    if (observacion == null || observacion.trim().isEmpty()) {
+                        observacion = ""; // String vacío
+                    }
+                    
+                    // Registrar el aborto de la prueba con el motivo y comentario
+                    registrarAborto(idPrueba, causarAborto, observacion, Utilidades.getIdUsuarioMotos());
+                    try {
+                        registrarTemperaturaHumedad(Utilidades.getTempAmbiente(), Utilidades.getHumedadAmbiente());
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(PanelPruebaGases.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                    panelCancelacion.cerrar();
+                    break;
+                
             }
             if (
                 status == JXLoginPane.Status.NOT_STARTED 
@@ -317,47 +372,87 @@ public class PanelPruebaGases extends JPanel implements ActionListener {
                 status = JXLoginPane.showLoginDialog(frmC, pane);
             }
         }
+        Mensajes.mensajeAdvertencia("Prueba abortada con exito. \nPor seguridad cerraremos el programa");
+        System.exit(0);
     }
 
-    private void registrarAborto(long idPrueba, String causalAborto, String comentarioAborto) {
+    private void registrarAborto(long idPrueba, String causalAborto, String comentarioAborto, long idUsuario) {
     
-        int idEquipo = LeerArchivo.getIdEquipoFromEquiposProperties();
+        System.out.println("idPrueba: "+idPrueba);
+        System.out.println("causalAborto: "+causalAborto);
+        System.out.println("comentarioAborto: "+comentarioAborto);
+        System.out.println("idUsuario: "+idUsuario);
 
-        String sqlUpdatePrueba = "UPDATE pruebas SET Comentario_aborto = ?, Abortada = ?, Finalizada = ?, serialEquipo = ?, observaciones = ? WHERE id_pruebas = ?";
-        String sqlFindSerial = "SELECT serialresolucion FROM equipos WHERE id_equipo = ?";
+        String serial = "";
+
+        try {
+            serial = LeerArchivo.getSerialOtto();
+        } catch (IOException e) {
+            // Manejo de la excepción
+            e.printStackTrace();  // Puedes manejarlo de manera más específica si lo necesitas
+        }
+
+        // Modificar la consulta SQL para incluir el campo Fecha_aborto
+        String sqlUpdatePrueba = "UPDATE pruebas SET Comentario_aborto = ?, Abortada = ?, Finalizada = ?, serialEquipo = ?, observaciones = ?, usuario_for = ?, Fecha_aborto = ? WHERE id_pruebas = ?";
         Conexion.setConexionFromFile();
-    
+
         try (Connection conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContrasena());
-             PreparedStatement updatePruebasStmt = conexion.prepareStatement(sqlUpdatePrueba);
-             PreparedStatement findSerial = conexion.prepareStatement(sqlFindSerial)) {
-            
-            findSerial.setInt(1, idEquipo);
-            
-            String serial = null;
-            //rc representa el resultado de la consulta
-            try (ResultSet rc = findSerial.executeQuery()) {
-                while (rc.next()) {
-                    serial = rc.getString("serialresolucion");
-                }
-            }
-    
+            PreparedStatement updatePruebasStmt = conexion.prepareStatement(sqlUpdatePrueba)) {
+
+            // Capturar la fecha y hora actuales según la zona horaria de Colombia
+            ZonedDateTime fechaAborto = ZonedDateTime.now(ZoneId.of("America/Bogota"));
+
             // Establecer los parámetros para la actualización
             updatePruebasStmt.setString(1, comentarioAborto);
             updatePruebasStmt.setString(2, "Y");
             updatePruebasStmt.setString(3, "Y");
             updatePruebasStmt.setString(4, serial);
             updatePruebasStmt.setString(5, causalAborto);
-            updatePruebasStmt.setLong(6, idPrueba);
-    
+            updatePruebasStmt.setLong(6, idUsuario);
+            updatePruebasStmt.setTimestamp(7, Timestamp.valueOf(fechaAborto.toLocalDateTime()));  // Convertir ZonedDateTime a Timestamp
+            updatePruebasStmt.setLong(8, idPrueba);
+
             // Ejecutar la actualización
             updatePruebasStmt.executeUpdate();
-    
+
             // Mostrar mensaje y esperar 3 segundos antes de cerrar la aplicación
             JOptionPane.showMessageDialog(null, "Prueba abortada y finalizada con éxito.", "Información", JOptionPane.INFORMATION_MESSAGE);
             
         } catch (SQLException ex) { 
             ex.printStackTrace();
             System.out.println("Error al tratar de abortar y finalizar la prueba por: " + ex.getMessage());
+        }
+    }
+
+    public void registrarTemperaturaHumedad(Double temperatura, Double humedad) throws ClassNotFoundException {
+
+        Connection cn = null;
+        try {
+            cn = Conex.getConnection();
+            String strInsert = "INSERT INTO medidas(MEASURETYPE,Valor_medida,TEST) VALUES(?,?,?)";
+            PreparedStatement ps = cn.prepareStatement(strInsert);
+            //insertar la temperatura
+            cn.setAutoCommit(false);
+            ps.setInt(1, 8031);
+            ps.setDouble(2, temperatura);
+            ps.setLong(3, idPrueba);
+            ps.executeUpdate();
+            ps.clearParameters();
+            ps.setInt(1, 8032);
+            ps.setDouble(2, humedad);
+            ps.setLong(3, idPrueba);
+            ps.executeUpdate();
+            cn.commit();
+            cn.setAutoCommit(true);
+            System.out.println("Termohigrometro Registrado. Temp: " + temperatura + "Humedad: " + humedad);
+        } catch (SQLException exc) {
+            JOptionPane.showMessageDialog(null, "No se pueden grabar los valores de humedad y temperatura");
+            System.out.println("Error registrando Termohigrometro " + exc);
+        } finally {
+            try {
+                cn.close();
+            } catch (SQLException e) {
+            }
         }
     }
 
@@ -387,10 +482,6 @@ public class PanelPruebaGases extends JPanel implements ActionListener {
 
     public JPanel getPanelFiguras() {
         return panelFiguras;
-    }
-
-    public JButton getBtnWorkerCicloMotos() {
-        return btnWorkerCicloMotos;
     }
 
     public void setPanelFiguras(JPanel panelFiguras) {
@@ -423,23 +514,7 @@ public class PanelPruebaGases extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == buttonFinalizar) {
             this.cancelacion();
-        } else {
-            //TODO añadir codigo para registrar el defecto por 
-//            System.out.println("se preciono el boton btnWorkerCicloMotos");
-//            RegistrarMedidas regMedidas = new RegistrarMedidas();
-//            
-//            try {
-//                regMedidas.registraRechazo(" ", "rechazo por revoluciones fuera de rango. ", idUsuario, idPrueba, 84018);
-//            } catch (SQLException ex) {
-//                Logger.getLogger(PanelPruebaGases.class.getName()).log(Level.SEVERE, null, ex);
-//            } catch (ClassNotFoundException ex) {
-//                Logger.getLogger(PanelPruebaGases.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//            System.out.println("Ya registre medidas de rechazo por RPM: " + "idPrueba = " + 15);
-//            System.out.println("Cierre de Panel ");
-//
-//            this.cerrar();
-        }
+        } 
     }//end of method actionPerformed
 
     // Método para cerrar la ventana y guardar la causa de aborto en la base de datos
