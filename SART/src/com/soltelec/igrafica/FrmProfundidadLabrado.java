@@ -4,8 +4,6 @@
  */
 package com.soltelec.igrafica;
 
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.PreparedStatement;
 import com.soltelec.dao.ControladorVerificar;
 import com.soltelec.modulopuc.utilidades.Mensajes;
 import java.awt.Dimension;
@@ -18,11 +16,10 @@ import java.util.Properties;
 import com.soltelec.model.Vehiculos;
 import com.soltelec.modulopuc.configuracion.modelo.Conexion;
 import java.awt.Component;
-import java.text.NumberFormat;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import javax.persistence.EntityManager;
-import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
-import javax.swing.text.NumberFormatter;
 
 /**
  *

@@ -5,10 +5,12 @@
  */
 package com.soltelec.dao.conexion;
 
-import com.soltelec.modulopuc.configuracion.modelo.Conexion;
+//import com.soltelec.modulopuc.configuracion.modelo.Conexion;
 import java.util.HashMap;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
+
+import com.soltelec.conexion_seriales.Conexion;
 
 /**
  *
@@ -18,11 +20,12 @@ public class PersistenceController {
     protected static EntityManager em;
     public static EntityManager getEntityManager() {
         if (Conexion.getBaseDatos() == null) {
+            com.soltelec.modulopuc.configuracion.modelo.Conexion.getBaseDatos();
             HashMap map = new HashMap();
             Conexion cn = Conexion.getInstance();
             map.put("javax.persistence.jdbc.url", Conexion.getUrl());
             map.put("javax.persistence.jdbc.user", Conexion.getUsuario());
-            map.put("javax.persistence.jdbc.password", Conexion.getContraseña());
+            map.put("javax.persistence.jdbc.password", Conexion.getContrasena());
             em = Persistence.createEntityManagerFactory("ProyectoCDAPU", map).createEntityManager();
         }
         return em;

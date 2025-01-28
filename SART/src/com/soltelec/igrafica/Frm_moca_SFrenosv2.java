@@ -4,8 +4,8 @@
  */
 package com.soltelec.igrafica;
 
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.PreparedStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import com.soltelec.modulopuc.configuracion.modelo.Conexion;
 import com.soltelec.modulopuc.utilidades.Mensajes;
 import java.awt.Dimension;

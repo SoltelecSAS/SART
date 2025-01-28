@@ -4546,10 +4546,10 @@ public final class Frm_mo_SFrenosv2 extends javax.swing.JDialog
 //            Connection cn = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/db_cda", "root", "50lt3l3c545");
             return cn;
         } catch (ClassNotFoundException | SQLException ex) {
-
+            ex.printStackTrace();
             Log.error("Error en el metodo: llamarConexion() " + ex.getMessage());
             Mensajes.mostrarExcepcion(ex);
-            JOptionPane.showMessageDialog(null, "Error al conectar con la db");
+            JOptionPane.showMessageDialog(null, "Error al conectar con la db 4");
             System.exit(0);
             //TMI21A
         }
@@ -4722,7 +4722,7 @@ public final class Frm_mo_SFrenosv2 extends javax.swing.JDialog
         log.info("---------------------------------------------------");
         log.info("--           cargarMedidasLabradoDB              --");
         log.info("---------------------------------------------------");
-        com.mysql.jdbc.PreparedStatement ps;
+        PreparedStatement ps;
         ResultSet rs;
         String sql="";
         List<Double> listMedidas = new ArrayList<Double>();
@@ -4734,7 +4734,7 @@ public final class Frm_mo_SFrenosv2 extends javax.swing.JDialog
             sql = "SELECT m.Valor_medida FROM medidas m WHERE m.MEASURETYPE IN ("+Labrado9046+","+Labrado9047+") AND m.TEST=?";
             if (conexion != null) 
             {
-                ps = (com.mysql.jdbc.PreparedStatement) conexion.prepareStatement(sql);
+                ps = (PreparedStatement) conexion.prepareStatement(sql);
                 ps.setInt(1, idPrueba);
                 rs = ps.executeQuery();
                 while (rs.next()) 

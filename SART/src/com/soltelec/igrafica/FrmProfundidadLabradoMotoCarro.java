@@ -4,8 +4,6 @@
  */
 package com.soltelec.igrafica;
 
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.PreparedStatement;
 import com.soltelec.dao.ControladorVerificar;
 import com.soltelec.modulopuc.utilidades.Mensajes;
 import java.awt.Dimension;
@@ -19,6 +17,7 @@ import com.soltelec.model.Vehiculos;
 import java.awt.Component;
 import javax.swing.JOptionPane;
 import com.soltelec.modulopuc.configuracion.modelo.Conexion;
+import java.sql.Connection;
 import javax.persistence.EntityManager;
 /**
  *

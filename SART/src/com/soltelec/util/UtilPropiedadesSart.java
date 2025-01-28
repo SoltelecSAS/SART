@@ -131,4 +131,10 @@ public class UtilPropiedadesSart
         }
         return null;
     }
+
+    public static String cargarPropiedad2(String nombrePropiedad, String nombreArchivo) throws FileNotFoundException, IOException {
+        Properties props = new Properties();
+        props.load(new FileInputStream("./" + nombreArchivo));
+        return props.getProperty(nombrePropiedad);
+    }
 }

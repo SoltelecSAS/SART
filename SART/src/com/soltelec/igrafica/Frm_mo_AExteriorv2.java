@@ -4,24 +4,15 @@
  */
 package com.soltelec.igrafica;
 
-import com.soltelec.dao.HojaPruebasJpaController;
-import com.soltelec.dao.VehiculosJpaController;
-import com.soltelec.model.Defxplaca;
-import com.soltelec.model.DefxplacaPK;
-import com.soltelec.model.HojaPruebas;
-import com.soltelec.model.Vehiculos;
 import com.soltelec.modulopuc.configuracion.modelo.Conexion;
 import com.soltelec.modulopuc.utilidades.Mensajes;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Properties;
 import javax.swing.JOptionPane;
 
 /**
@@ -1100,15 +1091,15 @@ public class Frm_mo_AExteriorv2 extends javax.swing.JDialog {
         try 
         {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection cn = (com.mysql.jdbc.Connection) DriverManager.getConnection("jdbc:mysql://" + Conexion.getIpServidor() + ":" + Conexion.getPuerto() + "/" + Conexion.getBaseDatos(), Conexion.getUsuario(), Conexion.getContraseña());
+            Connection cn = (Connection) DriverManager.getConnection("jdbc:mysql://" + Conexion.getIpServidor() + ":" + Conexion.getPuerto() + "/" + Conexion.getBaseDatos(), Conexion.getUsuario(), Conexion.getContraseña());
 //            Connection cn = (Connection) DriverManager.getConnection("jdbc:mysql://192.168.0.102:3306/db_cda", "root", "50lt3l3c545");
             cn.setAutoCommit(false);
             return cn;
         } catch (ClassNotFoundException | SQLException ex) {
-            
+            ex.printStackTrace();
             log.error("Error en el metodo llamarConexion() : PruebaInspecionSencorial: " + ex.getMessage() + ex.toString());
             Mensajes.mostrarExcepcion(ex);
-            JOptionPane.showMessageDialog(null, "Error al conectar con la db");
+            JOptionPane.showMessageDialog(null, "Error al conectar con la db 1");
             doClose(0);
         }
         return null;

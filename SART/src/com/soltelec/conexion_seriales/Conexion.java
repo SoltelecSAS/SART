@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.soltelec.util.CMensajes;
 import com.soltelec.util.Utilidades2;
@@ -69,11 +70,18 @@ public class Conexion implements Serializable {
                 datos.add(dato);
             }
 
+            if (datos.get(4).equalsIgnoreCase("Dental")) {
+                contrasena = "Dental~moovi#31053017byGod";
+            }else{
+                contrasena = datos.get(4);
+            }
+
+
             baseDatos = datos.get(0);
             ipServidor = datos.get(1);
             usuario = datos.get(2);
             puerto = datos.get(3);
-            contrasena = datos.get(4);
+            
 
             System.out.println("credenciales base de datos:");
             System.out.println(baseDatos);
@@ -82,6 +90,7 @@ public class Conexion implements Serializable {
             System.out.println(puerto);
             System.out.println(contrasena);
 
+            
             bufferedReader.close();
         } catch (IOException ex) {
             CMensajes.mensajeError("No se pudo leer el archivo de conexion "+ CARPETA + NOMBRE_ARCHIVO + EXTENSION);

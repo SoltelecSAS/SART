@@ -246,9 +246,10 @@ public class Frm_mo_Ensev2 extends javax.swing.JDialog {
 //           return cn;
        } catch (SQLException ex) 
        {
-           JOptionPane.showMessageDialog(null, "Error al conectar con la db");
-           log.error("Error en el metodo llamarConexion() " + ex.getMessage());
-           log.error("Error en el metodo llamarConexion() " + ex.getLocalizedMessage());
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al conectar con la db 2");
+            log.error("Error en el metodo llamarConexion() " + ex.getMessage());
+            log.error("Error en el metodo llamarConexion() " + ex.getLocalizedMessage());
        }
        return null;
    }

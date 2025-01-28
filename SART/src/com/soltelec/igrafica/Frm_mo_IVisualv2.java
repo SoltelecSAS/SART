@@ -17,8 +17,6 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -584,14 +582,14 @@ public class Frm_mo_IVisualv2 extends javax.swing.JDialog
         try {
             Class.forName("com.mysql.jdbc.Driver");
             System.out.println(" IpServidor :  " + Conexion.getIpServidor() + " Puerto " + Conexion.getPuerto() + " BaseDatos : " +  Conexion.getBaseDatos() + " Contraseña :  " + Conexion.getContraseña());
-            Connection cn = (com.mysql.jdbc.Connection) DriverManager.getConnection("jdbc:mysql://" + Conexion.getIpServidor() + ":" + Conexion.getPuerto() + "/" + Conexion.getBaseDatos(), Conexion.getUsuario(), Conexion.getContraseña());
+            Connection cn = (Connection) DriverManager.getConnection("jdbc:mysql://" + Conexion.getIpServidor() + ":" + Conexion.getPuerto() + "/" + Conexion.getBaseDatos(), Conexion.getUsuario(), Conexion.getContraseña());
 //            Connection cn = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/db_cda", "root", "50lt3l3c545");
             return cn;
         } catch (ClassNotFoundException | SQLException ex) {
-
+            ex.printStackTrace();
             System.out.println("Error en el metodo: llamarConexion() " + ex.getMessage());
             Mensajes.mostrarExcepcion(ex);
-            JOptionPane.showMessageDialog(null, "Error al conectar con la db");
+            JOptionPane.showMessageDialog(null, "Error al conectar con la db 3");
             System.exit(0);
         }
         return null;
@@ -614,7 +612,7 @@ public class Frm_mo_IVisualv2 extends javax.swing.JDialog
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            conexion = (com.mysql.jdbc.Connection) DriverManager.getConnection("jdbc:mysql://" + Conexion.getIpServidor() + ":" + Conexion.getPuerto() + "/" + Conexion.getBaseDatos(), Conexion.getUsuario(), Conexion.getContraseña());
+            conexion = (Connection) DriverManager.getConnection("jdbc:mysql://" + Conexion.getIpServidor() + ":" + Conexion.getPuerto() + "/" + Conexion.getBaseDatos(), Conexion.getUsuario(), Conexion.getContraseña());
         } catch (ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(null, "Class not found exception", "SART 1.7.3", JOptionPane.ERROR_MESSAGE);
             //CMensajes.mostrarExcepcion(ex);

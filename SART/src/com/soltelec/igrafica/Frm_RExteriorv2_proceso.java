@@ -4,19 +4,15 @@
  */
 package com.soltelec.igrafica;
 
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.PreparedStatement;
 import com.soltelec.modulopuc.utilidades.Mensajes;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
-import javax.swing.Icon;
 import com.soltelec.model.Vehiculos;
 import com.soltelec.modulopuc.configuracion.modelo.Conexion;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -1530,9 +1526,10 @@ public class Frm_RExteriorv2_proceso extends javax.swing.JDialog {
             return cn;
         } catch (ClassNotFoundException | SQLException ex) 
         {
+            ex.printStackTrace();
             System.out.println("Error en el metodo llamarConexion() : PruebaInspecionSencorial: " +ex.getMessage());
             Mensajes.mostrarExcepcion(ex);
-            JOptionPane.showMessageDialog(null, "Error al conectar con la db");
+            JOptionPane.showMessageDialog(null, "Error al conectar con la db 5");
         }
         return null;
     }

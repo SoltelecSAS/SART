@@ -53,7 +53,6 @@ import org.soltelec.pruebasgases.motocicletas.JDialogMotosGases;
 import org.soltelec.pruebasgases.motocicletas.WorkerCiclosMoto;
 import org.soltelec.sonometro.JDialogSonometro;
 import org.soltelec.util.UtilFugas;
-import org.soltelec.util.UtilSicov;
 import vistas.DlgFrenoMoto;
 import vistas.DlgIntegrado4x4;
 import vistas.DlgIntegradoLiviano;
@@ -71,8 +70,10 @@ import java.util.List;
 import myplayer.CapturarFoto;
 import org.soltelec.pruebasgases.DialogoVehiculo;
 import com.soltelec.util.MensajesOut;
+
 import org.apache.commons.lang.StringUtils;
 import org.soltelec.models.controllers.EquipoController;
+import org.soltelec.util.UtilSicov;
 import termohigrometro.TermoHigrometroArtisan;
 import utiltermohigrometro.UtilPropiedades;
 import vistas.DlgIntegradoMotoCarro;
@@ -2283,7 +2284,7 @@ public class Frm_Placas extends javax.swing.JDialog {
             }
             System.out.println("despues del if revtec");
             Long serialOpcimetro = UtilFugas.obtenerSerialOpacimetro();
-            System.out.println("SERIAL DEL OPACIMETRO  " + serialOpcimetro);
+            System.out.println("SERIAL DEL OPACIMETRO  1" + serialOpcimetro);
             RegVefCalibraciones regvef = new RegVefCalibraciones();
             boolean necesitaLinealidad = regvef.necesitaLinealidad(serialOpcimetro);
             if (necesitaLinealidad == true) {
