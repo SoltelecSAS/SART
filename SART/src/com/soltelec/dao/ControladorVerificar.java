@@ -20,6 +20,8 @@ import com.soltelec.model.Reinspeccion;
 import com.soltelec.model.TipoPrueba;
 import com.soltelec.model.Usuarios;
 import com.soltelec.model.Vehiculos;
+import com.soltelec.util.Utilidades;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -39,7 +41,6 @@ import javax.swing.JOptionPane;
 import org.soltelec.pruebasgases.motocicletas.CallableInicioMotos;
 import org.soltelec.pruebasgases.motocicletas.CallablePruebaMotos;
 import  org.soltelec.util.RegistrarMedidas;
-import org.soltelec.util.RegistrarMedidas;
 
 /**
  * Clase para optimizar la consulta de la ultima hoja de prueba no finalizada
@@ -180,7 +181,7 @@ public class ControladorVerificar {
                 }
                 System.out.println("NO ES INDRA");
                 
-                if (hp.getEstadoSICOV().equalsIgnoreCase("REGISTRADA")) {                   
+                if (hp.getEstadoSICOV().equalsIgnoreCase("REGISTRADA") && !ctxCDA.getProveedorSicov().equalsIgnoreCase("NO_APLICA")) {                   
                     
                     RespuestaDTO respuestaDTO= null;
                     try {
@@ -322,16 +323,25 @@ public class ControladorVerificar {
         
         List<Object[]> lstEscalar = consultaDB(em, idHojaPruebas, tipoPrueba);
 
+        //String[] datosPrueba = Utilidades.obtenerUltimaPruebaNoAutorizada(tipoPrueba, idPrueba);
+
         try 
         {
             if (lstEscalar != null) 
             {
                 String abortada = null;
                 Object[] result = lstEscalar.get(0);
+
                 idPrueba = (Integer) result[0];
                 abortada = (String) result[1];
                 String finalizada = (String) result[3];
                 Integer usuario = (Integer) result[2];
+
+                /* idPrueba = Integer.parseInt(datosPrueba[0]) ;
+                abortada = datosPrueba[1];
+                String finalizada = datosPrueba[3];
+                Integer usuario = Integer.parseInt(datosPrueba[2]); */
+
                 CallableInicioMotos.lecturaCondicionesAnormales = "";
                 CallablePruebaMotos.condicionTemperatura = 0;
                 if (finalizada.equalsIgnoreCase("Y")) {

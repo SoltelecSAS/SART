@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
 public class Desviacion implements PruebaDefault {
 
     private final List<Double> desviacion;
-    private double desviacionMedia;
+    //private double desviacionMedia;
     private List<Integer> tiposMedida;
     private List<Double> valoresMedida;
     private List<Integer> defectos;
@@ -108,16 +108,17 @@ public class Desviacion implements PruebaDefault {
      * Metodo para calcular la desviacion media de los datos obtenidos en la
      * prueba Formula: desviacionMedia = sumaDesviacion / numeroDatos;
      */
-    private void calcularDesviacionMedia() {
+    /* private void calcularDesviacionMedia() {
         double suma = 0;
         for (int i = 0; i < desviacion.size(); i++) {
             suma += desviacion.get(i);
         }
         desviacionMedia = (suma / desviacion.size()) / 1000;
-    }
+    } */
 
     @Override
-    public void imprimirValores() {
+    public void imprimirValores(String ubicacion) {
+        System.out.println("-----Ubicacion Desviacion: "+ubicacion);
         System.out.println("\n..........VALORES DESVIACION..........\n");
         for (int i = 0; i < desviacion.size(); i++) {
             System.out.println("Desviacion del Eje " + (i + 1) + ": " + desviacion.get(i));
@@ -140,9 +141,9 @@ public class Desviacion implements PruebaDefault {
             verifica= false;            
         }
         if(verifica==false){
-          imprimirValores();
+          imprimirValores("verifResolMedDesv desde Desviacion");
           Object[] choices = {"REPETIR"};         
-          int dato = JOptionPane.showOptionDialog(null, "<html><div><center><img src='file:images/flag-red-icon.png' alt='algo'/><h2 style='font-family: \"Open Sans Condensed Light\"; color:#069'>Falla en el proceso</h2><hr/><p align='justify' style='font-family: 'Open Sans Condensed Light'; font-size: 15px; '>LA MEDIDA ESTA POR FUERA DE LA RESOLUCION DE LA MAQUINA</p><hr/><br/></center></div></html>", "SART 1.7.3 DESVIACION FUERA DE RESOLUCION", 0, -1, null, choices, choices[0]);                   
+          /* int dato = */ JOptionPane.showOptionDialog(null, "<html><div><center><img src='file:images/flag-red-icon.png' alt='algo'/><h2 style='font-family: \"Open Sans Condensed Light\"; color:#069'>Falla en el proceso</h2><hr/><p align='justify' style='font-family: 'Open Sans Condensed Light'; font-size: 15px; '>LA MEDIDA ESTA POR FUERA DE LA RESOLUCION DE LA MAQUINA</p><hr/><br/></center></div></html>", "SART 1.7.3 DESVIACION FUERA DE RESOLUCION", 0, -1, null, choices, choices[0]);                   
         }        
         return verifica;        
     }

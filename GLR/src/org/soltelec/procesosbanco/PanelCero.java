@@ -95,7 +95,7 @@ public class PanelCero extends JFrame implements ActionListener, Runnable {
                 
                 MedicionGases medicion = banco.obtenerDatos();
                 Thread.sleep(300);
-                System.out.println("HC IS " + medicion.getValorHC() + " CO: " + medicion.getValorCO() + " CO2: " + medicion.getValorCO2() + " O2:" + medicion.getValorO2());
+                System.out.println("1-HC IS " + medicion.getValorHC() + " CO: " + medicion.getValorCO() + " CO2: " + medicion.getValorCO2() + " O2:" + medicion.getValorO2());
                 if (medicion.getValorHC() > 30 || medicion.getValorCO() > 100 || medicion.getValorCO2() > 10 || medicion.getValorO2() < 180) {
                     PanelCero.calibradoCero = 1;
                 } else {

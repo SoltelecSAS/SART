@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -49,10 +48,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import modelo.Desviacion;
 import modelo.Frenos;
-import static modelo.Frenos.eficacia;
 import modelo.Suspension;
 import org.jdesktop.swingx.JXLoginPane;
-import static vistas.DlgIntegradoPesado.byteToInt;
 
 /**
  *
@@ -2616,10 +2613,10 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
         for (int i = 0; i < fuerzasvd.size(); i++) {
             System.out.println("Valor de fuerza derecha " + fuerzasvd.get(i) + " en la posición " + i);
-            suspension.setFuerzaDerecha(fuerzasvd.get(i));
+            suspension.setFuerzaDerecha(fuerzasvd.get(i), "RegistrarMedidasSuspension desde DlgIntegradoLiviano con i="+i);
 
             System.out.println("Valor de fuerza izquierda " + fuerzasvi.get(i) + " en la posición " + i);
-            suspension.setFuerzaIzquierda(fuerzasvi.get(i));
+            suspension.setFuerzaIzquierda(fuerzasvi.get(i), "RegistrarMedidasSuspension desde DlgIntegradoLiviano con i="+i);
 
             if (fuerzasvd.get(i) == null || fuerzasvi.get(i) == null || fuerzasvd.get(i) == 0 || fuerzasvi.get(i) == 0) {
                 valoresNulosOCeros = true;
@@ -2629,10 +2626,10 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
         for (int k = 0; k < pesosd.size(); k++) {
             System.out.println("Valor de peso derecho " + pesosd.get(k) * spanpd + " en la posición " + k);
-            suspension.setPesoDerecho(pesosd.get(k) * spanpd);
+            suspension.setPesoDerecho(pesosd.get(k) * spanpd, "RegistrarMedidasSuspension desde DlgIntegradoLiviano con k="+k);
 
             System.out.println("Valor de peso izquierdo " + pesosi.get(k) * spanpd + " en la posición " + k);
-            suspension.setPesoIzquierdo(pesosi.get(k) * spanpi);
+            suspension.setPesoIzquierdo(pesosi.get(k) * spanpi, "RegistrarMedidasSuspension desde DlgIntegradoLiviano con k="+k);
 
             if (pesosd.get(k) == null || pesosi.get(k) == null || pesosd.get(k) == 0 || pesosi.get(k) == 0) {
                 valoresNulosOCeros = true;

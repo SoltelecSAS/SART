@@ -39,6 +39,16 @@ public class LeerArchivo {
         return 1;
     }
 
+    public static double getTiempoHc() {
+        String archivo = "propiedades.properties"; // Nombre del archivo
+        String buscarTexto = "hcTime=";
+        
+        String resultado = LeerArchivo.leerDatoDesdeArchivo(archivo, buscarTexto);
+        System.out.println("Valor hcTime: "+resultado);
+        if (resultado != null) return Double.parseDouble(resultado);
+        return 100; // retorna 100 por defecto
+    }
+
     public static int getIdEquipoFromEquiposProperties(){
         String archivo = "equipos.properties"; // Nombre del archivo
         String buscarTexto = "GASES=";

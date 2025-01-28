@@ -1022,13 +1022,13 @@ public class ProcesoPruebaOpacimetro implements Runnable, ActionListener {
 //            }
             if (modelo <= 2000) {
                 if (cilindraje < 5000) {
-                    if (promedioTresMediciones < 6.0) {
+                    if (promedioTresMediciones < 4.5) {
                         pruebaAprobada = true;
                     } else {
                         pruebaAprobada = false;
                     }
                 } else if (cilindraje >= 5000) {
-                    if (promedioTresMediciones < 5.5) {
+                    if (promedioTresMediciones < 4.0) {
                         pruebaAprobada = true;
                     } else {
                         pruebaAprobada = false;
@@ -1036,13 +1036,13 @@ public class ProcesoPruebaOpacimetro implements Runnable, ActionListener {
                 }
             } else if (modelo > 2000 && modelo <= 2015) {
                 if (cilindraje < 5000) {
-                    if (promedioTresMediciones < 5.0) {
+                    if (promedioTresMediciones < 3.5) {
                         pruebaAprobada = true;
                     } else {
                         pruebaAprobada = false;
                     }
                 } else if (cilindraje >= 5000) {
-                    if (promedioTresMediciones < 4.5) {
+                    if (promedioTresMediciones < 3.0) {
                         pruebaAprobada = true;
                     } else {
                         pruebaAprobada = false;
@@ -1050,13 +1050,13 @@ public class ProcesoPruebaOpacimetro implements Runnable, ActionListener {
                 }
             } else {
                 if (cilindraje < 5000) {
-                    if (promedioTresMediciones < 4.0) {
+                    if (promedioTresMediciones < 2.5) {
                         pruebaAprobada = true;
                     } else {
                         pruebaAprobada = false;
                     }
                 } else if (cilindraje >= 5000) {
-                    if (promedioTresMediciones < 3.5) {
+                    if (promedioTresMediciones < 2.0) {
                         pruebaAprobada = true;
                     } else {
                         pruebaAprobada = false;

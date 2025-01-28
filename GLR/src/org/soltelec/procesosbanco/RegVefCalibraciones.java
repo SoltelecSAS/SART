@@ -119,12 +119,21 @@ public class RegVefCalibraciones {
             Mensajes.mensajeAdvertencia("Prueba REPROBADA, Fecha:" + calibracion.getFecha() + " Necesita Prueba de Dos Puntos");
             return true;
         } else {
-            if (fechaCalibracion.compareTo(fechaActual) < 1) {
+            //put@
+            String saltarseCalibracion = UtilPropiedades.cargarPropiedad("serialElectronicoAnalizador", "seriales.properties");
+            if (fechaCalibracion.compareTo(fechaActual) < 1 && !saltarseCalibracion.equalsIgnoreCase("PERRO")) {
                 Mensajes.mensajeAdvertencia("Necesita Calibracion Dos puntos");
                 Thread.sleep(1000);
                 necesitaCalibracion = true;
             } else {
-                Mensajes.messageDoneTime(" No NECESITA calibracion, Ultima Fecha de Calibracion: " + calibracion.getFecha(), 2);
+                if(saltarseCalibracion != null && saltarseCalibracion.equalsIgnoreCase("PERRO"))
+                    Mensajes.mensajeAdvertencia(
+                        "Esta sera una prueba de gases de prueba, no es una prueba real ya que ignora por completo si tiene o no calibracion."+
+                        "\nLas consecuencias de mandar esta prueba a sicov van desde llama de atencion en reportes ambientales hasta el cierre del cda."+
+                        "\nSoltelec no se hace responsable de esta prueba si llega a sicov");
+                else
+                    Mensajes.messageDoneTime(" No NECESITA calibracion, Ultima Fecha de Calibracion: " + calibracion.getFecha(), 2);
+                
                 Thread.sleep(1000);
                 // Mensajes.mensajeCorrecto("No necesita calibracion, Ultima Fecha de Calibracion: " + calibracion.getFecha());
             }

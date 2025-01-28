@@ -99,7 +99,7 @@ public class MedidasDAO {
             }
         }
 
-        prueba.imprimirValores();
+        prueba.imprimirValores("guardarMedidas desde MedidasDAO");
         return false;
     }
 }

@@ -581,7 +581,7 @@ public class FrenoMotoCarro implements PruebaDefault {
         System.out.println("_|_ Valor Eficacia Frenos " + FrenoMotoCarro.eficacia);
     
         if (FrenoMotoCarro.eficacia > 100) {
-            imprimirValores();
+            imprimirValores("calcularEficacia desde FrenoMotoCarro");
             mostrarMensajeFalla();
             repetirPrueba = true;
         }
@@ -606,7 +606,7 @@ public class FrenoMotoCarro implements PruebaDefault {
                 suma += fuerzaDe + fuerzaIz;
             }
             if (fuerzaDe < 71) {
-                imprimirValores();
+                imprimirValores("calcularSumatoriaFuerzas desde FrenoMotoCarro");
                 mostrarMensajeFalla();
                 return suma;
             }
@@ -621,7 +621,7 @@ public class FrenoMotoCarro implements PruebaDefault {
             double fuerzaIzAx = fuerzaIzquierdaAux.get(i);
             suma += fuerzaDeAx + fuerzaIzAx;
             if (fuerzaDerechaAux.get(i) < 71 || fuerzaIzquierdaAux.get(i) < 71) {
-                imprimirValores();
+                imprimirValores("calcularSumatoriaFuerzasAux desde FrenoMotoCarro");
                 mostrarMensajeFalla();
                 return suma;
             }
@@ -658,7 +658,7 @@ public class FrenoMotoCarro implements PruebaDefault {
     private void mostrarMensajeFalla() {
         if (DlgIntegradoLiviano.activarFlagFrenos && DlgIntegradoLiviano.activarFlag == 0) {
             Object[] choices = {"REPETIR"};
-            int dato = JOptionPane.showOptionDialog(null, "<html><div><center><img src='file:images/flag-red-icon.png' alt='algo'/><h2 style='font-family: \"Open Sans Condensed Light\"; color:#069'>Falla en el proceso</h2><hr/><p align='justify' style='font-family: 'Open Sans Condensed Light'; font-size: 15px; '>Debe repetir la prueba</p><hr/><br/></center></div></html>", "SART 1.7.3 FALLA EN EL PROCESO", 0, -1, null, choices, choices[0]);
+            /* int dato =  */JOptionPane.showOptionDialog(null, "<html><div><center><img src='file:images/flag-red-icon.png' alt='algo'/><h2 style='font-family: \"Open Sans Condensed Light\"; color:#069'>Falla en el proceso</h2><hr/><p align='justify' style='font-family: 'Open Sans Condensed Light'; font-size: 15px; '>Debe repetir la prueba</p><hr/><br/></center></div></html>", "SART 1.7.3 FALLA EN EL PROCESO", 0, -1, null, choices, choices[0]);
         }
     }
 
@@ -756,7 +756,8 @@ public class FrenoMotoCarro implements PruebaDefault {
     }
 
     @Override
-    public void imprimirValores() {
+    public void imprimirValores(String ubicacion) {
+        System.out.println("----------Ubicacion FrenoMotoCarro: "+ubicacion);
         System.out.println("\n..........TABLA VALORES FRENOS .........\n");
         for (int i = 0; i < pesoDerecho.size(); i++) {
             System.out.println("Peso Derecho Eje " + (i + 1) + ": " + pesoDerecho.get(i));

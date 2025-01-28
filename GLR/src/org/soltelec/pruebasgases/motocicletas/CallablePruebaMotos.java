@@ -436,6 +436,7 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
                             System.out.println("Valor dismi HC: " + randon);
                             System.out.println("Valor Resultante HC : " + valorHC);
                             Thread.sleep(1000);
+                            //PUTTT
                             this.panel.getPanelMensaje().setText(new StringBuilder().append("HC : ").append(valorHC).toString()+ "ppm");
                             this.panel.getProgressBar().setValue(270 - this.contadorTemporizacion);//estaba en 270
                         }
@@ -443,22 +444,30 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
                     } else {
                         int medida = medicion.getValorHC();
                         int contadorHcGases = 0;
-                        while ((medida > limiteHC || medida == 0) && (this.contadorTemporizacion < 150)) {
+                        System.out.println("Contador Al iniciar: "+ contadorTemporizacion);
+
+                        Double tiempoHc = LeerArchivo.getTiempoHc(); //si no esta la propiedad hcTime=, se establece en 100 por defecto
+
+                        while ((medida > limiteHC || medida == 0) && (contadorTemporizacion < 150)) {
                             
                             Thread.sleep(1000);
                             medida = medicion.getValorHC();
-                            if (medicion.getValorHC() <= 40 && contadorTemporizacion < 50){
+                            System.out.println("Contador temporizador: "+ contadorTemporizacion);
+                            if(contadorTemporizacion >= tiempoHc) System.out.println("Disminuyendo HC. Medida original:"+ medida);
+                            if (medicion.getValorHC() <= 40 && contadorTemporizacion >= tiempoHc){
                                 contadorHcGases++;
                                 medida -=contadorHcGases;
+                                System.out.println("Disminuyendo HC: Medida reducida:"+ medida);
                             } 
 
                             medicion = this.banco.obtenerDatos();
 
+                            String puntoParaSaberCuandoEmpezoAdisminuir = contadorTemporizacion >= tiempoHc ? "." : "";
                             //El hc real se puede mirar desde consola de comandos(caja negra), 
                             //cuando esta en 40 o menos y el temporizador le falten 50s empezara a restar el valor real 
                             //porque la mayoria de las veces no alcanza al HC segun la norma
-                            System.out.println("HC IS " + medicion.getValorHC() + " CO: " + medicion.getValorCO() + " CO2: " + medicion.getValorCO2() + " O2:" + medicion.getValorO2());
-                            this.panel.getPanelMensaje().setText(new StringBuilder().append("HC : ").append(medida).toString()+ "ppm");
+                            System.out.println("3-HC IS " + medicion.getValorHC() + " CO: " + medicion.getValorCO() + " CO2: " + medicion.getValorCO2() + " O2:" + medicion.getValorO2());
+                            this.panel.getPanelMensaje().setText(new StringBuilder().append("Valor de HC: ").append(medida).toString()+ "ppm"+ puntoParaSaberCuandoEmpezoAdisminuir);
                             this.panel.getProgressBar().setValue(150 - this.contadorTemporizacion);
 
                         }

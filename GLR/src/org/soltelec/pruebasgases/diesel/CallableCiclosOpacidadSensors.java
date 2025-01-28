@@ -1483,7 +1483,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                 Thread.sleep(100);
             }
 
-            if (cumple) {
+            if (cumple || simulacion) {
                 aceleracionGobernadas5sValida = true;
             } else {
                 panel.getMensaje().setText("ACELERACION FALLIDA: intentos restantes " + (2 - intentosAceleracionGobernada));

@@ -7,6 +7,8 @@ package org.soltelec.pruebasgases;
 
 import com.soltelec.loginadministrador.ConsultasLogin;
 import com.soltelec.loginadministrador.LoginServiceCDA;
+import com.soltelec.servidor.utils.CMensajes;
+
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.BoxView;
 import javax.swing.text.ComponentView;
@@ -174,6 +176,11 @@ public class PanelPruebaGases extends JPanel implements ActionListener {
 
         btnWorkerCicloMotos.addActionListener(e -> {
 
+            System.out.println("--------------------------------------------");
+            System.out.println("--------------------------------------------");
+            System.out.println("--------------Entrando a rechazar rpm---------------------");
+            System.out.println("--------------------------------------------");
+            System.out.println("--------------------------------------------");
             String serial = "Serial no encontrado";
             try {
                 serial = ConsultarDatosVehiculo.buscarSerialEquipo(Utilidades.getIdPrueba());
@@ -186,25 +193,21 @@ public class PanelPruebaGases extends JPanel implements ActionListener {
             }
             //putttttt
 
-            if(Utilidades.getIsEditable() == 0){
-                Utilidades.cargarDefectos(84018, Utilidades.getIdPrueba());
-                Utilidades.actualizarPrueba(true, false, Utilidades.getIdUsuarioMotos(), serial, Utilidades.getIdPrueba());
+            Utilidades.cargarDefectos(84018, Utilidades.getIdPrueba());
+            Utilidades.guardarOModificarMedida(8031, (int)Utilidades.getIdPrueba(), Utilidades.getTempAmbiente(), "N");
+            Utilidades.guardarOModificarMedida(8032, (int)Utilidades.getIdPrueba(), Utilidades.getHumedadAmbiente(), "N");
+            Utilidades.actualizarPrueba(true, false, Utilidades.getIdUsuarioMotos(), serial, Utilidades.getIdPrueba(), "4.1.1.1.5 Revoluciones fuera de rango.");
+            /* if(Utilidades.getIsEditable() == 0){
+                
             }else{
-                Utilidades.actualizarPrueba(false, false, Utilidades.getIdUsuarioMotos(), serial, Utilidades.getIdPrueba());
-            }
+                Utilidades.actualizarPrueba(false, false, Utilidades.getIdUsuarioMotos(), serial, Utilidades.getIdPrueba(), "");
+            } */
 
-            // Crear el JFrame principal
-            JFrame frame = new JFrame("Ejemplo Auto-Cierre");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(300, 200);
-            frame.setLocationRelativeTo(null);
+
+            CMensajes.mensajeCorrecto("Prueba finalizada con exito. \\n" + //
+                                "Por seguridad cerraremos el programa.");
+            System.exit(0);
             
-            // Botón para abrir el cuadro de diálogo
-            JButton button = new JButton("Mostrar diálogo");
-            button.addActionListener(ee -> Utilidades.mostrarDialogoAutoCierre(frame));
-            
-            frame.add(button);
-            frame.setVisible(true);
         });
 
 

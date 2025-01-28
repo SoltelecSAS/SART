@@ -3490,17 +3490,17 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
 
         for (int k = 0; k < fuerzasvd.size(); k++) {
             System.out.println(" Valor de fuerza derecha " + fuerzasvd.get(k) + " en la posicion " + k);
-            suspension.setFuerzaDerecha(fuerzasvd.get(k));
+            suspension.setFuerzaDerecha(fuerzasvd.get(k), "RegistrarMedidasSuspension desde DlgIntegradoMotoCarro con k="+k);
             System.out.println(" Valor de fuerza izquierda " + fuerzasvi.get(k) + " en la posicion " + k);
-            suspension.setFuerzaIzquierda(fuerzasvi.get(k));
+            suspension.setFuerzaIzquierda(fuerzasvi.get(k), "RegistrarMedidasSuspension desde DlgIntegradoMotoCarro con k="+k);
         }
 
         for (int k = 0; k < pesosd.size(); k++) {
             System.out.println(" Valor de peso derecho " + pesosd.get(k) * spanpd + " en la posicion " + k);
-            suspension.setPesoDerecho(pesosd.get(k) * spanpd);
+            suspension.setPesoDerecho(pesosd.get(k) * spanpd, "RegistrarMedidasSuspension desde DlgIntegradoMotoCarro con k="+k);
 
             System.out.println(" Valor de peso izquierdo " + pesosi.get(k) * spanpd + " en la posicion " + k);
-            suspension.setPesoIzquierdo(pesosi.get(k) * spanpi);
+            suspension.setPesoIzquierdo(pesosi.get(k) * spanpi, "RegistrarMedidasSuspension desde DlgIntegradoMotoCarro con k="+k);
         }
 
         System.out.println("voy a registrar suspension DLGintegradoLiviano ");

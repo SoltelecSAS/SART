@@ -4,8 +4,6 @@
  */
 package com.soltelec.igrafica;
 
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.PreparedStatement;
 import com.soltelec.dao.ControladorVerificar;
 import com.soltelec.dao.HojaPruebasJpaController;
 import com.soltelec.dao.PruebasJpaController;
@@ -20,12 +18,11 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Properties;
 import javax.persistence.EntityManager;
 import javax.swing.JDialog;
 import javax.swing.JFrame;

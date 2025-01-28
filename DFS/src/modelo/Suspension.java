@@ -4,11 +4,8 @@
  */
 package modelo;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -36,16 +33,15 @@ public class Suspension implements PruebaDefault {
         fuerzaDerecha = new ArrayList<>();
         fuerzaIzquierda = new ArrayList<>();
         pesoDerecho = new ArrayList<>();
-        pesoIzquierdo = new ArrayList<>();        
-        this.fuerzasvd= fuerzasvd;
-        this.fuerzasvi= fuerzasvi;
+        pesoIzquierdo = new ArrayList<>();   
     }
 
     public List<Double> getFuerzaDerecha() {
         return fuerzaDerecha;
     }
 
-    public void setFuerzaDerecha(Double fuerzaDerecha) {
+    public void setFuerzaDerecha(Double fuerzaDerecha, String ubicacion) {
+        System.out.println("---ubicacion de seteo fuerza derecha double: "+ubicacion);
         this.fuerzaDerecha.add(fuerzaDerecha);
     }
 
@@ -53,7 +49,8 @@ public class Suspension implements PruebaDefault {
         return fuerzaIzquierda;
     }
 
-    public void setFuerzaIzquierda(Double fuerzaIzquierda) {
+    public void setFuerzaIzquierda(Double fuerzaIzquierda, String ubicacion) {
+        System.out.println("---ubicacion de seteo fuerza izquierda double: "+ubicacion);
         this.fuerzaIzquierda.add(fuerzaIzquierda);
     }
 
@@ -61,11 +58,13 @@ public class Suspension implements PruebaDefault {
         return pesoDerecho;
     }
 
-    public void setPesoDerecho(List<Double> pesoDerecho) {
+    public void setPesoDerecho(List<Double> pesoDerecho, String ubicacion) {
+        System.out.println("---ubicacion de seteo peso derecho List: "+ubicacion);
         this.pesoDerecho = pesoDerecho;
     }
 
-    public void setPesoDerecho(Double pesoDerecho) {
+    public void setPesoDerecho(Double pesoDerecho, String ubicacion) {
+        System.out.println("---ubicacion de seteo peso derecho double: "+ubicacion);
         this.pesoDerecho.add(pesoDerecho);
     }
 
@@ -73,11 +72,13 @@ public class Suspension implements PruebaDefault {
         return pesoIzquierdo;
     }
 
-    public void setPesoIzquierdo(List<Double> pesoIzquierdo) {
+    public void setPesoIzquierdo(List<Double> pesoIzquierdo, String ubicacion) {
+        System.out.println("---ubicacion de seteo peso derecho List: "+ubicacion);
         this.pesoIzquierdo = pesoIzquierdo;
     }
 
-    public void setPesoIzquierdo(Double pesoIzquierdo) {
+    public void setPesoIzquierdo(Double pesoIzquierdo, String ubicacion) {
+        System.out.println("---ubicacion de seteo peso izquierdo double: "+ubicacion);
         this.pesoIzquierdo.add(pesoIzquierdo);
     }
 
@@ -199,9 +200,6 @@ public class Suspension implements PruebaDefault {
         System.out.println("---   VALORES TOMADOS FUERZA DERECHA  -------------");
         for (int i = 0; i < fuerzaDerecha.size(); i++) 
         {    
-//            double FuerzaD=Double.parseDouble( new DecimalFormat("#.000").format((fuerzaDerecha.get(i))).replace(",", "."));
-//            double pesoD = Double.parseDouble( new DecimalFormat("#.000").format((pesoDerecho.get(i))).replace(",", "."));
-            
             double FuerzaD = fuerzaDerecha.get(i);
             double pesoD = pesoDerecho.get(i);
             
@@ -210,23 +208,6 @@ public class Suspension implements PruebaDefault {
             System.out.println("---  FuerzaD : " + FuerzaD);
             System.out.println("---  pesoD : " + pesoD);   
             System.out.println("---Original  adherenciaD : " + adherencia );
-            
-//            if (adherencia >=0 && adherencia < 25) 
-//            {
-//               double randon = Double.parseDouble( new DecimalFormat("#.000").format(((Math.random() * (0.4 -0.2)) + 0.2)).replace(",", "."));
-//               FuerzaD = pesoD * randon;
-//               
-//            }else if (adherencia >= 25 && adherencia <=40 ) 
-//            {
-//                double randon = Double.parseDouble( new DecimalFormat("#.000").format(((Math.random() * (0.6 -0.4)) + 0.4)).replace(",", "."));
-//                FuerzaD = pesoD * randon; 
-//            }else if (adherencia >= 85)
-//            {
-//                double randon = Double.parseDouble( new DecimalFormat("#.000").format(((Math.random() * (0.8 -0.6)) + 0.6)).replace(",", "."));
-//                FuerzaD = pesoD * randon; 
-//            }
-//            adherencia = (FuerzaD / pesoD) * 100;
-            
             System.out.println("---Recalculado  adherencia : " + adherencia );
             
             fuerzaDerecha.remove(i);
@@ -239,8 +220,6 @@ public class Suspension implements PruebaDefault {
         
         for (int i = 0; i < fuerzaIzquierda.size(); i++) 
         {
-//            double FuerzaIz = Double.parseDouble( new DecimalFormat("#.00").format((fuerzaIzquierda.get(i))).replace(",", "."));
-//            double pesoIz =  Double.parseDouble( new DecimalFormat("#.00").format((pesoIzquierdo.get(i))).replace(",", "."));
             double FuerzaIz = fuerzaIzquierda.get(i);
             double pesoIz = pesoIzquierdo.get(i);
             
@@ -249,25 +228,7 @@ public class Suspension implements PruebaDefault {
             System.out.println("---  FuerzaIz : " + FuerzaIz);
             System.out.println("---  pesoIz : " + pesoIz);
             System.out.println("---Original  adherenciaIz : " + adherenciaIz );
-            
-//            if (adherenciaIz>=0 && adherenciaIz<25) 
-//            {
-////              double randon = Double.parseDouble( new DecimalFormat("#.00").format(((Math.random() * (0.4 -0.2)) + 0.2)).replace(",", "."));
-//                double randon = Double.parseDouble(  new DecimalFormat("#.000").format(((Math.random() * (0.4 -0.2)) + 0.2)).replace(",", "."));
-//                FuerzaIz = pesoIz * randon;
-//                 
-//            }else if (adherenciaIz >= 25 && adherenciaIz <=40) 
-//            {
-////              double randon = Double.parseDouble( new DecimalFormat("#.00").format(((Math.random() * (0.6 -0.4)) + 0.4)).replace(",", "."));
-//                double randon = Double.parseDouble( new DecimalFormat("#.000").format(((Math.random() * (0.6 -0.4)) + 0.4)).replace(",", "."));
-//                FuerzaIz = pesoIz * randon;
-//                
-//            }if (adherenciaIz >= 85) 
-//            {
-////              double randon = Double.parseDouble( new DecimalFormat("#.00").format(((Math.random() * (0.8 -0.6)) + 0.6)).replace(",", "."));
-//                double randon = Double.parseDouble(  new DecimalFormat("#.000").format(((Math.random() * (0.8 -0.6)) + 0.6)).replace(",", "."));
-//                FuerzaIz = pesoIz * randon;
-//            }
+
             adherenciaIz = (FuerzaIz / pesoIz) * 100;
             System.out.println("---Reclaculada  adherenciaIz : " + adherenciaIz );
             fuerzaIzquierda.remove(i);
@@ -278,8 +239,9 @@ public class Suspension implements PruebaDefault {
     }
     
     @Override
-    public void imprimirValores()
+    public void imprimirValores(String ubicacion)
     {
+        System.out.println("------ubicacion suspension: "+ubicacion);
         System.out.println("\n..........VALORES SUSPENSION..........\n");
 
         for (int i = 0; i < pesoDerecho.size(); i++) 
@@ -293,8 +255,8 @@ public class Suspension implements PruebaDefault {
             System.out.println("Fuerza Izquierda Eje " + (i + 1) + ": " + fuerzaIzquierda.get(i));
             System.out.println("Fuerza Derecha Eje " + (i + 1) + ": " + fuerzaDerecha.get(i));
         }
-        System.out.println("Suspension DI " + suspension.get(0));
-        System.out.println("Suspension DD : " + suspension.get(1));
+        System.out.println("Suspension DD " + suspension.get(0));
+        System.out.println("Suspension DI : " + suspension.get(1));
         System.out.println("Suspension TI " + suspension.get(2));
         System.out.println("Suspension TD " + suspension.get(3));
     }
@@ -309,4 +271,4 @@ public class Suspension implements PruebaDefault {
     public Boolean verifResolMedDesv(Double medida, Integer resolMin, Integer resolMax) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    }
+}

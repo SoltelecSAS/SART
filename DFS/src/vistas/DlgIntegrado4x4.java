@@ -51,8 +51,6 @@ import modelo.Desviacion;
 import modelo.Frenos;
 import modelo.Suspension;
 import org.jdesktop.swingx.JXLoginPane;
-import static vistas.DlgIntegradoLiviano.byteToInt;
-import static vistas.DlgIntegradoPesado.byteToInt;
 
 /**
  *
@@ -2046,13 +2044,13 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
         PruebaDefaultDAO suspensionDAO = new PruebaDefaultDAO();
 
         for (int k = 0; k < fuerzasvd.size(); k++) {
-            suspension.setFuerzaDerecha(Math.floor(Math.round(fuerzasvd.get(k) * spanpd)));
-            suspension.setFuerzaIzquierda(Math.floor(Math.round(fuerzasvi.get(k) * spanpi)));
+            suspension.setFuerzaDerecha(Math.floor(Math.round(fuerzasvd.get(k) * spanpd)), "RegistrarMedidasSuspension desde DlgIntegrado4x4 con k="+k);
+            suspension.setFuerzaIzquierda(Math.floor(Math.round(fuerzasvi.get(k) * spanpi)), "RegistrarMedidasSuspension desde DlgIntegrado4x4 con k="+k);
         }
 
         for (int k = 0; k < pesosd.size(); k++) {
-            suspension.setPesoDerecho(Math.floor(Math.round(pesosd.get(k) * spanpd)));
-            suspension.setPesoIzquierdo(Math.floor(Math.round(pesosi.get(k) * spanpi)));
+            suspension.setPesoDerecho(Math.floor(Math.round(pesosd.get(k) * spanpd)), "RegistrarMedidasSuspension desde DlgIntegrado4x4 con k="+k);
+            suspension.setPesoIzquierdo(Math.floor(Math.round(pesosi.get(k) * spanpi)), "RegistrarMedidasSuspension desde DlgIntegrado4x4 con k="+k);
         }
 
         try {
@@ -2114,7 +2112,7 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
             Mensajes.mostrarExcepcion(ex);
         }
 
-        frenos.imprimirValores();
+        frenos.imprimirValores("RegistrarMedidasFrenos desde DlgIntegrado4x4");
     }
 
     /**

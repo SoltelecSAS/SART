@@ -81,4 +81,59 @@ public class Utilidades2 {
       }
       return null;
    }
+
+   public static String[] obtenerUltimaPruebaNoAutorizada(String testSheet, String testType) {
+      Conexion.setConexionFromFile();
+      Connection connection = null;
+      PreparedStatement selectStatement = null;
+      ResultSet resultSet = null;
+      
+      try {
+          // Establecer conexión
+          String url = Conexion.getUrl(); 
+          String user = Conexion.getUsuario(); 
+          String password = Conexion.getContrasena();
+          connection = DriverManager.getConnection(url, user, password);
+  
+          // Consulta SQL
+          String selectSql = "SELECT p.idPruebas, p.abortada, p.usuarios.geuser, p.finalizada " +
+                             "FROM Pruebas p " +
+                             "WHERE p.autorizada = 'N' " +
+                             "AND p.hojaPruebas.testsheet = ? " +
+                             "AND p.tipoPrueba.testtype = ? " +
+                             "ORDER BY p.idPruebas DESC " +
+                             "LIMIT 1";
+          
+          selectStatement = connection.prepareStatement(selectSql);
+          selectStatement.setString(1, testSheet);
+          selectStatement.setString(2, testType);
+          
+          resultSet = selectStatement.executeQuery();
+  
+          // Retornar el resultado si existe
+          if (resultSet.next()) {
+              return new String[]{
+                  resultSet.getString("idPruebas"),
+                  resultSet.getString("abortada"),
+                  resultSet.getString("geuser"),
+                  resultSet.getString("finalizada")
+              };
+          } else {
+              System.out.println("No se encontró ninguna prueba no autorizada con los criterios dados.");
+          }
+      } catch (SQLException e) {
+          e.printStackTrace();
+          throw new RuntimeException("Error al obtener la prueba no autorizada");
+      } finally {
+          try {
+              if (resultSet != null) resultSet.close();
+              if (selectStatement != null) selectStatement.close();
+              if (connection != null) connection.close();
+          } catch (SQLException ex) {
+              ex.printStackTrace();
+          }
+      }
+      return null;
+  }
+  
  }

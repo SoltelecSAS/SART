@@ -469,7 +469,7 @@ System.out.println("Valor calculado eficacia FRENOS sin recorte decimal"+Frenos.
         System.out.println("Valor calculado eficacia FRENOS sin recorte decimal" + Frenos.eficacia);
 
         if (Frenos.eficacia > 100) {
-            imprimirValores();
+            imprimirValores("calcularEficacia desde FrenosPrueba");
             mostrarMensajeFalla();
             repetirPrueba = true;
         }
@@ -500,7 +500,7 @@ System.out.println("Valor calculado eficacia FRENOS sin recorte decimal"+Frenos.
     private boolean fuerzasInconsistentes(double sumaFuerzas) {
         for (int i = 0; i < fuerzaDerecha.size(); i++) {
             if (fuerzaDerecha.get(i) < 71 || fuerzaIzquierda.get(i) < 71) {
-                imprimirValores();
+                imprimirValores("fuerzasInconsistentes desde FrenosPrueba");
                 mostrarMensajeFalla();
                 return true;
             }
@@ -521,7 +521,7 @@ System.out.println("Valor calculado eficacia FRENOS sin recorte decimal"+Frenos.
     private boolean fuerzasAuxiliaresInconsistentes(double sumFreAux) {
         for (int i = 0; i < fuerzaDerechaAux.size(); i++) {
             if (fuerzaDerechaAux.get(i) < 71 || fuerzaIzquierdaAux.get(i) < 71) {
-                imprimirValores();
+                imprimirValores("fuerzasAuxiliaresInconsistentes desde FrenosPrueba");
                 mostrarMensajeFalla();
                 return true;
             }
@@ -659,7 +659,8 @@ System.out.println("Valor calculado eficacia FRENOS sin recorte decimal"+Frenos.
     }
 
     @Override
-    public void imprimirValores() {
+    public void imprimirValores(String ubicacion) {
+        System.out.println("-------ubicacion Frenos prueba: "+ubicacion);
         System.out.println("\n..........TABLA VALORES FRENOS .........\n");
         for (int i = 0; i < pesoDerecho.size(); i++) {
             System.out.println("Peso Derecho Eje " + (i + 1) + ": " + pesoDerecho.get(i));

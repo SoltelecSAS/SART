@@ -602,48 +602,17 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
         //EVALUAR LA PRUEBA
         long car = rs.getLong("CAR");
 
-        // String strDiametro = "UPDATE vehiculos SET Diametro = ? WHERE CAR = ?";
-        // PreparedStatement psDiametro = conexion.prepareStatement(strDiametro);
-        // psDiametro.setInt(1, (int) diametroExosto);
-        // psDiametro.setLong(2, car);
-        //  psDiametro.executeUpdate();
-        boolean pruebaAprobada = false;
 
-//        if (modelo <= 1970) {
-//            if (promedioTresMediciones < 50) {
-//                pruebaAprobada = true;
-//            } else {
-//                pruebaAprobada = false;
-//            }
-//        } else if (modelo > 1970 && modelo <= 1984) { // tambien esta bie 
-//            if (promedioTresMediciones < 45) {
-//                pruebaAprobada = true;
-//            } else {
-//                pruebaAprobada = false;
-//            }
-//        } else if (modelo > 1984 && modelo <= 1997) { // este esta bien segun la tabla expuesta
-//            if (promedioTresMediciones < 40) {
-//                pruebaAprobada = true;
-//            } else {
-//                pruebaAprobada = false;
-//            }
-//        } else if (modelo > 1997) {// tambien esta bien 
-//            if (promedioTresMediciones < 35) {
-//                pruebaAprobada = true;
-//            } else {
-//                pruebaAprobada = false;
-//            }
-//        }
-        
-                    if (modelo <= 2000) {
+        boolean pruebaAprobada = false;
+            if (modelo <= 2000) {
                 if (cilindraje < 5000) {
-                    if (promedioTresMediciones < 6.0) {
+                    if (promedioTresMediciones < 4.5) {
                         pruebaAprobada = true;
                     } else {
                         pruebaAprobada = false;
                     }
                 } else if (cilindraje >= 5000) {
-                    if (promedioTresMediciones < 5.5) {
+                    if (promedioTresMediciones < 4.0) {
                         pruebaAprobada = true;
                     } else {
                         pruebaAprobada = false;
@@ -651,13 +620,13 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
                 }
             } else if (modelo > 2000 && modelo <= 2015) {
                 if (cilindraje < 5000) {
-                    if (promedioTresMediciones < 5.0) {
+                    if (promedioTresMediciones < 3.5) {
                         pruebaAprobada = true;
                     } else {
                         pruebaAprobada = false;
                     }
                 } else if (cilindraje >= 5000) {
-                    if (promedioTresMediciones < 4.5) {
+                    if (promedioTresMediciones < 3.0) {
                         pruebaAprobada = true;
                     } else {
                         pruebaAprobada = false;
@@ -665,19 +634,20 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
                 }
             } else {
                 if (cilindraje < 5000) {
-                    if (promedioTresMediciones < 4.0) {
+                    if (promedioTresMediciones < 2.5) {
                         pruebaAprobada = true;
                     } else {
                         pruebaAprobada = false;
                     }
                 } else if (cilindraje >= 5000) {
-                    if (promedioTresMediciones < 3.5) {
+                    if (promedioTresMediciones < 2.0) {
                         pruebaAprobada = true;
                     } else {
                         pruebaAprobada = false;
                     }
                 }
             }
+
 
         boolean escrTrans = false;
         if (aplicTrans == 1 && pruebaAprobada == true) {

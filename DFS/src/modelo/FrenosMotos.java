@@ -6,9 +6,6 @@ package modelo;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
-
-import Utilidades.CMensajes;
 import Utilidades.Utilidades2;
 
 /**
@@ -29,7 +26,7 @@ public class FrenosMotos implements PruebaDefault {
     private String aprobada;
 
     //Permisible para eficacia de frenado
-    private int minimoEficaciaA = 30;
+    //private int minimoEficaciaA = 30;
     private boolean repetirPrueba;
 
     public double getPesoDelantero() {
@@ -115,7 +112,7 @@ public class FrenosMotos implements PruebaDefault {
 
     private List<Integer> getDefectosMoto(){
         List<Integer> defects = new ArrayList<>();
-        minimoEficaciaA = 30;
+        //minimoEficaciaA = 30;
         if (eficacia < 30) {
             aprobada = "N";
             defects.add(54010);
@@ -126,7 +123,7 @@ public class FrenosMotos implements PruebaDefault {
 
     private List<Integer> getDefectosCicloMotor(){
         List<Integer> defects = new ArrayList<>();
-        minimoEficaciaA = 40;
+        //minimoEficaciaA = 40;
         if (eficacia < 40) {
             defects.add(56000);//cambiar permisible = 54010
             aprobada = "N";
@@ -167,8 +164,8 @@ public class FrenosMotos implements PruebaDefault {
     }
 
     @Override
-    public void imprimirValores() {
-
+    public void imprimirValores(String ubicacion) {
+        System.out.println("-------ubicacion FrenosMotos: "+ ubicacion);
     }
 
     @Override

@@ -67,7 +67,7 @@ public class WorkerCero extends SwingWorker<Void,Integer>{
             }
             Thread.sleep(300);
              MedicionGases medicion = banco.obtenerDatos();
-               System.out.println("HC IS " +medicion.getValorHC() +" CO: "+medicion.getValorCO()+" CO2: "+medicion.getValorCO2()+" O2:"+medicion.getValorO2());
+               System.out.println("2-HC IS " +medicion.getValorHC() +" CO: "+medicion.getValorCO()+" CO2: "+medicion.getValorCO2()+" O2:"+medicion.getValorO2());
             if (medicion.getValorHC() > 30 || medicion.getValorCO()  > 100 || medicion.getValorCO2() > 10 || medicion.getValorO2()<180) {
                 JOptionPane.showMessageDialog(null, "EL CERO DEL EQUIPO  DESVIADO \n  CONSULTE AL SOPORTE TECNICO \n SISTEMA   BLOQUEADO SEGUN NUMERAL 5.2.3.3 ...!");
                  labelMensaje.setText("EL CERO DEL EQUIPO SE ENCUENTRA DESVIADO "); 

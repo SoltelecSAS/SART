@@ -6,10 +6,7 @@ package dao;
 
 import com.soltelec.modulopuc.utilidades.Mensajes;
 import excepciones.NoPersistException;
-import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import modelo.*;
 
@@ -37,7 +34,6 @@ public class PruebaDefaultDAO {
             System.out.println("SUM PESO VACIO.." + pesoVacio);
             if (tipoPista.equalsIgnoreCase("MIXTA"))
             {
-                String ctxPista = null;
                 if (pesoVacio > 3500) 
                 {
                    /* if (tipoVehiculo.equalsIgnoreCase("Liviano") || tipoVehiculo.equalsIgnoreCase("Taxis_AplTaximetro") || tipoVehiculo.equalsIgnoreCase("Taxis") || tipoVehiculo.equalsIgnoreCase("4x4")) {

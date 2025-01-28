@@ -75,6 +75,13 @@ public class Conexion implements Serializable {
             puerto = datos.get(3);
             contrasena = datos.get(4);
 
+            System.out.println("credenciales base de datos:");
+            System.out.println(baseDatos);
+            System.out.println(ipServidor);
+            System.out.println(usuario);
+            System.out.println(puerto);
+            System.out.println(contrasena);
+
             bufferedReader.close();
         } catch (IOException ex) {
             CMensajes.mensajeError("No se pudo leer el archivo de conexion "+ CARPETA + NOMBRE_ARCHIVO + EXTENSION);
@@ -116,7 +123,9 @@ public class Conexion implements Serializable {
     }
 
     public static String getUrl() {
-        return "jdbc:mysql://" + ipServidor + ":" + puerto + "/" + baseDatos + "?zeroDateTimeBehavior=convertToNull";
+        String url = "jdbc:mysql://" + ipServidor + ":" + puerto + "/" + baseDatos + "?zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true";
+        System.out.println(url);
+        return url;
     }
 
     /**

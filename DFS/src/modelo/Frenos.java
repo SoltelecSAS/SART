@@ -491,7 +491,7 @@ public class Frenos implements PruebaDefault {
         System.out.println("_|_ Valor Eficacia Frenos " + Frenos.eficacia);
     
         if (Frenos.eficacia > 100) {
-            imprimirValores();
+            imprimirValores("calcularEficacia desde Frenos");
             mostrarMensajeFalla();
             repetirPrueba = true;
         }
@@ -516,7 +516,7 @@ public class Frenos implements PruebaDefault {
                 suma += fuerzaDe + fuerzaIz;
             }
             if (fuerzaDe < 71 || fuerzaIz < 71) {
-                imprimirValores();
+                imprimirValores("calcularSumatoriaFuerzas desde Frenos");
                 mostrarMensajeFalla();
                 return suma;
             }
@@ -534,7 +534,7 @@ public class Frenos implements PruebaDefault {
             System.out.println("_|_  FuerzaAux. Izq: " + aproximacion(fuerzaIzAx));
     
             if (fuerzaDerechaAux.get(i) < 71 || fuerzaIzquierdaAux.get(i) < 71) {
-                imprimirValores();
+                imprimirValores("calcularSumatoriaFuerzasAux desde Frenos");
                 mostrarMensajeFalla();
                 System.out.println("_|_ Sumatoria Fuerzas  :  " + aproximacion(suma));
                 return suma;
@@ -671,7 +671,8 @@ public class Frenos implements PruebaDefault {
     }
 
     @Override
-    public void imprimirValores() {
+    public void imprimirValores(String ubicacion) {
+        System.out.println("---------ubicacion frenos: "+ ubicacion);
         System.out.println("\n..........TABLA VALORES FRENOS .........\n");
         for (int i = 0; i < pesoDerecho.size(); i++) {
             System.out.println("Peso Derecho Eje " + (i + 1) + ": " + pesoDerecho.get(i));

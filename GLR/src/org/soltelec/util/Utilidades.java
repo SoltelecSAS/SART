@@ -256,14 +256,15 @@ public class Utilidades {
         }
     }
 
-    public static void actualizarPrueba(boolean finalizada, boolean aprobada, Long usuario, String serialEquipo, Long idPruebas) {
+    public static void actualizarPrueba(boolean finalizada, boolean aprobada, Long usuario, String serialEquipo, Long idPruebas, String comentario) {
         // Consulta SQL para actualizar los valores en la tabla pruebas
         String query = "UPDATE pruebas " +
                        "SET Finalizada = ?, " +
                        "    Aprobada = ?, " +
                        "    Abortada = 'N', " +
                        "    usuario_for = ?, " +
-                       "    serialEquipo = ? " +
+                       "    serialEquipo = ?, " +
+                       "    observaciones = ?" +
                        "WHERE Id_Pruebas = ?";
         
         try (Connection conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContrasena());
@@ -274,7 +275,8 @@ public class Utilidades {
             stmt.setString(2, aprobada ? "Y" : "N");
             stmt.setLong(3, usuario);
             stmt.setString(4, serialEquipo);
-            stmt.setLong(5, idPruebas);
+            stmt.setString(5, comentario);
+            stmt.setLong(6, idPruebas);
     
             // Ejecuta la actualización
             int filasActualizadas = stmt.executeUpdate();
@@ -316,5 +318,50 @@ public class Utilidades {
         timer.start(); // Iniciar el temporizador
 
         dialog.setVisible(true); // Mostrar el cuadro de diálogo
+    }
+
+    public static boolean guardarOModificarMedida(int measureType, int test, Double nuevoValorMedida, String nuevoSimult) {
+        String verificarExistencia = "SELECT COUNT(*) FROM medidas WHERE MEASURETYPE = ? AND TEST = ?";
+        String actualizacion = "UPDATE medidas SET Valor_medida = ?, Simult = ? WHERE MEASURETYPE = ? AND TEST = ?";
+        String insercion = "INSERT INTO medidas (MEASURETYPE, TEST, Valor_medida, Simult) VALUES (?, ?, ?, ?)";
+    
+        try (Connection conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContrasena())) {
+            
+            // Verificar si la medida existe
+            try (PreparedStatement consultaVerificacion = conexion.prepareStatement(verificarExistencia)) {
+                consultaVerificacion.setInt(1, measureType);
+                consultaVerificacion.setInt(2, test);
+    
+                try (ResultSet resultado = consultaVerificacion.executeQuery()) {
+                    if (resultado.next() && resultado.getInt(1) > 0) {
+                        // La medida existe, se actualiza
+                        try (PreparedStatement consultaActualizacion = conexion.prepareStatement(actualizacion)) {
+                            consultaActualizacion.setDouble(1, nuevoValorMedida);
+                            consultaActualizacion.setString(2, nuevoSimult);
+                            consultaActualizacion.setInt(3, measureType);
+                            consultaActualizacion.setInt(4, test);
+    
+                            int filasAfectadas = consultaActualizacion.executeUpdate();
+                            return filasAfectadas > 0; // Retorna true si se actualizó al menos una fila
+                        }
+                    } else {
+                        // La medida no existe, se inserta
+                        try (PreparedStatement consultaInsercion = conexion.prepareStatement(insercion)) {
+                            consultaInsercion.setInt(1, measureType);
+                            consultaInsercion.setInt(2, test);
+                            consultaInsercion.setDouble(3, nuevoValorMedida);
+                            consultaInsercion.setString(4, nuevoSimult);
+    
+                            int filasInsertadas = consultaInsercion.executeUpdate();
+                            return filasInsertadas > 0; // Retorna true si se insertó una fila
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return false; // Retorna false si ocurre un error
     }
 }

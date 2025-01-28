@@ -152,6 +152,9 @@ public class ConsultarDatosVehiculo {
                 serialEquipo = serialCompleto;
 
             } else {
+
+                
+
                 String marcaAnalizador = UtilPropiedades.cargarPropiedad("marcaAnalizador", "seriales.properties");
                 String modeloAnalizador = UtilPropiedades.cargarPropiedad("modeloAnalizador", "seriales.properties");
                 String serialElectronicoAnalizador = UtilPropiedades.cargarPropiedad("serialElectronicoAnalizador", "seriales.properties");
@@ -166,6 +169,11 @@ public class ConsultarDatosVehiculo {
                 String serialVibracion = UtilPropiedades.cargarPropiedad("serialVibracion", "seriales.properties");
                 String serialTemperatura = UtilPropiedades.cargarPropiedad("serialTemperatura", "seriales.properties");
                 String serialTermohigrometro = UtilPropiedades.cargarPropiedad("serialTermo", "seriales.properties");
+
+                String esPrueba = serialElectronicoAnalizador != null && serialElectronicoAnalizador.equalsIgnoreCase("PERRO") ? "prueba" : "";
+
+                pefAnalizador+=esPrueba;
+                serialAnalizador+=esPrueba;
 
                 String serialAnalizadorCompleto = 
                     serialBanco.equals("")  ? 

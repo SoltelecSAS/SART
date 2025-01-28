@@ -54,7 +54,7 @@ public interface PruebaDefault {
     public Double verifPesoVacioXPista();
     
     Boolean verifResolMedDesv(Double medida,Integer resolMin,Integer resolMax);
-    public void imprimirValores();
+    public void imprimirValores(String ubicacionDeImpresion);
     
     /**
      * Indica si se debe repetir la prueba
