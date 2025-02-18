@@ -663,7 +663,7 @@ public class RegistrarMedidas {
             int i = 0;
 
         }
-        if (rs.first()) {
+        if (rs.next()) {
             int modelo = rs.getInt("Modelo");
             String placa = rs.getString("CARPLATE");
             int tiemposMotor = rs.getInt("Tiempos_motor");

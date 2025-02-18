@@ -24,6 +24,7 @@ public class HiloTomaDatosDieselBrianBee extends HiloTomaDatosDiesel
       try {
         Thread.sleep(10L);
       } catch (InterruptedException ex) {
+        ex.printStackTrace();
       }
     }
   }

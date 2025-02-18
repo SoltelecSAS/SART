@@ -56,7 +56,7 @@ public class Test {
             PreparedStatement instruccion = conexion.prepareStatement(statement);
             instruccion.setInt(1, idPrueba);
             ResultSet rs = instruccion.executeQuery();
-            if (rs.first()) {
+            if (rs.next()) {
                 Date fecha1 = sdf.parse("2022-08-18");
                 Date fecha2 = sdf.parse(rs.getDate("Fecha_ingreso_vehiculo").toString());
 

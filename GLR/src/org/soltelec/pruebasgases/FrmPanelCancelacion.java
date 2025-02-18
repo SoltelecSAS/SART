@@ -4,28 +4,9 @@
  */
 package org.soltelec.pruebasgases;
 
-import org.soltelec.luxometro.*;
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.PreparedStatement;
-import com.soltelec.modulopuc.utilidades.Mensajes;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Properties;
-
-import java.awt.Component;
 import java.awt.Window;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.sql.Connection;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import org.soltelec.util.ConsultarDatosVehiculo;
 
 /**
  *

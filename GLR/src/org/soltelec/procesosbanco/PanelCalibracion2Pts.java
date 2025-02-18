@@ -26,6 +26,8 @@ import org.soltelec.util.MedicionGases;
 import org.soltelec.util.Mensajes;
 import org.soltelec.util.capelec.BancoCapelec;
 
+import com.soltelec.servidor.utils.CMensajes;
+
 /**
  * Esta clase tiene como fin dar una interfaz gráfica para realizar el proceso
  * completo para capturar la calibración de los datos 17/02/2011 adicionado un
@@ -141,15 +143,15 @@ public class PanelCalibracion2Pts extends JPanel implements ActionListener {
                     return;
                 }
                 if (valorHC < 255 || valorHC > 345) {
-                    JOptionPane.showMessageDialog(panelPtoCalibracion, "Que Pena El Valor Introducido para HC no debe de Exceder del 15 % de las Fracciones del volumen requeridas");
+                    JOptionPane.showMessageDialog(panelPtoCalibracion, "Que Pena El Valor Introducido para HC no debe de Exceder del 15 % de las Fracciones del volumen requeridas (valor HC)");
                     return;
                 }
                 if (valorCO < 0.85 || valorCO > 1.15) {
-                    JOptionPane.showMessageDialog(panelPtoCalibracion, "Que Pena El Valor Introducido para CO no debe de Exceder del 15 % de las Fracciones del volumen requeridas");
+                    JOptionPane.showMessageDialog(panelPtoCalibracion, "Que Pena El Valor Introducido para CO no debe de Exceder del 15 % de las Fracciones del volumen requeridas (valor CO)");
                     return;
                 }
                 if (valorCO2 < 5.10 || valorCO2 > 6.90) {
-                    JOptionPane.showMessageDialog(panelPtoCalibracion, "Que Pena El Valor Introducido para CO2 no debe de Exceder del 15 % de las Fracciones del volumen requeridas");
+                    JOptionPane.showMessageDialog(panelPtoCalibracion, "Que Pena El Valor Introducido para CO2 no debe de Exceder del 15 % de las Fracciones del volumen requeridas (valor CO2)");
                     return;
                 }
 
@@ -203,9 +205,13 @@ public class PanelCalibracion2Pts extends JPanel implements ActionListener {
                     return;
                 }
                 System.out.println(" EL ANALIZADOR ES DE " + PanelCalibracion2Pts.analizador);
+                CMensajes.mensajeCorrecto(" EL ANALIZADOR ES DE " + PanelCalibracion2Pts.analizador);
+                System.out.println();
                 if (PanelCalibracion2Pts.analizador.equalsIgnoreCase("4t")) {
+                    //System.out.println("PanelCalibracion2Pts.analizador = "+);
                     if (valorHC > 1380 || valorHC < 1020) {
-                        JOptionPane.showMessageDialog(panelPtoCalibracion, "Que Pena El Valor Introducido para HC no debe de Exceder del 15 % de las Fracciones del volumen requeridas");
+                        System.out.println("Valor HC: "+valorHC);
+                        JOptionPane.showMessageDialog(panelPtoCalibracion, "Que Pena El Valor Introducido para HC no debe de Exceder del 15 % de las Fracciones del volumen requeridas (4t)");
                         return;
                     }
                     if (valorCO > 4.60 || valorCO < 3.4) {
@@ -218,7 +224,7 @@ public class PanelCalibracion2Pts extends JPanel implements ActionListener {
                     }
                 } else {
                     if (valorHC > 3680 || valorHC < 2720) {
-                        JOptionPane.showMessageDialog(panelPtoCalibracion, "Que Pena El Valor Introducido para HC no debe de Exceder del 15 % de las Fracciones del volumen requeridas");
+                        JOptionPane.showMessageDialog(panelPtoCalibracion, "Que Pena El Valor Introducido para HC no debe de Exceder del 15 % de las Fracciones del volumen requeridas (2t)");
                         return;
                     }
                     if (valorCO > 9.2 || valorCO < 6.8) {

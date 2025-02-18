@@ -30,6 +30,7 @@ public class Conexion {
     private static String password;
 
     public static Connection conectar() throws SQLException, ClassNotFoundException, IOException {
+        com.soltelec.modulopuc.configuracion.modelo.Conexion.getInstance();
         Class.forName(driver); 
          System.out.println("VOY A LEVANTAR OBJ CONEXION ");
         String db_cda = com.soltelec.modulopuc.configuracion.modelo.Conexion.getBaseDatos();

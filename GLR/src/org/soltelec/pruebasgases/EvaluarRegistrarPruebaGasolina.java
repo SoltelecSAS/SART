@@ -200,7 +200,7 @@ public class EvaluarRegistrarPruebaGasolina {
             System.out.println("coRalenti: 1" + coRalenti);
             System.out.println("coCrucero: 1" + coCrucero);
 //           
-            if (gasolina == 1) {
+            if (gasolina == 1 || gasolina == 10) {
                 if (
                     o2Crucero > 5 || o2Ralenti > 5 
                     || co2Crucero < 7 || co2Ralenti < 7 
@@ -426,13 +426,14 @@ public class EvaluarRegistrarPruebaGasolina {
             PreparedStatement consultaFechaIngreso = cn.prepareStatement(statement);
             consultaFechaIngreso.setLong(1, idPrueba);
             ResultSet rs = consultaFechaIngreso.executeQuery();
-            while (rs.first()) {
+            while (rs.next()) {
                 System.out.println("-------sin parsear" + rs.getDate("Fecha_ingreso_vehiculo"));
                 System.out.println("-------to string" + rs.getDate("Fecha_ingreso_vehiculo").toString());
                 return rs.getDate("Fecha_ingreso_vehiculo");
             }
         } catch (SQLException e) {
             System.err.println("Error en el metodo : consultarFecha()" + e.getMessage() + e.getLocalizedMessage());
+            e.printStackTrace();
         } catch (ClassNotFoundException exp) {
             exp.printStackTrace();
         }

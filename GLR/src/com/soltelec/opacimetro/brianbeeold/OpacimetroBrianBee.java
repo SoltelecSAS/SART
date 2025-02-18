@@ -11,6 +11,8 @@ package com.soltelec.opacimetro.brianbeeold;
  import org.soltelec.util.MedicionOpacidad;
  import org.soltelec.util.UtilGasesModelo;
  
+ import com.soltelec.opacimetro.brianbee.UtilOpacimetroBrianBee;
+ 
  public class OpacimetroBrianBee implements Opacimetro
  {
    private SerialPort serialPort;
@@ -62,8 +64,9 @@ package com.soltelec.opacimetro.brianbeeold;
    public MedicionOpacidad obtenerDatos() {
 /*  63 */     byte[] tramaComando = { 2, 79, 80, 65, 23, 48, 23, 86, 65, 68, 53, 3 };
 /*  64 */     byte[] tramaRespuesta = enviarRecibirTrama(tramaComando);
-/*  65 */     MensajeOpacimetroBrianBee mensajeRespuesta = UtilOpacimetroBrianBee.armarMensajeOpacimetroBrianBee(tramaRespuesta);
-/*  66 */     MedicionOpacidad medicion = new MedicionOpacidad();
+/*  65 */     com.soltelec.opacimetro.brianbee.MensajeOpacimetroBrianBee mensajeRespuesta = UtilOpacimetroBrianBee.armarMensajeOpacimetroBrianBee(tramaRespuesta);
+/*  66 */
+ MedicionOpacidad medicion = new MedicionOpacidad();
 /*  67 */     double transmitancia = Double.parseDouble((String)mensajeRespuesta.getDatos().get(0));
 /*  68 */     System.out.println("transmitancia: " + transmitancia);
 /*  69 */     medicion.setDensidadHumo(transmitancia);
@@ -109,6 +112,7 @@ package com.soltelec.opacimetro.brianbeeold;
 /* 109 */       this.out = this.serialPort.getOutputStream();
 /* 110 */       this.in = this.serialPort.getInputStream();
      } catch (IOException ex) {
+      ex.printStackTrace();
 /* 112 */       Logger.getRootLogger().error(ex);
      }
    }
@@ -117,8 +121,9 @@ package com.soltelec.opacimetro.brianbeeold;
 /* 117 */     byte[] trama = { 2, 79, 80, 65, 23, 48, 23, 73, 68, 67, 66, 3 };
 /* 118 */     byte[] respuesta = enviarRecibirTrama(trama);
 /* 119 */     imprimirRespuesta(respuesta);
-/* 120 */     MensajeOpacimetroBrianBee mensaje = UtilOpacimetroBrianBee.armarMensajeOpacimetroBrianBee(respuesta);
-/* 121 */     return Long.parseLong((String)mensaje.getDatos().get(3));
+/* 120 */     com.soltelec.opacimetro.brianbee.MensajeOpacimetroBrianBee mensaje = UtilOpacimetroBrianBee.armarMensajeOpacimetroBrianBee(respuesta);
+/* 121 */
+ return Long.parseLong((String)mensaje.getDatos().get(3));
    }
    
    public void resetearValoresPico() {
@@ -129,8 +134,9 @@ package com.soltelec.opacimetro.brianbeeold;
    public MedicionOpacidad obtenerOpacidad() {
 /* 130 */     byte[] tramaComando = { 2, 79, 80, 65, 23, 48, 23, 86, 65, 68, 53, 3 };
 /* 131 */     byte[] tramaRespuesta = enviarRecibirTrama(tramaComando);
-/* 132 */     MensajeOpacimetroBrianBee mensajeRespuesta = UtilOpacimetroBrianBee.armarMensajeOpacimetroBrianBee(tramaRespuesta);
-/* 133 */     MedicionOpacidad medicion = new MedicionOpacidad();
+/* 132 */     com.soltelec.opacimetro.brianbee.MensajeOpacimetroBrianBee mensajeRespuesta = UtilOpacimetroBrianBee.armarMensajeOpacimetroBrianBee(tramaRespuesta);
+/* 133 */
+ MedicionOpacidad medicion = new MedicionOpacidad();
 /* 134 */     double transmitancia = Double.parseDouble((String)mensajeRespuesta.getDatos().get(0));
 /* 135 */     System.out.println("transmitancia: " + transmitancia);
 /* 136 */     medicion.setDensidadHumo(transmitancia);
@@ -150,6 +156,7 @@ package com.soltelec.opacimetro.brianbeeold;
 /* 150 */       System.out.println("");
 /* 151 */       this.out.write(trama);
      } catch (IOException ex) {
+      ex.printStackTrace();
 /* 153 */       System.out.println("Excepcion enviando datos");
 /* 154 */       Logger.getRootLogger().error("Excepcion enviando datos", ex);
 /* 155 */       return buffer;
@@ -157,7 +164,10 @@ package com.soltelec.opacimetro.brianbeeold;
      try {
 /* 158 */       Thread.sleep(50L);
      }
-     catch (InterruptedException ex) {}
+     catch (InterruptedException ex) {
+         ex.printStackTrace();
+     }
+     
 /* 161 */     int contador = 0;
 /* 162 */     buffer = new byte[2048];
 /* 163 */     while ((!respuestaRecibida) && (contador < 4)) {
@@ -181,10 +191,13 @@ package com.soltelec.opacimetro.brianbeeold;
          
 /* 182 */         contador++;
        } catch (IOException ioe) {
+         ioe.printStackTrace();
 /* 184 */         System.out.println("Excepcion leyendo datos del opacimetro");
 /* 185 */         contador++;
        } catch (ArrayIndexOutOfBoundsException ae) {
+           ae.printStackTrace();
 /* 187 */         return null;
+
        }
      }
 /* 190 */     return null;

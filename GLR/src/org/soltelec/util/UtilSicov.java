@@ -86,7 +86,7 @@ public class UtilSicov {
             System.out.println("No se logro cargar la ip del equipo");
         }
         return sE;
-     }
+    }
 
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
         //Crear el objeto de <span class="IL_AD" id="IL_AD12">conexion</span> a la base de datos
@@ -103,7 +103,6 @@ public class UtilSicov {
         } catch (Exception e) {
             e.printStackTrace();
             logger.info("Serial no encontrado" + e.getMessage());
-            e.printStackTrace();
             return "Serial no encontrado";
         }
     }

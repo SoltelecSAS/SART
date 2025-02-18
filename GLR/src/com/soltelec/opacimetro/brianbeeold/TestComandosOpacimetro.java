@@ -39,8 +39,10 @@ package com.soltelec.opacimetro.brianbeeold;
 /* 39 */         Thread.sleep(100L);
 /*    */       }
 /*    */     } catch (NoSuchPortException ex) {
+    ex.printStackTrace();
 /* 42 */       Logger.getLogger(TestComandosOpacimetro.class.getName()).log(Level.SEVERE, null, ex);
 /*    */     } catch (Exception ex) {
+    ex.printStackTrace();
 /* 44 */       Logger.getLogger(TestComandosOpacimetro.class.getName()).log(Level.SEVERE, null, ex);
 /*    */     }
 /*    */   }

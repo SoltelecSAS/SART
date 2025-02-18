@@ -149,9 +149,11 @@ public class WorkerInicioPruebaGases extends SwingWorker<Void, Void> {
                 });
             Void get = submit.get();
         } catch (CancellationException ce) {
+            ce.printStackTrace();
             System.out.println("Prueba de Gases cancelada");
             ce.printStackTrace(System.err);
         } catch (InterruptedException exc) {
+            exc.printStackTrace();
             System.out.println("Tarea interrumpida");
             if (exc.getCause() instanceof InterruptedException) {
                 System.out.println("InterruptedException");
@@ -160,9 +162,11 @@ public class WorkerInicioPruebaGases extends SwingWorker<Void, Void> {
                 exc.printStackTrace(System.err);
             }
         } catch (DilucionException dexc) {
+            dexc.printStackTrace();
             JOptionPane.showMessageDialog(panel, " Dilucion encontrada");
 
         } catch (Exception exc) {
+            exc.printStackTrace();
             //JOptionPane.showMessageDialog(null,"Error durante la ejecucion de la prueba");
             Logger.getLogger(this.getClass()).error("Error durante la ejecucion de la prueba", exc);
 
@@ -170,6 +174,7 @@ public class WorkerInicioPruebaGases extends SwingWorker<Void, Void> {
             exc.printStackTrace(System.err);
             panel.cerrar();
         } catch (Error err) {
+            err.printStackTrace();
             JOptionPane.showMessageDialog(null, "No se puede iniciar el sensor de temperatura y humedad ambiental");
         }
         return null;

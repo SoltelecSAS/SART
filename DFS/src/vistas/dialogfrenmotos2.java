@@ -936,6 +936,7 @@ public class dialogfrenmotos2
         try {
             serialEquipo = PruebasDAO.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
+            e.printStackTrace();
             serialEquipo = "Serial no encontrado";
         }
 
@@ -983,6 +984,7 @@ public class dialogfrenmotos2
         try {
             serialEquipo = PruebasDAO.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
+            e.printStackTrace();
             serialEquipo = "Serial no encontrado";
         }
         Connection conexion = DriverManager.getConnection("jdbc:mysql://" + URLServidor + "/db_cda", "fabian", "passfabian");

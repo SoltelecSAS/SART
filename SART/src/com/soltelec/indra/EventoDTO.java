@@ -6,6 +6,8 @@
 package com.soltelec.indra;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -37,14 +39,18 @@ public class EventoDTO  implements Serializable{
 
   public String getFecha()
   {
+    System.out.println("Fecha get antes: "+this.fecha);
     if ("".equals(this.fecha)) {
-      this.fecha = new SimpleDateFormat("yyy-MM-dd hh:mm:ss").format(new Date());
+      
+      this.fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
+    System.out.println("Fecha get despues: "+this.fecha);
     return this.fecha;
   }
 
   public void setFecha(String fecha)
   {
+    System.out.println("Fecha seteada: "+this.fecha);
     this.fecha = fecha;
   }
 

@@ -185,10 +185,13 @@ public class PanelPruebaGases extends JPanel implements ActionListener {
             try {
                 serial = ConsultarDatosVehiculo.buscarSerialEquipo(Utilidades.getIdPrueba());
             } catch (SQLException ex) {
+                ex.printStackTrace();
                 Logger.getLogger(PanelPruebaGases.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ClassNotFoundException ex) {
+                ex.printStackTrace();
                 Logger.getLogger(PanelPruebaGases.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
+                ex.printStackTrace();
                 Logger.getLogger(PanelPruebaGases.class.getName()).log(Level.SEVERE, null, ex);
             }
             //putttttt

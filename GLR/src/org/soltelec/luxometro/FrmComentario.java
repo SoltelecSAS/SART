@@ -4,8 +4,6 @@
  */
 package org.soltelec.luxometro;
 
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.PreparedStatement;
 import com.soltelec.modulopuc.utilidades.Mensajes;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -17,6 +15,7 @@ import java.util.Properties;
 
 import java.awt.Component;
 import java.awt.Window;
+import java.sql.Connection;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 

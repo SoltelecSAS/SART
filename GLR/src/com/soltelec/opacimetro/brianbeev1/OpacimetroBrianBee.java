@@ -74,6 +74,7 @@ public class OpacimetroBrianBee
         transmitancia = Double.parseDouble((String)mensajeRespuesta.getDatos().get(0));
     } catch (Exception e) {
       i = mensajeRespuesta.getDatos().iterator(); 
+      e.printStackTrace();
     } 
      while (i.hasNext()) { String dato = (String)i.next();
       System.out.println(dato);
@@ -127,6 +128,7 @@ public class OpacimetroBrianBee
       this.in = this.serialPort.getInputStream();
     } catch (IOException ex) {
       Logger.getRootLogger().error(ex);
+      ex.printStackTrace();
     }
   }
 

@@ -1233,12 +1233,13 @@ public class HiloPruebaMotos implements Runnable, ActionListener {
             PreparedStatement consultaFechaIngreso = cn.prepareStatement(statement);
             consultaFechaIngreso.setInt(1, idPrueba);
             ResultSet rs = consultaFechaIngreso.executeQuery();
-            while (rs.first()) {
+            while (rs.next()) {
                 System.out.println("-------sin parsear" + rs.getDate("Fecha_ingreso_vehiculo"));
                 System.out.println("-------to string" + rs.getDate("Fecha_ingreso_vehiculo").toString());
                 return rs.getDate("Fecha_ingreso_vehiculo");
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             System.err.println("Error en el metodo : consultarFecha()" + e.getMessage() + e.getLocalizedMessage());
         }
         return null;
@@ -1258,7 +1259,7 @@ public class HiloPruebaMotos implements Runnable, ActionListener {
         PreparedStatement instruccion = conexion.prepareStatement(statement);
         instruccion.setInt(1, idPrueba);
         ResultSet rs = instruccion.executeQuery();
-        if (rs.first()) {
+        if (rs.next()) {
             modelo = rs.getInt("Modelo");
             placa = rs.getInt("CAR");
             tiemposMotor = rs.getInt("Tiempos_motor");
@@ -1309,14 +1310,14 @@ public class HiloPruebaMotos implements Runnable, ActionListener {
                 }
             }
             ResultSet co = statementCO.executeQuery();
-            if (co.first()) {
+            if (co.next()) {
                 permisibleCO = co.getDouble("Valor_maximo");
                 System.out.println("permisible CO: " + permisibleCO);
             } else {
                 JOptionPane.showMessageDialog(null, "NO se pueden cargar los datos de permisible de CO");
             }
             ResultSet hc = statementHC.executeQuery();
-            if (hc.first()) {
+            if (hc.next()) {
                 permisibleHC = hc.getDouble("Valor_maximo");
                 System.out.println("permisible HC: " + permisibleHC);
             } else {

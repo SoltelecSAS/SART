@@ -17,7 +17,19 @@ import java.util.List;
 import java.util.Map;
 
 import com.soltelec.util.CMensajes;
+import com.soltelec.util.Utilidades;
 import com.soltelec.util.Utilidades2;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  *
@@ -26,13 +38,15 @@ import com.soltelec.util.Utilidades2;
 public class Conexion implements Serializable {
 
     public static final String ARCHIVO = "Conexion.stlc"; 
-    private String driver = "com.mysql.jdbc.Driver";      
+    private String driver = "com.mysql.cj.jdbc.Driver";   
     protected static String baseDatos;
     protected static String ipServidor;
     protected static String usuario;
     protected static String puerto;
     protected static String contrasena;
     private static Conexion instance;
+
+    private static final String USER_AGENT = "Mozilla/5.0";
 
     public static Conexion getInstance() {     
        setConexionFromFile();
@@ -42,20 +56,36 @@ public class Conexion implements Serializable {
     private static final String CARPETA = "./configuracion/";
     private static final String EXTENSION = ".soltelec";
     private static final String NOMBRE_ARCHIVO = "Conexion";
+    private static boolean licencia = false;
+    private static String nitCda;
+
+    public static String getNitCda(){
+        return Conexion.nitCda;
+    }
+
+    public static void setNitCda(String nit){
+        Conexion.nitCda = nit;
+    }
+
+    public static void changeLicencia() throws IOException{
+        licencia = false;
+        Utilidades.eliminarCantA2();
+    }
 
     public static void setConexionFromFile() {
         try {
+
             FileReader fileReader = new FileReader(CARPETA + NOMBRE_ARCHIVO + EXTENSION);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
 
             String linea;
             int numLinea = 0;
             List<String> datos = new ArrayList<>();
+            String response = "";
 
             while ((linea = bufferedReader.readLine()) != null) {
                 
                 numLinea +=1;
-                
                 String dato = "";
                 
                 if(numLinea !=2){
@@ -70,32 +100,237 @@ public class Conexion implements Serializable {
                 datos.add(dato);
             }
 
+            
+            String url = "jdbc:mysql://" + datos.get(1) + ":" + datos.get(3) + "/" + datos.get(0) + "?zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&allowPublicKeyRetrieval=true";
+            //System.out.println("URL: "+url);
+
+            String user = datos.get(2);
+            String password = "";
+
             if (datos.get(4).equalsIgnoreCase("Dental")) {
-                contrasena = "Dental~moovi#31053017byGod";
+                password = "Dental~moovi#31053017byGod";
             }else{
-                contrasena = datos.get(4);
+                password = datos.get(4);
+            }
+            
+            System.out.println("URL: "+url);
+            System.out.println("user: "+user);
+            System.out.println("password: "+password);
+            
+            
+            boolean tieneInternet = verificarConexionInternet();
+            System.out.println(tieneInternet ? "Tiene internet" : "No tiene internet");
+            
+            if (!licencia && !tieneInternet) {
+                String consulta = "SELECT licence FROM cda WHERE id_cda = 1";
+                try (Connection conexion = DriverManager.getConnection(url, user, password)) {
+
+                    // Verificar si el campo 'licence' existe en la tabla 'cda'
+                    if (!campoExiste(conexion, "cda", "licence")) {
+                        // Si no existe, crear el campo 'licence' con valor predeterminado true
+                        crearCampoLicence(conexion);
+                    }
+
+                    // Preparar y ejecutar la consulta SQL
+                    try (PreparedStatement consultaDagma = conexion.prepareStatement(consulta)) {
+
+                        boolean ingresoALosDatos = false; // Variable para almacenar el valor de 'licence'
+                        // Ejecutar la consulta
+                        try (ResultSet rc = consultaDagma.executeQuery()) {
+                            if (rc.next()) {
+                                ingresoALosDatos = true;
+
+                                // Si 'licence' es true, actualizar la variable 'licencia'
+                                if (rc.getBoolean("licence")) {
+                                    licencia = true;
+                                }
+                            }
+                        }
+
+                        // Si no se encuentra el registro valido del cda
+                        if (!ingresoALosDatos) {
+                            CMensajes.mensajeError("La columna 'id_cda' de la tabla 'cda' de la base de datos debe ser 1 \no el cda no cuenta con NIT registrado en esa misma tabla\n Contactese con Soltelec.\n");
+                            throw new RuntimeException("La columna 'id_cda' de la tabla 'cda' de la base de datos debe ser 1");
+                        }
+
+                    }
+
+                } catch (Exception e) {
+                    CMensajes.mensajeError(
+                        "Hubo un error al tratar de conectarse a la base de datos, contactese con Soltelec.\n" +
+                        "Revise por favor el archivo " + CARPETA + NOMBRE_ARCHIVO + EXTENSION + "\n" +
+                        "Si este mismo error se repite en todos los computadores del CDA revise el servidor"
+                    );
+                    e.printStackTrace();
+                    throw new RuntimeException("Error al tratar de conectarse con la base de datos: \n" + e.getMessage());
+                }
+            }
+            
+            if (!licencia && tieneInternet) {
+                String consulta = "SELECT NIT FROM cda WHERE id_cda = 1";
+                try (Connection conexion = DriverManager.getConnection(url, user, password)) {
+            
+                    // Ejecutar el comando para desactivar ONLY_FULL_GROUP_BY
+                    try (Statement statement = conexion.createStatement()) {
+                        String sql = "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))";
+                        statement.execute(sql);
+                        System.out.println("Modo ONLY_FULL_GROUP_BY desactivado correctamente.");
+                    }
+
+                    
+                    // Verificar si el campo 'licence' existe en la tabla 'cda'
+                    if (!campoExiste(conexion, "cda", "licence")) {
+                        System.out.println("El campo licence no existe. Creando...");
+                        // Si no existe, crear el campo 'licence' con valor predeterminado true
+                        crearCampoLicence(conexion);
+                    }
+            
+                    // Preparar y ejecutar la consulta SQL después de modificar el modo SQL
+                    try (PreparedStatement consultaDagma = conexion.prepareStatement(consulta)) {
+            
+                        String nit = "";
+                        // Ejecutar la consulta
+                        try (ResultSet rc = consultaDagma.executeQuery()) {
+                            while (rc.next()) {
+                                nit = rc.getString("NIT");
+
+                                Conexion.setNitCda(nit);
+
+                                String urlPeticion = "http://api.soltelec.com:8087/api/public/" + nit;
+                                //String urlPeticion = "http://localhost/api/public/" + nit;
+                                response = sendGet(urlPeticion);
+            
+                                if (response.equalsIgnoreCase("true")){
+                                    licencia = true;
+                                    String updateSql = "UPDATE cda SET licence = 1 WHERE id_cda = 1";
+                                    try (Statement updateStmt = conexion.createStatement()) {
+                                        updateStmt.executeUpdate(updateSql);
+                                    }
+                                } 
+                                else {
+                                    // Si la respuesta no es "true", actualizar 'licence' a 0
+                                    String updateSql = "UPDATE cda SET licence = 0 WHERE id_cda = 1";
+                                    try (Statement updateStmt = conexion.createStatement()) {
+                                        updateStmt.executeUpdate(updateSql);
+                                        System.out.println("Campo 'licence' actualizado a 0.");
+                                    }
+                                }
+                            }
+                        }
+            
+                        // Si no se encuentra el NIT
+                        if (nit.equals("")) {
+                            CMensajes.mensajeError("La columna 'id_cda' de la tabla 'cda' de la base de datos debe ser 1 \no el cda no cuenta con NIT registrado en esa misma tabla\n Contactese con Soltelec.\n");
+                            throw new RuntimeException("Error porque no logro encontrar los datos de la tabla cda para id_cda = 1 o el campo NIT de esa misma tabla esta vacio\n");
+                        }
+                        
+                    }
+            
+                } catch (Exception e) {
+                    CMensajes.mensajeError(
+                        "Hubo un error al tratar de conectarse a la base de datos, contactese con Soltelec.\n" +
+                        "Revise por favor el archivo " + CARPETA + NOMBRE_ARCHIVO + EXTENSION + "\n" +
+                        "Si este mismo error se repite en todos los computadores del CDA revise el servidor"
+                    );
+                    e.printStackTrace();
+                    throw new RuntimeException("Error al tratar de conectarse con el base de datos: \n" + e.getMessage());
+                }
             }
 
+            if (!licencia){
+                bufferedReader.close();
+                CMensajes.mensajeError(
+                    "Su licencia ha expirado, contactese con Soltelec\n"
+                );
+                String mensajeRespuesta = response.equalsIgnoreCase("false") ? "Licencia expirada" : response;
+                System.out.println("Respuesta del VPS ante la expiracion de licencia: "+mensajeRespuesta);
+                throw new RuntimeException("respuesta del VPS: \n"+ mensajeRespuesta);
+            } 
 
             baseDatos = datos.get(0);
             ipServidor = datos.get(1);
             usuario = datos.get(2);
             puerto = datos.get(3);
-            
-
-            System.out.println("credenciales base de datos:");
-            System.out.println(baseDatos);
-            System.out.println(ipServidor);
-            System.out.println(usuario);
-            System.out.println(puerto);
-            System.out.println(contrasena);
+            contrasena = password;
 
             
+
             bufferedReader.close();
+
         } catch (IOException ex) {
             CMensajes.mensajeError("No se pudo leer el archivo de conexion "+ CARPETA + NOMBRE_ARCHIVO + EXTENSION);
             System.out.println("No se pudo leer el archivo de conexion de la base de datos");
             ex.printStackTrace();
+        }
+    }
+    
+    public static boolean verificarConexionInternet() {
+        try {
+            // Intentamos conectarnos a un servidor confiable, por ejemplo, Google DNS
+            InetAddress.getByName("8.8.8.8").isReachable(10000); // Timeout de 10 segundos
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // Método para verificar si un campo existe en una tabla
+    private static boolean campoExiste(Connection conexion, String tabla, String campo) throws SQLException {
+        DatabaseMetaData metaData = conexion.getMetaData();
+        try (ResultSet rs = metaData.getColumns(null, null, tabla, campo)) {
+            return rs.next(); // Si hay un resultado, el campo existe
+        }
+    }
+
+    // Método para crear el campo 'licence' con valor predeterminado true
+    private static void crearCampoLicence(Connection conexion) throws SQLException {
+        String sql = "ALTER TABLE cda ADD COLUMN licence BOOLEAN DEFAULT true";
+        try (Statement stmt = conexion.createStatement()) {
+            stmt.executeUpdate(sql);
+        }
+    }
+    
+    private static String sendGet(String url) {
+        HttpURLConnection con = null;
+        try {
+            URL obj = new URL(url);
+            con = (HttpURLConnection) obj.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("User-Agent", USER_AGENT);
+
+            int responseCode = con.getResponseCode();
+            System.out.println("GET Response Code :: " + responseCode);
+
+            if (responseCode == HttpURLConnection.HTTP_OK) { // código 200 OK
+                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                return response.toString();
+            } else if (responseCode == HttpURLConnection.HTTP_NOT_FOUND) { // código 404
+                return "404 Not Found";
+            }else if (responseCode == HttpURLConnection.HTTP_INTERNAL_ERROR) { // código 500
+                return "El CDA no se encuentra inscrito en la base de datos del VPS";
+            }else {
+                return "Unexpected Response Code: " + responseCode;
+            }
+        } catch (java.net.UnknownHostException e) {
+            return "Unknown Host Exception: " + e.getMessage();
+        } catch (java.net.ConnectException e) {
+            return "true";
+        } catch (java.net.SocketTimeoutException e) {
+            return "Socket Timeout Exception: " + e.getMessage();
+        } catch (Exception e) {
+            return "Exception: " + e.getMessage();
+        } finally {
+            if (con != null) {
+                con.disconnect();
+            }
         }
     }
     
@@ -132,9 +367,8 @@ public class Conexion implements Serializable {
     }
 
     public static String getUrl() {
-        String url = "jdbc:mysql://" + ipServidor + ":" + puerto + "/" + baseDatos + "?zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true";
-        System.out.println(url);
-        return url;
+        if(ipServidor == null || puerto == null || baseDatos == null) setConexionFromFile();
+        return "jdbc:mysql://" + ipServidor + ":" + puerto + "/" + baseDatos + "?zeroDateTimeBehavior=convertToNull";
     }
 
     /**

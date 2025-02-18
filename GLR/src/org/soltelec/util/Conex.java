@@ -7,7 +7,7 @@ package org.soltelec.util;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import org.soltelec.conexion_seriales.Conexion;
+import com.soltelec.modulopuc.configuracion.modelo.Conexion;
 /**
  *
  * @author GerenciaDesarrollo
@@ -18,8 +18,8 @@ public class Conex {
         Connection conexion = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Conexion.setConexionFromFile();
-            conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContrasena());
+            Conexion.getInstance();
+            conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContraseña());
         } catch (SQLException e) {
             e.printStackTrace(System.err);
         }

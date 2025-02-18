@@ -12,6 +12,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.soltelec.conexion_seriales.Conexion;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.Statement;
 
 /**
  *
@@ -42,6 +46,58 @@ public class Utilidades {
      public static void servicio() {
          
      }
+     
+    
+    public static boolean eliminarCantA2() throws IOException {
+        String consultaColumnas = "SELECT COLUMN_NAME " +
+                                "FROM INFORMATION_SCHEMA.COLUMNS " +
+                                "WHERE TABLE_NAME = 'zbefore' AND TABLE_SCHEMA = '" + Conexion.getBaseDatos() + "' " +
+                                "AND COLUMN_NAME IN ('cant_a2')";
+
+        String consultaDatos = "SELECT cant_a2 FROM zbefore";
+        String eliminarColumnas = "ALTER TABLE zbefore DROP COLUMN cant_a2";
+
+        try (Connection conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContrasena());
+            Statement consulta = conexion.createStatement();
+            ResultSet resultado = consulta.executeQuery(consultaColumnas)) {
+
+            // Verificar si la columna existe
+            boolean cantA2Existe = false;
+
+            while (resultado.next()) {
+                String columna = resultado.getString("COLUMN_NAME");
+                if ("cant_a2".equals(columna)) cantA2Existe = true;
+            }
+
+            // Si la columna existe, guardar sus datos en un archivo y eliminarla
+            if (cantA2Existe) {
+                // Crear archivo y escribir los datos de la columna
+                try (Statement consultaDatosStmt = conexion.createStatement();
+                    ResultSet datos = consultaDatosStmt.executeQuery(consultaDatos);
+                    BufferedWriter writer = new BufferedWriter(new FileWriter("artf.txt"))) {
+
+                    while (datos.next()) {
+                        String valor = datos.getString("cant_a2");
+                        writer.write(valor != null ? valor : "NULL");
+                        writer.newLine();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false; // Error al escribir el archivo
+                }
+
+                // Eliminar la columna
+                try (Statement eliminacion = conexion.createStatement()) {
+                    eliminacion.executeUpdate(eliminarColumnas);
+                    return true; // Columna eliminada exitosamente
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false; // Retorna false si no existe la columna o ocurre un error
+    }
 
      /* public static String[] obtenerUltimaPruebaNoAutorizada(int testSheet, int testType) {
         Conexion.setConexionFromFile();

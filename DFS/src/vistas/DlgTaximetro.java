@@ -278,6 +278,7 @@ public class DlgTaximetro extends javax.swing.JDialog implements ActionListener 
             try {
                 serialEquipo = PruebasDAO.buscarSerialEquipo(idPrueba);
             } catch (Exception e) {
+                e.printStackTrace();
                 serialEquipo = "Serial no encontrado";
             }
             DlgTaximetro.serialEquipo = serialEquipo;
@@ -357,6 +358,7 @@ public class DlgTaximetro extends javax.swing.JDialog implements ActionListener 
             try {
                 serialEquipo = PruebasDAO.buscarSerialEquipo(idPrueba);
             } catch (Exception e) {
+                e.printStackTrace();
                 serialEquipo = "Serial no encontrado";
             }
 

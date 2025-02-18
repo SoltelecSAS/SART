@@ -4,21 +4,13 @@
  */
 package org.soltelec.luxometro.lujan;
 
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.PreparedStatement;
 import com.soltelec.modulopuc.utilidades.Mensajes;
 import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
 
-import java.awt.Component;
 import java.awt.Window;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import java.sql.Connection;
 
 
 /**

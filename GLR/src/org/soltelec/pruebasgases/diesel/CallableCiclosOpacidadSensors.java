@@ -4,7 +4,6 @@
  */
 package org.soltelec.pruebasgases.diesel;
 
-import com.mysql.jdbc.Connection;
 import com.soltelec.modulopuc.utilidades.Mensajes;
 import com.soltelec.opacimetro.brianbee.HiloTomaDatosDieselBrianBee;
 import com.soltelec.opacimetro.brianbee.OpacimetroBrianBee;
@@ -736,6 +735,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                             System.out.println("-----Serial encontrado:\n"+serialEquipo);
                         } catch (Exception e) {
                             serialEquipo = "Serial no Encontrado ";
+                            e.printStackTrace();
                         }
                         try {
                             conexion.setAutoCommit(false);
@@ -1287,6 +1287,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
             System.out.println("-----Serial encontrado:\n"+serialEquipo);
         } catch (Exception e) {
             serialEquipo = "Serial no Encontrado ";
+            e.printStackTrace();
         }
     
         Conexion.setConexionFromFile();

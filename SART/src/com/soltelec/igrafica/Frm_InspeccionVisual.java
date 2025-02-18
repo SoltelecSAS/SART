@@ -808,6 +808,7 @@ public class Frm_InspeccionVisual extends javax.swing.JDialog {
             System.out.println(" ME CAI CON " + e.getMessage());
             System.out.println(" CAUSA " + e.getCause());
             serialEquipo = "Serial no encontrado";
+            e.printStackTrace();
         }
         try {
             conexion1.setAutoCommit(false);

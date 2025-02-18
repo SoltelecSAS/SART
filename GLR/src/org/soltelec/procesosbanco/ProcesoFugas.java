@@ -175,7 +175,7 @@ public class ProcesoFugas implements ActionListener, Runnable {
         //c.setTime(d);
         //instruccion.setDate(3,new java.sql.Date(c.getTimeInMillis()));
         ResultSet executeQuery = instruccion.executeQuery();
-        boolean existe = executeQuery.first();
+        boolean existe = executeQuery.next();
         if (!existe) {
             System.out.println("No hay ultima fecha");
             return;

@@ -161,6 +161,7 @@ public class UtilOpacimetroBrianBee             // 2, 79, 80, 65, 23, 51, 49, 23
           listaEncontrados.add(new String(buffer, "US-ASCII"));
           temporal.clear();
         } catch (UnsupportedEncodingException ex) {
+          ex.printStackTrace();
           Logger.getLogger(UtilOpacimetroBrianBee.class.getName()).log(Level.SEVERE, null, ex);
         }
       else if (contadorOcurrencias != 0) {
@@ -176,6 +177,7 @@ public class UtilOpacimetroBrianBee             // 2, 79, 80, 65, 23, 51, 49, 23
           listaEncontrados.add(new String(buffer, "US-ASCII"));
           temporal.clear();
         } catch (UnsupportedEncodingException ex) {
+          ex.printStackTrace();
           Logger.getLogger(UtilOpacimetroBrianBee.class.getName()).log(Level.SEVERE, null, ex);
         }
       }

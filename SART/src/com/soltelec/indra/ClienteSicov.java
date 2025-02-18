@@ -34,7 +34,7 @@ public class ClienteSicov {
    * @param cda
    * @return 
    */
-  public RespuestaDTO crearEvento(EventoDTO evento,Cda cda)
+  public RespuestaDTO crearEvento(EventoDTO evento, Cda cda, String prueba)
   {
     logger.info("------------------------------------------------------------");
     logger.info("------------Creando Evento para la prueba-------------------");

@@ -95,6 +95,7 @@ public class UtilidadAbortoPrueba
             System.out.println(" Serial Equipo encontrado : " + serialEquipo);
         } catch (Exception e) {
             serialEquipo = "Serial no Encontrado ";
+            e.printStackTrace();
         }
         return serialEquipo;
     }

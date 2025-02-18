@@ -42,7 +42,7 @@ public class EquipoController {
         
         return equipo;
     }
-    private com.mysql.jdbc.Connection conexion;
+    private Connection conexion;
     public Integer findIdEquipoBySerial(String serial, Connection cn) throws SQLException, ClassNotFoundException, IOException 
     {
         String sql = "SELECT " + Equipo.ID_EQUIPO + " FROM " + Equipo.TABLA + " WHERE " + Equipo.SERIAL + " = '" + serial + "'";
@@ -282,7 +282,7 @@ public class EquipoController {
         public void ActFecha(Long idPrueba) throws Exception {
           try {
             Class.forName("com.mysql.jdbc.Driver");
-            conexion = (com.mysql.jdbc.Connection) DriverManager.getConnection(com.soltelec.modulopuc.configuracion.modelo.Conexion.getUrl(),com.soltelec.modulopuc.configuracion.modelo.Conexion.getUsuario() ,com.soltelec.modulopuc.configuracion.modelo.Conexion.getContraseña());
+            conexion = DriverManager.getConnection(com.soltelec.modulopuc.configuracion.modelo.Conexion.getUrl(),com.soltelec.modulopuc.configuracion.modelo.Conexion.getUsuario() ,com.soltelec.modulopuc.configuracion.modelo.Conexion.getContraseña());
         } catch (ClassNotFoundException | SQLException ex) {
             Mensajes.mostrarExcepcion(ex);
         }
@@ -307,7 +307,7 @@ public class EquipoController {
         public void ActFechaFinal(Long idPrueba) throws Exception {
           try {
             Class.forName("com.mysql.jdbc.Driver");
-            conexion = (com.mysql.jdbc.Connection) DriverManager.getConnection(com.soltelec.modulopuc.configuracion.modelo.Conexion.getUrl(),com.soltelec.modulopuc.configuracion.modelo.Conexion.getUsuario() ,com.soltelec.modulopuc.configuracion.modelo.Conexion.getContraseña());
+            conexion = DriverManager.getConnection(com.soltelec.modulopuc.configuracion.modelo.Conexion.getUrl(),com.soltelec.modulopuc.configuracion.modelo.Conexion.getUsuario() ,com.soltelec.modulopuc.configuracion.modelo.Conexion.getContraseña());
         } catch (ClassNotFoundException | SQLException ex) {
             Mensajes.mostrarExcepcion(ex);
         }

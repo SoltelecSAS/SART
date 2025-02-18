@@ -355,13 +355,13 @@ public class Frm_Placas extends javax.swing.JDialog {
                     }
                 }
                 String fecha = UtilSicov.askDate();
-                fecha = fecha.substring(0, fecha.length() - 2);
+                //fecha = fecha.substring(0, fecha.length() - 2);
                 eventoDTO.setFecha(fecha);
                 if (test.getTipoPrueba().getTesttype() == 5 || test.getTipoPrueba().getTesttype() == 6 || test.getTipoPrueba().getTesttype() == 4) {
                     eventoDTO.setNombrePrueba("FAS");
                 }
 
-                RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda);
+                RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda, "regIdAuditoria");
                 System.out.println("--------------------------------------------Respuesta Evento Verificado Gases");
                 if (respuesta.getCodigoRespuesta().equals("0")) {
                     Logger.getLogger(Frm_Placas.class.getName()).log(Level.WARNING, null, "NO PUEDE FINALIZAR EVENTOS DE PLACA".concat(eventoDTO.getPlaca()).concat(" DE TIPO ").concat(test.getTipoPrueba().getNombretipoprueba()));
@@ -472,13 +472,13 @@ public class Frm_Placas extends javax.swing.JDialog {
                     }                   
                 }
                 String fecha = UtilSicov.askDate();
-                fecha = fecha.substring(0, fecha.length() - 2);
+                //fecha = fecha.substring(0, fecha.length() - 2);
                 eventoDTO.setFecha(fecha);
                 if (test.getTipoPrueba().getTesttype()==5 || test.getTipoPrueba().getTesttype()==6 || test.getTipoPrueba().getTesttype()==4) {
                     eventoDTO.setNombrePrueba("FAS");
                 }
                 
-                RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda);
+                RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda, "Evento ruido");
                 System.out.println("--------------------------------------------Respuesta Evento Verificado Auditoria");
                 System.out.println("");
                 if (respuesta.getCodigoRespuesta().equals("0")) {
@@ -916,7 +916,7 @@ public class Frm_Placas extends javax.swing.JDialog {
                         System.out.println(" SERIAL  " + serialEquipo);
                         System.out.println(" FECHA  " + eventoDTO.getFecha());
                         Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "fecha: ".concat(eventoDTO.getFecha()));
-                        RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda);
+                        RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda, "Prueba integracion");
                         System.out.println("--------------------------------------------Respuesta Evento Verificado Integracion");
                         if (respuesta.getCodigoRespuesta().equals("0")) {
                             JOptionPane.showMessageDialog(null, "DISCULPE; No Pude iniciar el Evento para la Pruebas FAS");
@@ -1075,10 +1075,10 @@ public class Frm_Placas extends javax.swing.JDialog {
                             return;
                         }
                         String fecha = UtilSicov.askDate();
-                        fecha = fecha.substring(0, fecha.length() - 2);
+                        //fecha = fecha.substring(0, fecha.length() - 2);
                         eventoDTO.setSerialEquipo(serialEquipo);
                         eventoDTO.setFecha(fecha);
-                        RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda);
+                        RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda, "Taximetro");
                         System.out.println("--------------------------------------------Respuesta Evento Verificado Taximetro");
                         if (respuesta.getCodigoRespuesta().equals("0")) {
                             JOptionPane.showMessageDialog(null, "DISCULPE; No Pude iniciar el Evento para la Pruebas FAS");
@@ -1154,10 +1154,10 @@ public class Frm_Placas extends javax.swing.JDialog {
                             return;
                         }
                         String fecha = UtilSicov.askDate();
-                        fecha = fecha.substring(0, fecha.length() - 2);
+                        //fecha = fecha.substring(0, fecha.length() - 2);
                         eventoDTO.setSerialEquipo(serialEquipo);
                         eventoDTO.setFecha(fecha);
-                        RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda);
+                        RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda, "Suspencion");
                         System.out.println("--------------------------------------------Respuesta Evento Verificado Suspension");
                         Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "Serial: ".concat(serialEquipo));
                         Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "fecha: ".concat(eventoDTO.getFecha()));
@@ -1330,11 +1330,11 @@ public class Frm_Placas extends javax.swing.JDialog {
                         }
                         Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "Serial -- : ".concat(serialEquipo));
                         String fecha = UtilSicov.askDate();
-                        fecha = fecha.substring(0, fecha.length() - 2);
+                        //fecha = fecha.substring(0, fecha.length() - 2);
                         eventoDTO.setSerialEquipo(serialEquipo);///
                         eventoDTO.setMensajeEvento("");
                         eventoDTO.setFecha(fecha);
-                        RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda);
+                        RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda, "Luces");
                         System.out.println("Respuesta de envio Evento Luces-------------------------------");
                         Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "Serial -- : ".concat(serialEquipo));
                         Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "fecha -- : ".concat(eventoDTO.getFecha()));
@@ -1594,10 +1594,10 @@ public class Frm_Placas extends javax.swing.JDialog {
                         }
                         Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "Serial: ".concat(serialEquipo));
                         String fecha = UtilSicov.askDate();
-                        fecha = fecha.substring(0, fecha.length() - 2);
+                        //fecha = fecha.substring(0, fecha.length() - 2);
                         eventoDTO.setSerialEquipo(serialEquipo);
                         eventoDTO.setFecha(fecha);
-                        RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda);
+                        RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda, "Frenos");
                         System.out.println("--------------------------------------------Respuesta Evento Verificado Frenos");
                         Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "Serial: ".concat(serialEquipo));
 
@@ -1776,13 +1776,13 @@ public class Frm_Placas extends javax.swing.JDialog {
                             return;
                         }
                         String fecha = UtilSicov.askDate();
-                        fecha = fecha.substring(0, fecha.length() - 2);
+                        //fecha = fecha.substring(0, fecha.length() - 2);
                         eventoDTO.setFecha(fecha);
                         eventoDTO.setSerialEquipo(serialEquipo);
 
                         Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "Serial: ".concat(serialEquipo));
                         Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "fecha: ".concat(eventoDTO.getFecha()));
-                        RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda);
+                        RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda, "Inspeccion sensorial");
                         System.out.println("--------------------------------------------Respuesta Evento Verificado Sensorial");
                         if (respuesta.getCodigoRespuesta().equals("0")) {
                             JOptionPane.showMessageDialog(null, "DISCULPE; No Pude iniciar el Evento para la Pruebas Visual");
@@ -1880,10 +1880,10 @@ public class Frm_Placas extends javax.swing.JDialog {
                         }
                         Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "Serial: ".concat(serialEquipo));
                         String fecha = UtilSicov.askDate();
-                        fecha = fecha.substring(0, fecha.length() - 2);
+                        //fecha = fecha.substring(0, fecha.length() - 2);
                         eventoDTO.setSerialEquipo(serialEquipo);
                         Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "fecha: ".concat(eventoDTO.getFecha()));
-                        RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda);
+                        RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda, "Desviacion");
                         System.out.println("--------------------------------------------Respuesta Evento Verificado Desviacion");
                         if (respuesta.getCodigoRespuesta().equals("0")) {
                             JOptionPane.showMessageDialog(null, "DISCULPE; No Pude iniciar el Evento para la Pruebas FAS");
@@ -2103,10 +2103,10 @@ public class Frm_Placas extends javax.swing.JDialog {
             }
             Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "Serial: ".concat(serialEquipo));
             String fecha = UtilSicov.askDate();
-            fecha = fecha.substring(0, fecha.length() - 2);
+            //fecha = fecha.substring(0, fecha.length() - 2);
             eventoDTO.setSerialEquipo(serialEquipo.replace(";", "_"));
             eventoDTO.setFecha(fecha);
-            RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda);
+            RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda, "Gases indra");
             System.out.println("--------------------------------------------Respuesta Evento Verificado IndraGases");
             Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "Serial: ".concat(serialEquipo));
             Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "fecha: ".concat(eventoDTO.getFecha()));
@@ -2187,6 +2187,7 @@ public class Frm_Placas extends javax.swing.JDialog {
                 try {
                     (new EquipoController()).findIdEquipoBySerial(serialBanco);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     JOptionPane.showMessageDialog(null, "Disculpe. El banco con serial: " + serialBanco + " no existe");
                     doClose(0);
                     return false;
@@ -2267,10 +2268,10 @@ public class Frm_Placas extends javax.swing.JDialog {
                     }
                     Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "Serial: ".concat(serialEquipo));
                     String fecha = UtilSicov.askDate();
-                    fecha = fecha.substring(0, fecha.length() - 2);
+                    //fecha = fecha.substring(0, fecha.length() - 2);
                     eventoDTO.setSerialEquipo(serialEquipo.replace(";", "_"));
                     eventoDTO.setFecha(fecha);
-                    RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda);
+                    RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda, "Diesel moto carro");
                     System.out.println("--------------------------------------------Respuesta Evento Verificado Gases");
                     Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "Serial: ".concat(serialEquipo));
                     Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "fecha: ".concat(eventoDTO.getFecha()));
@@ -2342,10 +2343,10 @@ public class Frm_Placas extends javax.swing.JDialog {
                     }
                     Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "Serial: ".concat(serialEquipo));
                     String fecha = UtilSicov.askDate();
-                    fecha = fecha.substring(0, fecha.length() - 2);
+                    //fecha = fecha.substring(0, fecha.length() - 2);
                     eventoDTO.setSerialEquipo(serialEquipo.replace(";", "_"));
                     eventoDTO.setFecha(fecha);
-                    RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda);
+                    RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda, "Diesel otros");
                     System.out.println("--------------------------------------------Respuesta Evento Verificado Diesel Otros");
                     Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "Serial: ".concat(serialEquipo));
                     Logger.getLogger(Frm_Placas.class.getName()).log(Level.INFO, null, "fecha: ".concat(eventoDTO.getFecha()));

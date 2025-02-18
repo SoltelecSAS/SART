@@ -32,6 +32,7 @@ public class PruebasDAO {
         try {
             serialEquipo = buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
+            e.printStackTrace();
             serialEquipo = "Serial no encontrado";
         }
         PruebaDefaultDAO.serialEquipo=serialEquipo;
@@ -62,6 +63,7 @@ public class PruebasDAO {
         try {
             serialEquipo = buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
+            e.printStackTrace();
             serialEquipo = "Serial no encontrado";
         }
 
@@ -108,6 +110,7 @@ public class PruebasDAO {
      */
     public static String buscarSerialEquipo(long idPrueba) throws SQLException, ClassNotFoundException, IOException 
     {
+        Conexion.getInstance();
         Connection conn = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContraseña());
         Long idHojaPrueba = 0L;
         Long idTipoCombustible = 0L;

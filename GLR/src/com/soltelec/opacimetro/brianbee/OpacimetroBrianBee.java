@@ -84,6 +84,7 @@ public class OpacimetroBrianBee
         transmitancia = Double.parseDouble((String)mensajeRespuesta.getDatos().get(0));
    }catch(NumberFormatException ex){
        System.out.println(" no tome transmitancia no es numeric lo que entrega es: "+ mensajeRespuesta.getDatos().get(0));  
+       ex.printStackTrace();
     } 
     medicion.setDensidadHumo(transmitancia);
     double opacidad = (1.0D - Math.exp(-transmitancia * 0.43D)) * 100.0D;
@@ -147,6 +148,7 @@ public class OpacimetroBrianBee
       this.in = this.serialPort.getInputStream();
     } catch (IOException ex) {
       Logger.getRootLogger().error(ex);
+      ex.printStackTrace();
     }
   }
 
@@ -196,13 +198,16 @@ public class OpacimetroBrianBee
       System.out.println("");
       this.out.write(trama);
     } catch (IOException ex) {
+      ex.printStackTrace();
       System.out.println("Excepcion enviando datos");
       Logger.getRootLogger().error("Excepcion enviando datos", ex);
+      
       return buffer;
     }
     try {
       Thread.sleep(50L);
     } catch (InterruptedException ex) {
+      ex.printStackTrace();
     }
     int contador = 0;
     buffer = new byte[2048];
@@ -223,9 +228,11 @@ public class OpacimetroBrianBee
         System.out.println("Intentos de lectura: " + contador);
         contador++;
       } catch (IOException ioe) {
+        ioe.printStackTrace();
         System.out.println("Excepcion leyendo datos del opacimetro");
         contador++;
       } catch (ArrayIndexOutOfBoundsException ae) {
+        ae.printStackTrace();
         return null;
       }
     }

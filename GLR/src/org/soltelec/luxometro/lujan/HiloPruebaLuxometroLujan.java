@@ -974,7 +974,7 @@ public class HiloPruebaLuxometroLujan implements Runnable, ActionListener {
         PreparedStatement instruccion = conexion.prepareStatement(statement);
         instruccion.setInt(1, 6);
         ResultSet executeQuery = instruccion.executeQuery();
-        if (executeQuery.first()) {
+        if (executeQuery.next()) {
             permisibleBaja = executeQuery.getDouble("Valor_maximo");
             permisibleBaja = 2.5;
         } else {
@@ -985,7 +985,7 @@ public class HiloPruebaLuxometroLujan implements Runnable, ActionListener {
         instruccion.clearParameters();
         instruccion.setInt(1, 7);
         executeQuery = instruccion.executeQuery();
-        if (executeQuery.first()) {
+        if (executeQuery.next()) {
             permisibleAlta = executeQuery.getDouble("Valor_maximo");
         } else {
             JOptionPane.showMessageDialog(null, "Error cargando los valores vehiculo");
@@ -995,7 +995,7 @@ public class HiloPruebaLuxometroLujan implements Runnable, ActionListener {
         instruccion.clearParameters();
         instruccion.setInt(1, 5);
         executeQuery = instruccion.executeQuery();
-        if (executeQuery.first()) {
+        if (executeQuery.next()) {
             permisibleSumatoria = executeQuery.getDouble("Valor_maximo");
         } else {
             JOptionPane.showMessageDialog(null, "Error cargando los valores vehiculo");
@@ -1005,7 +1005,7 @@ public class HiloPruebaLuxometroLujan implements Runnable, ActionListener {
         String strDos = "SELECT Valor_minimo,Valor_maximo FROM permisibles WHERE Id_permisible = 9";
         PreparedStatement instruccion2 = conexion.prepareStatement(strDos);
         executeQuery = instruccion2.executeQuery();
-        if (executeQuery.first()) {
+        if (executeQuery.next()) {
             permisibleAnguloBajo = executeQuery.getDouble("Valor_minimo");
             permisibleAnguloAlto = executeQuery.getDouble("Valor_maximo");//remiendo solamente un remiendo
         } else {

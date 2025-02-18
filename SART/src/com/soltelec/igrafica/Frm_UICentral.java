@@ -1323,6 +1323,7 @@ public class Frm_UICentral extends javax.swing.JDialog {
                                 count = 0;
                             }else count++;
                             
+                            //JOptionPane.showMessageDialog(null, "");
                             if(count == 7 && strFuncionTermo.equalsIgnoreCase("Master")){
                                 JOptionPane.showMessageDialog(null, "TermoHigrometro desconectado. Saliendo...");
 

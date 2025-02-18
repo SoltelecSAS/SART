@@ -42,8 +42,10 @@ public class TestComandosOpacimetro
         Thread.sleep(100L);
       }
     } catch (NoSuchPortException ex) {
+      ex.printStackTrace();
       Logger.getLogger(TestComandosOpacimetro.class.getName()).log(Level.SEVERE, null, ex);
     } catch (Exception ex) {
+      ex.printStackTrace();
       Logger.getLogger(TestComandosOpacimetro.class.getName()).log(Level.SEVERE, null, ex);
     }
   }

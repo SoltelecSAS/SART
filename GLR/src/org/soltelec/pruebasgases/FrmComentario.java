@@ -4,20 +4,12 @@
  */
 package org.soltelec.pruebasgases;
 
-import org.soltelec.luxometro.*;
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.PreparedStatement;
 import com.soltelec.modulopuc.utilidades.Mensajes;
 import java.awt.AWTException;
 import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
 
-import java.awt.Component;
 import java.awt.Robot;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -29,10 +21,10 @@ import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.Timer;
 import org.soltelec.util.ConsultarDatosVehiculo;
 import com.soltelec.modulopuc.configuracion.modelo.Conexion;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import org.soltelec.pruebasgases.motocicletas.CallableInicioMotos;
 
@@ -174,6 +166,7 @@ public class FrmComentario extends javax.swing.JDialog {
             serialEquipo = ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba);
         } catch (Exception e) {
             serialEquipo = "Serial no Encontrado ";
+            e.printStackTrace();
         }
         System.out.println("entro al metodo de persistencia de datos");
         try {

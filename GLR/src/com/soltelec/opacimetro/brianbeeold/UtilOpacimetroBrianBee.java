@@ -132,6 +132,7 @@ package com.soltelec.opacimetro.brianbeeold;
                     /* 121 */ temporal.clear();
                                     } catch (UnsupportedEncodingException ex) {
                     /* 123 */ Logger.getLogger(UtilOpacimetroBrianBee.class.getName()).log(Level.SEVERE, null, ex);
+                    ex.printStackTrace();
                                     }
                 /* 125 */            } else if (contadorOcurrencias != 0) {
                 /* 126 */ temporal.add(Byte.valueOf(trama[i]));
@@ -146,6 +147,7 @@ package com.soltelec.opacimetro.brianbeeold;
                     /* 135 */ listaEncontrados.add(new String(buffer, "US-ASCII"));
                     /* 136 */ temporal.clear();
                                     } catch (UnsupportedEncodingException ex) {
+                                        ex.printStackTrace();
                     /* 138 */ Logger.getLogger(UtilOpacimetroBrianBee.class.getName()).log(Level.SEVERE, null, ex);
                                     }
                             }

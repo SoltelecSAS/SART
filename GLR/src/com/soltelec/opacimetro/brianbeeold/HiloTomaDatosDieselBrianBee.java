@@ -7,6 +7,8 @@ package com.soltelec.opacimetro.brianbeeold;
 /*    */ import org.soltelec.util.MedicionOpacidad;
 /*    */ import org.soltelec.util.UtilGasesModelo;
 
+import com.soltelec.opacimetro.brianbee.OpacimetroBrianBee;
+
 /*    */
  /*    */ public class HiloTomaDatosDieselBrianBee extends HiloTomaDatosDiesel /*    */ {
 
@@ -27,6 +29,7 @@ package com.soltelec.opacimetro.brianbeeold;
             /*    */ try {
                 /* 25 */ Thread.sleep(10L);
                 /*    */            } /*    */ catch (InterruptedException ex) {
+                    ex.printStackTrace();
             }
             /*    */        }
         /*    */    }
