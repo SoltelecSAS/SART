@@ -62,7 +62,7 @@ public class MedidasDAO {
         System.out.println("--------------------------------------");
         
         System.out.println("Numero tipos de medida: "+tiposMedida.size());
-        for (int i = 0; i < valoresMedida.size(); i++) 
+        for (int i = 0; i < tiposMedida.size(); i++) 
         {        
             System.out.println("--------------------------------------------------------------");    
             System.out.println("ciclo "+i);
