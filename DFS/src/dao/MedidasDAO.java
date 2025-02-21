@@ -87,8 +87,7 @@ public class MedidasDAO {
                     System.out.println(" ************* INSERTA MEDIDAS *****************");
                     DBUtil.insert(Medidas.TABLA, campos, valores);   
                 }
-            } catch (SQLException ex) 
-            {
+            } catch (SQLException ex) {
                 System.out.println("Error: guardarMedidas - (MedidasDAO)");
                 ex.printStackTrace(System.err);
                 //throw new NoPersistException();

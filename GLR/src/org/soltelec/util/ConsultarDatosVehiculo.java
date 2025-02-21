@@ -139,11 +139,18 @@ public class ConsultarDatosVehiculo {
                 String modeloOpacimetro = UtilPropiedades.cargarPropiedad("modeloOpacimetro", "seriales.properties");
 
                 String serialOpacimetroCompleto = ltoeOpacimetro+"-"+serialOpacimetro;
+
+                String serialKitCompleto = "";
+                String rpmDiesel = Utilidades.getMetodoMedicionRpmDiesel();
                 
-                String serialKitCompleto = 
-                    Utilidades.getMetodoMedicionRpmDiesel().equalsIgnoreCase("Bateria") ?
-                        serialRpm+"/"+serialTemperatura+"/"+serialBateria:
-                        serialRpm+"/"+serialTemperatura+"/"+serialVibracion;
+                if (rpmDiesel != null) {
+                    serialKitCompleto = 
+                        rpmDiesel.equalsIgnoreCase("Bateria") ?
+                            serialRpm+"/"+serialTemperatura+"/"+serialBateria:
+                            serialRpm+"/"+serialTemperatura+"/"+serialVibracion;
+                }else{
+                    serialKitCompleto = serialRpm+"/ / ";
+                }
                 
                 String serialCompleto = "diesel~"+
                     marcaOpacimetro+";"+marcaKit+";"+marcaTermo+"~"+
