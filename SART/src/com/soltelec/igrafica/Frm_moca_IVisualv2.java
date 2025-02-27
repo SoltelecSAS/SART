@@ -490,7 +490,7 @@ public class Frm_moca_IVisualv2 extends javax.swing.JDialog {
                 consultaTotal.setLong(3, hojaPruebasActual);
                 rs = null;
                 rs = consultaTotal.executeQuery();
-                rs.first();
+                rs.next();
                 int totalDefA = rs.getInt(1);
                 consultaTotal.clearParameters();              
             //System.out.println("Datos enviados");

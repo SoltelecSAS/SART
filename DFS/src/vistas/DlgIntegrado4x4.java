@@ -2099,7 +2099,7 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
                 repetirPrueba = frenosDAO.persist(frenos, idPruebafren, idUsuario, aplicTrans, this.ipEquipo,tipoPista,tipoVehiculo,this.Placa, "frenos DlgIntegrado4x4");
             } catch (ClassNotFoundException ex) {    }
             if (repetirPrueba                                                == false) {
-                DlgIntegrado4x4.tramaAuditoria = "{\"eficaciaTotal\":\"".concat(String.valueOf(Frenos.eficacia)).concat("\",").concat("\"eficaciaAuxiliar\":\"").concat(String.valueOf(Frenos.eficaciaFrenoMano)).concat("\",");
+                DlgIntegrado4x4.tramaAuditoria = "{\"eficaciaTotal\":\"".concat(String.valueOf(Frenos.eficaciaVariable)).concat("\",").concat("\"eficaciaAuxiliar\":\"").concat(String.valueOf(Frenos.eficaciaFrenoMano)).concat("\",");
                 for (int k = 0; k < frenos.getPesoDerecho().size(); k++) {
                     DlgIntegrado4x4.tramaAuditoria = DlgIntegrado4x4.tramaAuditoria.concat("\"fuerzaEje").concat(String.valueOf(k + 1)).concat("Izquierdo\":\"").concat(String.valueOf(frenos.getFuerzaIzquierda().get(k))).concat("\",").concat("\"pesoEje").concat(String.valueOf(k + 1)).concat("Izquierdo\":\"").concat(String.valueOf(frenos.getPesoIzquierdo().get(k))).concat("\",").concat("\"fuerzaEje").concat(String.valueOf(k + 1)).concat("Derecho\":\"").concat(String.valueOf(frenos.getFuerzaDerecha().get(k))).concat("\",").concat("\"pesoEje").concat(String.valueOf(k + 1)).concat("Derecho\":\"").concat(String.valueOf(frenos.getPesoDerecho().get(k))).concat("\",").concat("\"eje").concat(String.valueOf(k + 1)).concat("Desequilibro\":\"").concat(String.valueOf(Frenos.desequilibrio.get(k))).concat("\",");
                 }

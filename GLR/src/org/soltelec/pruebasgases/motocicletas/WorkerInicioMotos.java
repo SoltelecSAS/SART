@@ -144,6 +144,7 @@ public class WorkerInicioMotos extends SwingWorker<Void, Void> {
                     JOptionPane.showMessageDialog(null, "No se pueden tomar mediciones de humedad y termohigrometro");
                     Logger.getRootLogger().error("Error con el termohigrometro", th);
                     panel.cerrar();
+                    th.printStackTrace();
                     return null;
                 }
                 tempAmbiente = medicion.getValorTemperatura();//no se puede saber si demora un poco la cosa

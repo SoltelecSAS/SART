@@ -36,19 +36,6 @@ public class PruebaDefaultDAO {
             {
                 if (pesoVacio > 3500) 
                 {
-                   /* if (tipoVehiculo.equalsIgnoreCase("Liviano") || tipoVehiculo.equalsIgnoreCase("Taxis_AplTaximetro") || tipoVehiculo.equalsIgnoreCase("Taxis") || tipoVehiculo.equalsIgnoreCase("4x4")) {
-                        Mensajes.messageDoneTime("Se le informa que este vehiculo fue autorizado como " + tipoVehiculo + " y su peso vacio fue: " + Math.round(pesoVacio), 7);
-                        String campos = "observaciones";
-                        String valores = "ABORTADA; este Vehiculo FUE AUTORIZADO como " + tipoVehiculo + " Y su peso vacio fue " + Math.round(pesoVacio) + " Kg. por lo tanto la prueba ha sido ANULADA por incongruencia entre el peso vacio Registrado y el Tipo Vehiculo ..!";
-                        String condicion = "Id_Pruebas =" + idPrueba;
-                        try {
-                            DBUtil.updateSingle("db_cda.pruebas", campos, valores, condicion);
-                        } catch (SQLException ex) {
-                            Logger.getLogger(PruebaDefaultDAO.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        Mensajes.messageDoneTime(" SE LE INFORMA QUE LA PRUEBA HA SIDO ANULADA POR INCONGRUENCIA ENTRE EL PESO VACIO Y EL TIPO VEHICULO ", 7);
-                        return true;
-                    }*/
                 } else {
                     
                 }

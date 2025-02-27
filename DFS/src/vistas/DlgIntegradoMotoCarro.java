@@ -52,7 +52,7 @@ import javax.swing.Timer;
 import modelo.Desviacion;
 import modelo.Frenos;
 import modelo.FrenoMotoCarro;
-import static modelo.Frenos.eficacia;
+import static modelo.Frenos.eficaciaVariable;
 import modelo.Suspension;
 import org.jdesktop.swingx.JXLoginPane;
 import static vistas.DlgIntegradoPesado.byteToInt;
@@ -3585,7 +3585,7 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
             }
             if (repetirPrueba == false) {
                 tramaAuditoria = "{\"eficaciaTotal\":\""
-                        .concat(String.valueOf(FrenoMotoCarro.eficacia))
+                        .concat(String.valueOf(FrenoMotoCarro.eficaciaVariable))
                         .concat("\",").concat("\"eficaciaAuxiliar\":\"")
                         .concat(String.valueOf(FrenoMotoCarro.eficaciaFrenoMano))
                         .concat("\",");

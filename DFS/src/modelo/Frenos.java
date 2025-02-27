@@ -5,16 +5,14 @@
 package modelo;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import javax.swing.JOptionPane;
+
 import vistas.DlgIntegradoLiviano;
-import vistas.DlgIntegradoPesado;
 
 /**
  *
@@ -31,7 +29,7 @@ public class Frenos implements PruebaDefault {
 
     private final List<Double> fuerzaDerechaEnseñanza;
     private final List<Double> fuerzaIzquierdaEnseñanza;
-    public static double eficacia;
+    public static double eficaciaVariable;
     private double eficaciaEnseñanza;
     public static double eficaciaFrenoMano;
     public static List<Double> desequilibrio;
@@ -251,73 +249,53 @@ public class Frenos implements PruebaDefault {
         calcularDesequilibrio();
         calcularEficacia();
 
-        DecimalFormat def = new DecimalFormat("#####.##");
-        try {
-            BufferedWriter regdatospd1 = new BufferedWriter(new FileWriter(new File("BackupMedidas.txt")));
-            regdatospd1.write("  BITACORA DE LOS DATOS DE LA PRUEBA DE PESO DERECHO DEL EJE DELANTERO");
-            regdatospd1.newLine();
-            regdatospd1.flush();
-            for (int i = 0; i < valoresMedida.size(); i++) {
-                regdatospd1.write("MEDIDA: ".concat(String.valueOf(tiposMedida.get(i))).concat("Valor: ".concat(String.valueOf(valoresMedida.get(i)))));
-                regdatospd1.newLine();
-            }
-            regdatospd1.flush();
-        } catch (IOException ex) {
-            System.out.println("no se pudo crear el archivo de datos" + ex);
-        }
-
-        for (Double pesoDerecho1 : pesoDerecho) {
-            valoresMedida.add(pesoDerecho1);
-        }
-
-        for (Double pesoIzquierdo1 : pesoIzquierdo) {
-            valoresMedida.add(pesoIzquierdo1);
-        }
-
-        for (int i = 0; i < (fuerzaDerecha.size()); i++) {
-            valoresMedida.add(fuerzaDerecha.get(i));
-        }
-
-        for (int i = 0; i < (fuerzaIzquierda.size()); i++) {
-            valoresMedida.add(fuerzaIzquierda.get(i));
-        }
-        for (int i = 0; i < (fuerzaDerechaAux.size()); i++) {
-            valoresMedida.add(fuerzaDerechaAux.get(i));
-        }
-
-        for (int i = 0; i < (fuerzaIzquierdaAux.size()); i++) {
-            valoresMedida.add(fuerzaIzquierdaAux.get(i));
-        }
-
-        for (Double desequilibrio1 : desequilibrio) {
-            valoresMedida.add(desequilibrio1);
-        }
-
-        valoresMedida.add(eficacia);
+        // Agregamos los valores a la lista
+        valoresMedida.addAll(pesoDerecho);
+        valoresMedida.addAll(pesoIzquierdo);
+        valoresMedida.addAll(fuerzaDerecha);
+        valoresMedida.addAll(fuerzaIzquierda);
+        valoresMedida.addAll(fuerzaDerechaAux);
+        valoresMedida.addAll(fuerzaIzquierdaAux);
+        valoresMedida.addAll(desequilibrio);
+        valoresMedida.add(eficaciaVariable);
         valoresMedida.add(eficaciaFrenoMano);
 
-        // Validamos si el vehiculo es de enseñanza para agregar los valores
+        // Agregamos valores adicionales si el vehículo es de enseñanza
         if (!fuerzaDerechaEnseñanza.isEmpty()) {
-            for (Double fuerzaDerechaEnseñanza1 : fuerzaDerechaEnseñanza) {
-                valoresMedida.add(fuerzaDerechaEnseñanza1);
-            }
-
-            for (Double fuerzaIzquierdaEnseñanza1 : fuerzaIzquierdaEnseñanza) {
-                valoresMedida.add(fuerzaIzquierdaEnseñanza1);
-            }
-
-            for (Double desequilibrioEnseñanza1 : desequilibrioEnseñanza) {
-                valoresMedida.add(desequilibrioEnseñanza1);
-            }
+            valoresMedida.addAll(fuerzaDerechaEnseñanza);
+            valoresMedida.addAll(fuerzaIzquierdaEnseñanza);
+            valoresMedida.addAll(desequilibrioEnseñanza);
             valoresMedida.add(eficaciaEnseñanza);
         }
-        for (int i = 0; i < valoresMedida.size(); i++) {
-            Double valor = Double.parseDouble(def.format(valoresMedida.get(i)).replace(",", "."));
-            valoresMedida.remove(i);
-            valoresMedida.add(i, valor);
+
+        // Formateamos los valores correctamente
+        DecimalFormat def = new DecimalFormat("#####.##");
+        List<Double> valoresFormateados = new ArrayList<>();
+        for (Double valor : valoresMedida) {
+            valoresFormateados.add(Double.parseDouble(def.format(valor).replace(",", ".")));
         }
+        valoresMedida = valoresFormateados;
+
+        // Guardamos los datos en el archivo
+        guardarBitacora(valoresMedida);
+
         return valoresMedida;
     }
+
+    private void guardarBitacora(List<Double> valores) {
+        try (BufferedWriter regdatospd1 = new BufferedWriter(new FileWriter("BackupMedidas.txt"))) {
+            regdatospd1.write("BITACORA DE LOS DATOS DE LA PRUEBA DE PESO DERECHO DEL EJE DELANTERO");
+            regdatospd1.newLine();
+
+            for (int i = 0; i < valores.size(); i++) {
+                regdatospd1.write("MEDIDA: " + tiposMedida.get(i) + " Valor: " + valores.get(i));
+                regdatospd1.newLine();
+            }
+        } catch (IOException ex) {
+            System.out.println("No se pudo crear el archivo de datos: " + ex.getMessage());
+        }
+    }
+
 
     @Override
     public void verificarDefectos(String placa) {
@@ -329,7 +307,7 @@ public class Frenos implements PruebaDefault {
             getValoresMedida();
         }
 
-        if (eficacia < EFICACIA_FRENADO_A) {
+        if (eficaciaVariable < EFICACIA_FRENADO_A) {
             defectos.add(50028);
             aprobada = "N";
         } else if (!fuerzaDerechaEnseñanza.isEmpty() && eficaciaEnseñanza < EFICACIA_FRENADO_A) {
@@ -357,113 +335,6 @@ public class Frenos implements PruebaDefault {
         }
     }
 
-    /**
-     * Metodo para calcular la eficacia de cada eje incluyendo el freno de mano
-     * Formula = Eficacia = 100 * (sumaFuerzas / sumaPesos)
-     */
-    /* public void calcularEficacia() {
-        System.out.println("-------------------------------------");
-        System.out.println("-------- calcularEficacia   --------");
-        System.out.println("--------------------------------------");
-
-        double sumaFuerzas = 0;
-        double sumaPesos = 0;
-        double sumFreAux = 0;
-        System.out.println("---F.Izq" + fuerzaIzquierda);
-
-        System.out.println(":: Calculando Sumatoria de Pesos:");
-        for (int i = 0; i < pesoIzquierdo.size(); i++) {
-            sumaPesos += Math.round(pesoDerecho.get(i)) + Math.round(pesoIzquierdo.get(i));
-        }
-        System.out.println("_|_ Sumatoria Peso : " + sumaPesos);
-        //sumatoria de fuerzas da cero
-        System.out.println(":: Calculando Sumatoria de Fuerzas");
-        for (int i = 0; i < fuerzaDerecha.size(); i++) {
-            double fuerzaDe = fuerzaDerecha.get(i);
-            double fuerzaIz = fuerzaIzquierda.get(i);
-            if (fuerzaDerecha.size() > 0 && fuerzaDerecha.get(0) > 0) {
-                sumaFuerzas += Math.round(fuerzaDe) + Math.round(fuerzaIz);
-            }
-            if (fuerzaDe < 71 || fuerzaIz < 71) {
-                imprimirValores();
-
-                if (DlgIntegradoLiviano.activarFlagFrenos) {
-                    if (DlgIntegradoLiviano.activarFlag == 0) {
-                        Object[] choices = {"REPETIR"};
-                        int dato = JOptionPane.showOptionDialog(null, "<html><div><center><img src='file:images/flag-red-icon.png' alt='algo'/><h2 style='font-family: \"Open Sans Condensed Light\"; color:#069'>Falla en el proceso</h2><hr/><p align='justify' style='font-family: 'Open Sans Condensed Light'; font-size: 15px; '>VALORES DE FUERZAS INCONSISTEN EN EL EJE " + i + 1 + "</p><hr/><br/></center></div></html>", "SART 1.7.3 FUERZAS EN 0", 0, -1, null, choices, choices[0]);
-                        repetirPrueba = true;
-                        DlgIntegradoLiviano.activarFlag++;
-                    }
-                }
-                return;
-            }
-        }
-        System.out.println("_|_ Sumatoria Fuerzas  :  " + sumaFuerzas);
-
-        System.out.println(":: Calculando Sumatoria de Fuerzas Aux");
-        for (int i = 0; i < fuerzaDerechaAux.size(); i++) {
-            double fuerzaDeAx = fuerzaDerechaAux.get(i);
-            double fuerzaIzAx = fuerzaIzquierdaAux.get(i);
-            sumFreAux += Math.round(fuerzaDeAx) + Math.round(fuerzaIzAx);
-            System.out.println("_|_  fuerz Aux. DEr " + fuerzaDeAx);
-            System.out.println("_|_  FuerzaAux. Izq: " + fuerzaIzAx);
-
-            if (fuerzaDerechaAux.get(i) < 71 || fuerzaIzquierdaAux.get(i) < 71) {
-                imprimirValores();
-                if (DlgIntegradoLiviano.activarFlagFrenos) {
-                    if (DlgIntegradoLiviano.activarFlag == 0) {
-                        Object[] choices = {"REPETIR"};
-//                            int dato = JOptionPane.showOptionDialog(null, "<html><div><center><img src='file:images/flag-red-icon.png' alt='algo'/><h2 style='font-family: \"Open Sans Condensed Light\"; color:#069'>Falla en el proceso</h2><hr/><p align='justify' style='font-family: 'Open Sans Condensed Light'; font-size: 15px; '>Eficacia superior a el 100%, debe repetir la prueba</p><hr/><br/></center></div></html>", "FALLA EN EL PROCESO", 0, -1, null, choices, choices[0]);
-                        int dato = JOptionPane.showOptionDialog(null, "<html><div><center><img src='file:images/flag-red-icon.png' alt='algo'/><h2 style='font-family: \"Open Sans Condensed Light\"; color:#069'>Falla en el proceso( FUERZAS EN 0)</h2><hr/><p align='justify' style='font-family: 'Open Sans Condensed Light'; font-size: 15px; '>VALORES DE FUERZAS INCONSISTEN</p><hr/><br/></center></div></html>", "SART 1.7.3  FUERZAS AUX. EN 0", 0, -1, null, choices, choices[0]);
-                        repetirPrueba = true;
-                    }
-                }
-                System.out.println("_|_ Sumatoria Fuerzas  :  " + sumFreAux);
-
-                return;
-            }
-        }
-
-        //Si es motocarro se agrega los valores que no se agregarian en bucle anterior
-        if (fuerzaDerecha.size() == 3 && fuerzaIzquierda.size() == 2) {
-            sumaPesos += Math.round(pesoDerecho.get(1));
-            sumaFuerzas += Math.round(fuerzaDerecha.get(1));
-        }
-
-        System.out.println(":: Calculando Eficacia de freno Mano");
-        eficaciaFrenoMano = ((sumFreAux) / (sumaPesos)) * 100.0;
-        System.out.println("_|_ Valor Eficacia FrenoMano  :  " + eficaciaFrenoMano);
-
-        System.out.println(":: Calculando Eficacia de Frenos Normales");
-        if (sumaFuerzas > 0) {
-            Frenos.eficacia = ((sumaFuerzas) / (sumaPesos)) * 100.0;
-        } else {
-            Frenos.eficacia = 1;
-        }
-
-        System.out.println("_|_ Valor Eficacia Frenos " + Frenos.eficacia);
-        System.out.println("Valor calculado eficacia FRENOS sin recorte decimal" + Frenos.eficacia);
-
-        if (Frenos.eficacia > 100) {
-            imprimirValores();
-            Object[] choices = {"Aceptar"};
-//            int dato = JOptionPane.showOptionDialog(null, "<html><div><center><img src='file:images/flag-red-icon.png' alt='algo'/><h2 style='font-family: \"Open Sans Condensed Light\"; color:#069'>Falla en el proceso</h2><hr/><p align='justify' style='font-family: 'Open Sans Condensed Light'; font-size: 15px; '>Eficacia superior a el 100%, debe repetir la prueba</p><hr/><br/></center></div></html>", "FALLA EN EL PROCESO", 0, -1, null, choices, choices[0]);
-            int dato = JOptionPane.showOptionDialog(null, "<html><div><center><img src='file:images/flag-red-icon.png' alt='algo'/><h2 style='font-family: \"Open Sans Condensed Light\"; color:#069'>Falla en el proceso</h2><hr/><p align='justify' style='font-family: 'Open Sans Condensed Light'; font-size: 15px; '>Debe repetir la prueba</p><hr/><br/></center></div></html>", "SART 1.7.3 FALLA EN EL PROCESO", 0, -1, null, choices, choices[0]);
-//            Mensajes.mensajeError("Eficacia superior a el 100% debe volver hacer la prueba");
-            repetirPrueba = true;
-        }
-
-        // Se valida si el vehiculo es de enseñanza para asi calcular la eficacia
-        // y guardala en su variable asignada
-        if (!fuerzaDerechaEnseñanza.isEmpty()) {
-            sumaFuerzas = 0;
-            for (int i = 0; i < fuerzaDerechaEnseñanza.size(); i++) {
-                sumaFuerzas += fuerzaDerechaEnseñanza.get(i) + fuerzaIzquierdaEnseñanza.get(i);
-            }
-            eficaciaEnseñanza = ((sumaFuerzas) / (sumaPesos)) * 100.0;
-        }
-    } */
-
     public void calcularEficacia() {
         System.out.println("-------------------------------------");
         System.out.println("-------- calcularEficacia   --------");
@@ -484,17 +355,19 @@ public class Frenos implements PruebaDefault {
     
         eficaciaFrenoMano = calcularEficaciaFrenoMano(sumFreAux, sumaPesos);
         eficaciaFrenoMano = Double.parseDouble(aproximacion(eficaciaFrenoMano));
-        Frenos.eficacia = calcularEficaciaFrenos(sumaFuerzas, sumaPesos);
-        Frenos.eficacia = Double.parseDouble(aproximacion(Frenos.eficacia));
+        eficaciaVariable = calcularEficaciaFrenos(sumaFuerzas, sumaPesos);
+        eficaciaVariable = Double.parseDouble(aproximacion(eficaciaVariable));
     
         System.out.println("_|_ Valor Eficacia FrenoMano  :  " + eficaciaFrenoMano);
-        System.out.println("_|_ Valor Eficacia Frenos " + Frenos.eficacia);
+        System.out.println("_|_ Valor Eficacia Frenos " + eficaciaVariable);
     
-        if (Frenos.eficacia > 100) {
+        if (eficaciaVariable > 100) {
             imprimirValores("calcularEficacia desde Frenos");
             mostrarMensajeFalla();
             repetirPrueba = true;
-        }
+        }//else{
+        //    Utilidades2.guardarOModificarMedida(5024, 5024, Frenos.eficacia, "N");
+        //}
     
         calcularEficaciaEnsenanza(sumaFuerzas, sumaPesos);
     }
@@ -572,7 +445,7 @@ public class Frenos implements PruebaDefault {
     private void mostrarMensajeFalla() {
         if (DlgIntegradoLiviano.activarFlagFrenos && DlgIntegradoLiviano.activarFlag == 0) {
             Object[] choices = {"REPETIR"};
-            int dato = JOptionPane.showOptionDialog(null, "<html><div><center><img src='file:images/flag-red-icon.png' alt='algo'/><h2 style='font-family: \"Open Sans Condensed Light\"; color:#069'>Falla en el proceso</h2><hr/><p align='justify' style='font-family: 'Open Sans Condensed Light'; font-size: 15px; '>Debe repetir la prueba</p><hr/><br/></center></div></html>", "SART 1.7.3 FALLA EN EL PROCESO", 0, -1, null, choices, choices[0]);
+            JOptionPane.showOptionDialog(null, "<html><div><center><img src='file:images/flag-red-icon.png' alt='algo'/><h2 style='font-family: \"Open Sans Condensed Light\"; color:#069'>Falla en el proceso</h2><hr/><p align='justify' style='font-family: 'Open Sans Condensed Light'; font-size: 15px; '>Debe repetir la prueba</p><hr/><br/></center></div></html>", "SART 1.7.3 FALLA EN EL PROCESO", 0, -1, null, choices, choices[0]);
         }
     }
 
@@ -691,7 +564,7 @@ public class Frenos implements PruebaDefault {
             System.out.println("Desequilibrio Eje " + (i + 1) + ": " + desequilibrio.get(i));
         }
 
-        System.out.println("Eficacia del Freno: " + eficacia);
+        System.out.println("Eficacia del Freno: " + eficaciaVariable);
         System.out.println("Eficacia del Freno de Mano " + eficaciaFrenoMano);
         if (!fuerzaDerechaEnseñanza.isEmpty()) {
             for (int i = 0; i < fuerzaDerechaEnseñanza.size(); i++) {

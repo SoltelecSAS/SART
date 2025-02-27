@@ -850,7 +850,7 @@ public class Frm_InspeccionVisual extends javax.swing.JDialog {
             consultaTotal.setLong(3, hojaPruebasActual);
             rs = null;
             rs = consultaTotal.executeQuery();
-            rs.first();
+            rs.next();
             int totalDefA = rs.getInt(1);
 
             consultaTotal.clearParameters();          

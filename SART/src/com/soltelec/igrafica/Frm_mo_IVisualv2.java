@@ -495,7 +495,7 @@ public class Frm_mo_IVisualv2 extends javax.swing.JDialog
             consultaTotal.setLong(3, hojaPruebaActual);
             rs = null;
             rs = consultaTotal.executeQuery();
-            rs.first();
+            rs.next();
             int totalDefA = rs.getInt(1);
             consultaTotal.clearParameters();
             String strIVEval = "UPDATE pruebas SET Aprobada = ? where Id_Pruebas = ?";

@@ -1,11 +1,11 @@
 [DAQ]
-puerto: COM4
+puerto: COM3
 
 [BANCO]
 desviacion: si
-suspension: no
+suspension: si
 frenos: no
-pista_mixta: si
+pista_mixta: no
 
 [SOFTWARE]
 pruebas_unidas: si
@@ -23,12 +23,12 @@ resol_max: 25
 tiempo_mensajes: 3000
 
 [SUSPENSION]
-umbral_peso_susp: 380
+umbral_peso_susp: 1
 factor_escala_susp: 1
 temporizador_inercia: 500
 salida_motor_derecho: 010000
 salida_motor_izquierdo: 100000
-tiempo_mensajes: 4000
+tiempo_mensajes: 8000
 
 [TIPOPISTA]
 valida_tipo: 2
@@ -36,7 +36,7 @@ tipo_pista: Mixta
 
 [FRENOMETRO]
 umbral_velo: 5
-umbral_peso_fren: 500
+umbral_peso_fren: 1
 factor_desq: 1.7
 
 livianos:

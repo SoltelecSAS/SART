@@ -2031,7 +2031,7 @@ public class DlgIntegradoPesado extends javax.swing.JDialog implements ActionLis
         try {
             System.out.println("toma el marcado de confirmacion FRENOS PESADO ");
             System.out.println("------------------------------------------------------------------------------------");
-            System.out.println("|                             " + FrenosPrueba.eficacia + "-------------------------------|");
+            System.out.println("|                             " + FrenosPrueba.eficaciaVariable + "-------------------------------|");
             System.out.println("-------------------------------------------------------------------------------------");
             PruebaDefaultDAO.escrTrans = "@";
             try {
@@ -2039,9 +2039,9 @@ public class DlgIntegradoPesado extends javax.swing.JDialog implements ActionLis
             } catch (ClassNotFoundException ex) {
             }
             if (repetirPrueba == false) {
-                tramaAuditoria = "{\"eficaciaTotal\":\"".concat(String.valueOf(FrenosPrueba.eficacia)).concat("\",").concat("\"eficaciaAuxiliar\":\"").concat(String.valueOf(FrenosPrueba.eficaciaFrenoMano)).concat("\",");
+                tramaAuditoria = "{\"eficaciaTotal\":\"".concat(String.valueOf(FrenosPrueba.eficaciaVariable)).concat("\",").concat("\"eficaciaAuxiliar\":\"").concat(String.valueOf(FrenosPrueba.eficaciaFrenoMano)).concat("\",");
                 for (int k = 0; k < frenos.getPesoDerecho().size(); k++) {
-                    tramaAuditoria = tramaAuditoria.concat("\"fuerzaEje").concat(String.valueOf(k + 1)).concat("Izquierdo\":\"").concat(String.valueOf(frenos.getFuerzaIzquierda().get(k))).concat("\",").concat("\"pesoEje").concat(String.valueOf(k + 1)).concat("Izquierdo\":\"").concat(String.valueOf(frenos.getPesoIzquierdo().get(k))).concat("\",").concat("\"fuerzaEje").concat(String.valueOf(k + 1)).concat("Derecho\":\"").concat(String.valueOf(frenos.getFuerzaDerecha().get(k))).concat("\",").concat("\"pesoEje").concat(String.valueOf(k + 1)).concat("Derecho\":\"").concat(String.valueOf(frenos.getPesoDerecho().get(k))).concat("\",").concat("\"eje").concat(String.valueOf(k + 1)).concat("Desequilibro\":\"").concat(String.valueOf(FrenosPrueba.desequilibrio.get(k))).concat("\",");
+                    tramaAuditoria = tramaAuditoria.concat("\"fuerzaEje").concat(String.valueOf(k + 1)).concat("Izquierdo\":\"").concat(String.valueOf(frenos.getFuerzaIzquierda().get(k))).concat("\",").concat("\"pesoEje").concat(String.valueOf(k + 1)).concat("Izquierdo\":\"").concat(String.valueOf(frenos.getPesoIzquierdo().get(k))).concat("\",").concat("\"fuerzaEje").concat(String.valueOf(k + 1)).concat("Derecho\":\"").concat(String.valueOf(frenos.getFuerzaDerecha().get(k))).concat("\",").concat("\"pesoEje").concat(String.valueOf(k + 1)).concat("Derecho\":\"").concat(String.valueOf(frenos.getPesoDerecho().get(k))).concat("\",").concat("\"eje").concat(String.valueOf(k + 1)).concat("Desequilibro\":\"").concat(String.valueOf(FrenosPrueba.desequilibrioVariable.get(k))).concat("\",");
                 }
                 for (int k = frenos.getPesoDerecho().size() + 1; k < 6; k++) {
                     tramaAuditoria = tramaAuditoria.concat("\"fuerzaEje").concat(String.valueOf(k)).concat("Izquierdo\":\"").concat(String.valueOf(" ")).concat("\",").concat("\"pesoEje").concat(String.valueOf(k)).concat("Izquierdo\":\"").concat(String.valueOf(" ")).concat("\",").concat("\"fuerzaEje").concat(String.valueOf(k)).concat("Derecho\":\"").concat(String.valueOf(" ")).concat("\",").concat("\"pesoEje").concat(String.valueOf(k)).concat("Derecho\":\"").concat(String.valueOf(" ")).concat("\",").concat("\"eje").concat(String.valueOf(k)).concat("Desequilibro\":\"").concat(String.valueOf(" ")).concat("\",");

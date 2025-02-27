@@ -11,6 +11,8 @@
 package vistas;
 
 import Utilidades.UtilPropiedades;
+import Utilidades.Utilidades2;
+
 import com.soltelec.loginadministrador.UtilLogin;
 import com.soltelec.modulopuc.utilidades.Mensajes;
 import dao.PruebaDefaultDAO;
@@ -580,7 +582,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
             System.out.println("spanfd " + spanfd + " spanfi " + spanfi + " spanpd " + spanpd + " spanpi " + spanpi
                     + " spanvd " + spanvd + " spanvi " + spanvi + " spand " + spand);
-            System.out.println("LOS SPAN DINAMICOS DE PESOS SON  spanpdTD" + spanpdTD + " spanpdTI " + spanpdTI + " spanpdDD " + spanpdDD + " spanpdDD " + spanpdDI);
+            System.out.println("LOS SPAN DINAMICOS DE PESOS SON  spanpdTD" + spanpdTD + " spanpdTI " + spanpdTI + " spanpdDD " + spanpdDD + " spanpdDI " + spanpdDI);
 
         } catch (Exception e) {
             System.err.println("Error en el metodo : leyendoSpanConfiguracion()");
@@ -1033,7 +1035,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
     public void MedirFuerzaVertical(String lado) throws InterruptedException {
         //double ab = CalcularMaximo(Datos1);
-        double auxfuerzad, auxfuerzai;
+        double auxfuerzadVariable, auxfuerzaiVariable;
         int bc;
         long s;
         LabelInfo.setText("MIDIENDO FUERZA VERTICAL...!");
@@ -1159,14 +1161,14 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                 }
                 //
                 System.out.println("Vamos a descartar los " + contoff + " primeros datos");
-                auxfuerzad = CalcularMinimo(Datos3, contoff);
+                auxfuerzadVariable = CalcularMinimo(Datos3, contoff);
 
                 System.out.println("-----------------------------");
                 System.out.println("- AUXILIAR FUERZA DERECHA ---");
-                System.out.println("--" + auxfuerzad + "--");
+                System.out.println("--" + auxfuerzadVariable + "--");
                 System.out.println("-----------------------------");
 
-                System.out.println(">>>>>>>>>>Valor Minimo DEL EJE :Derecho " + auxfuerzad);
+                System.out.println(">>>>>>>>>>Valor Minimo DEL EJE :Derecho " + auxfuerzadVariable);
                 if (enablebackup) {
                     try {
                         if (ejemedido == 1) {
@@ -1181,7 +1183,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                                 regdatosfvd1.newLine();
                                 regdatosfvi1.flush();
                             }
-                            regdatosfvd1.write(">>>>>>>>>>Valor Minimo DEL EJE 1: " + auxfuerzad);
+                            regdatosfvd1.write(">>>>>>>>>>Valor Minimo DEL EJE 1: " + auxfuerzadVariable);
                             regdatosfvd1.newLine();
                             regdatosfvd1.close();
                         } else if (ejemedido == 2) {
@@ -1195,7 +1197,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                                 regdatosfvd2.newLine();
                                 regdatosfvd2.flush();
                             }
-                            regdatosfvd2.write(">>>>>>>>>>Valor Minimo DEL EJE 2: " + auxfuerzad);
+                            regdatosfvd2.write(">>>>>>>>>>Valor Minimo DEL EJE 2: " + auxfuerzadVariable);
                             regdatosfvd2.newLine();
                             regdatosfvd2.close();
                         }
@@ -1204,11 +1206,11 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                     }
                 }
 
-                if ((auxfuerzad - valcalcero3) < 0) {
+                if ((auxfuerzadVariable - valcalcero3) < 0) {
                     fuerzasvd.add(0.0);
                     System.out.println("ENTRO EN CALCULOS CERO DE FUERZAS ..!");
                 } else {//pesosd.get(ejemedido-1)
-                    Double factorPesoMov = auxfuerzad - valcalcero3;
+                    Double factorPesoMov = auxfuerzadVariable - valcalcero3;
                     System.out.println("de nuevo el cero de fuerza derecho " + (valcalcero3) + " MV ");
                     System.out.println(">>>>>>>>>>Valor Minimo :Derecho Aplicando Resta del Cero" + factorPesoMov);
 
@@ -1328,7 +1330,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                     }
                 }
                 System.out.println("De la izquierda se eliminan " + contoff + " datos iniciales");
-                auxfuerzai = CalcularMinimo(Datos4, contoff);
+                auxfuerzaiVariable = CalcularMinimo(Datos4, contoff);
                 if (enablebackup) {
                     try {
                         if (ejemedido == 1) {
@@ -1341,7 +1343,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                                 regdatosfvi1.write(Datos4.get(t).toString());
                                 regdatosfvi1.newLine();
                             }
-                            regdatosfvi1.write(">>>>>>>>>>Valor Minimo DEL EJE 1: " + auxfuerzai);
+                            regdatosfvi1.write(">>>>>>>>>>Valor Minimo DEL EJE 1: " + auxfuerzaiVariable);
                             regdatosfvi1.newLine();
                             regdatosfvi1.close();
                         } else if (ejemedido == 2) {
@@ -1354,7 +1356,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                                 regdatosfvi2.write(Datos4.get(t).toString());
                                 regdatosfvi2.newLine();
                             }
-                            regdatosfvi2.write(">>>>>>>>>>Valor Minimo DEL EJE 2: " + auxfuerzai);
+                            regdatosfvi2.write(">>>>>>>>>>Valor Minimo DEL EJE 2: " + auxfuerzaiVariable);
                             regdatosfvi2.newLine();
                             regdatosfvi2.close();
                         }
@@ -1363,11 +1365,11 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                     }
                 }
 
-                if ((auxfuerzai - valcalcero4) < 0) {
-                    System.out.println("La operacion algebraica es " + (auxfuerzai - valcalcero4));
+                if ((auxfuerzaiVariable - valcalcero4) < 0) {
+                    System.out.println("La operacion algebraica es " + (auxfuerzaiVariable - valcalcero4));
                     fuerzasvi.add(0.0);
                 } else {    //pesosi.get(ejemedido-1);                
-                    Double factorPesoMov = auxfuerzai - valcalcero4;
+                    Double factorPesoMov = auxfuerzaiVariable - valcalcero4;
                     System.out.println(">>>>>>>>>>Valor Minimo :Izquierdo Aplicando Resta del Cero" + factorPesoMov);
                     if (ejemedido == 1) {
                         System.out.println(">>>>>>>>>>Spand Dinamico Izquierdo Delantero " + spanpdDI);
@@ -1383,7 +1385,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                 }
                 bc = fuerzasvi.size();
                 System.out.println("de nuevo el cero de fuerza izquierdo " + (valcalcero4) + " MV");
-                System.out.println("fuerza sin calibrar " + ejemedido + " izquierda: " + (auxfuerzai) + " MV");
+                System.out.println("fuerza sin calibrar " + ejemedido + " izquierda: " + (auxfuerzaiVariable) + " MV");
                 System.out.println("fuerza del eje " + ejemedido + " izquierda: " + (fuerzasvi.get(bc - 1)) + "");
                 break;
         }
@@ -2188,7 +2190,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                                 int baja = byteToInt(data);
                                 ComandoRecibido[3] = partealta * 256 + byteToInt(data);
                                 if (ComandoRecibido[3] <= 4095) {
-                                    Datos3.add(ComandoRecibido[3]);
+                                    Datos3.add(ComandoRecibido[3]); //recibidos datos3
                                     j = 7;
                                 } else {
                                 }
@@ -2202,7 +2204,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                             } else if (j == 8) {
                                 ComandoRecibido[4] = partealta * 256 + byteToInt(data);
                                 if (ComandoRecibido[4] <= 4095) {
-                                    Datos4.add(ComandoRecibido[4]);
+                                    Datos4.add(ComandoRecibido[4]); //recibidos datos4
                                     j = 9;
                                 } else {
                                 }
@@ -2258,6 +2260,8 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                             }
                             // </editor-fold>
                         }
+                        Utilidades2.writeListToFile(Datos3, "datos3-1.txt");
+                        Utilidades2.writeListToFile(Datos4, "datos4-1.txt");
                     } else {
                         comandoCEROS(0);
                     }
@@ -2318,7 +2322,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                             } else if (j == 7) {
                                 ComandoRecibido[4] = partealta * 256 + byteToInt(data);
                                 if (ComandoRecibido[4] <= 4095) {
-                                    Datos3.add(ComandoRecibido[4]);
+                                    Datos3.add(ComandoRecibido[4]); //recibidos datos3
                                     j = 8;
                                 } else {
                                 }
@@ -2332,7 +2336,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                             } else if (j == 9) {
                                 ComandoRecibido[5] = partealta * 256 + byteToInt(data);
                                 if (ComandoRecibido[5] <= 4095) {
-                                    Datos4.add(ComandoRecibido[5]);
+                                    Datos4.add(ComandoRecibido[5]); //recibidos datos4 posible no
                                     j = 10;
                                 } else {
                                 }
@@ -2380,6 +2384,9 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                         //setCanal1((ComandoRecibido[1] & 0x02) >0);
                         led1.setLedOn(isCanal0());
                         led2.setLedOn(isCanal1());
+
+                        Utilidades2.writeListToFile(Datos3, "datos3-2.txt");
+                        Utilidades2.writeListToFile(Datos4, "datos4-2.txt");
                     } else {
                         comandoFREN();
                     }
@@ -2405,7 +2412,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                                 if (data > 0) {
                                     ComandoRecibido[1] = partealta * 256 + byteToInt(data);
                                     if (ComandoRecibido[1] <= 4095) {
-                                        Datos3.add(ComandoRecibido[1]);
+                                        Datos3.add(ComandoRecibido[1]); //recibidos datos3
                                         j = 3;
                                     } else {
                                     }
@@ -2421,10 +2428,11 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                                 if (data > 0) {
                                     ComandoRecibido[2] = partealta * 256 + byteToInt(data);
                                     if (ComandoRecibido[2] <= 4095) {
-                                        Datos4.add(ComandoRecibido[2]);
+                                        Datos4.add(ComandoRecibido[2]); //recibidos datos4
                                         j = 5;
                                     } else {
                                     }
+                                    System.out.println("datos: "+Datos4);
                                 }
                                 // </editor-fold>
                                 // <editor-fold desc="Se valida la cola de la trama">
@@ -2435,7 +2443,11 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                                 }
                             }
                             // </editor-fold>
+
                         }
+
+                        Utilidades2.writeListToFile(Datos3, "datos3-3.txt");
+                        Utilidades2.writeListToFile(Datos4, "datos4-3.txt");
                     } else {
                         comandoSUSP();
                     }
@@ -2507,7 +2519,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                             } else if (j == 2) {
                                 ComandoRecibido[1] = partealta * 256 + byteToInt(data);
                                 if (ComandoRecibido[1] <= 4095) {
-                                    Datos3.add(ComandoRecibido[1]);
+                                    Datos3.add(ComandoRecibido[1]); //recibidos datos3
                                     j = 3;
                                 } else {
                                 }
@@ -2522,7 +2534,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                             } else if (j == 4) {
                                 ComandoRecibido[2] = partealta * 256 + byteToInt(data);
                                 if (ComandoRecibido[2] <= 4095) {
-                                    Datos4.add(ComandoRecibido[2]);
+                                    Datos4.add(ComandoRecibido[2]); //recibidos datos4 posible no
                                     j = 5;
                                 } else {
                                 }
@@ -2537,6 +2549,9 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                             }
                             // </editor-fold>
                         }
+
+                        Utilidades2.writeListToFile(Datos4, "datos3-5.txt");
+                        Utilidades2.writeListToFile(Datos4, "datos4-5.txt");
                     } else {
                         comandoSUSP();
                     }
@@ -2697,7 +2712,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             } catch (ClassNotFoundException ex) {
             }
             if (repetirPrueba == false) {
-                tramaAuditoria = "{\"eficaciaTotal\":\"".concat(String.valueOf(Frenos.eficacia)).concat("\",").concat("\"eficaciaAuxiliar\":\"").concat(String.valueOf(Frenos.eficaciaFrenoMano)).concat("\",");
+                tramaAuditoria = "{\"eficaciaTotal\":\"".concat(String.valueOf(Frenos.eficaciaVariable)).concat("\",").concat("\"eficaciaAuxiliar\":\"").concat(String.valueOf(Frenos.eficaciaFrenoMano)).concat("\",");
                 for (int k = 0; k < frenos.getPesoDerecho().size(); k++) {
                     tramaAuditoria = tramaAuditoria.concat("\"fuerzaEje")
                             .concat(String.valueOf(k + 1))

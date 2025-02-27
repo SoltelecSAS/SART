@@ -30,7 +30,7 @@ public class FrenoMotoCarro implements PruebaDefault {
 
     private final List<Double> fuerzaDerechaEnseñanza;
     private final List<Double> fuerzaIzquierdaEnseñanza;
-    public static double eficacia;
+    public static double eficaciaVariable;
     private double eficaciaEnseñanza;
     public static double eficaciaFrenoMano;
     public static List<Double> desequilibrio;
@@ -292,7 +292,7 @@ public class FrenoMotoCarro implements PruebaDefault {
             valoresMedida.add(desequilibrio1);
         }
 
-        valoresMedida.add(eficacia);
+        valoresMedida.add(eficaciaVariable);
         valoresMedida.add(eficaciaFrenoMano);
 
         // Validamos si el vehiculo es de enseñanza para agregar los valores
@@ -339,7 +339,7 @@ public class FrenoMotoCarro implements PruebaDefault {
             getValoresMedida();
         }
 
-        if (eficacia < EFICACIA_FRENADO_A) {
+        if (eficaciaVariable < EFICACIA_FRENADO_A) {
             defects.add(54010);//cambiar permisible = 54010
             aprobada = "N";
         } else if (!fuerzaDerechaEnseñanza.isEmpty() && eficaciaEnseñanza < EFICACIA_FRENADO_A) {
@@ -375,7 +375,7 @@ public class FrenoMotoCarro implements PruebaDefault {
             getValoresMedida();
         }
 
-        if (eficacia < 40) {
+        if (eficaciaVariable < 40) {
             defects.add(56000);//cambiar permisible = 54010
             aprobada = "N";
         } 
@@ -408,7 +408,7 @@ public class FrenoMotoCarro implements PruebaDefault {
             getValoresMedida();
         }
 
-        if (eficacia < 40) {
+        if (eficaciaVariable < 40) {
             defects.add(56000);//cambiar permisible = 54010
             aprobada = "N";
         } 
@@ -574,13 +574,13 @@ public class FrenoMotoCarro implements PruebaDefault {
     
         eficaciaFrenoMano = calcularEficaciaFrenoMano(sumFreAux, sumaPesos);
         eficaciaFrenoMano = Double.parseDouble(aproximacion(eficaciaFrenoMano));
-        FrenoMotoCarro.eficacia = calcularEficaciaFrenos(sumaFuerzas, sumaPesos);
-        FrenoMotoCarro.eficacia = Double.parseDouble(aproximacion(FrenoMotoCarro.eficacia));
+        FrenoMotoCarro.eficaciaVariable = calcularEficaciaFrenos(sumaFuerzas, sumaPesos);
+        FrenoMotoCarro.eficaciaVariable = Double.parseDouble(aproximacion(FrenoMotoCarro.eficaciaVariable));
         
         System.out.println("_|_ Valor Eficacia FrenoMano  :  " + eficaciaFrenoMano);
-        System.out.println("_|_ Valor Eficacia Frenos " + FrenoMotoCarro.eficacia);
+        System.out.println("_|_ Valor Eficacia Frenos " + FrenoMotoCarro.eficaciaVariable);
     
-        if (FrenoMotoCarro.eficacia > 100) {
+        if (FrenoMotoCarro.eficaciaVariable > 100) {
             imprimirValores("calcularEficacia desde FrenoMotoCarro");
             mostrarMensajeFalla();
             repetirPrueba = true;
@@ -776,7 +776,7 @@ public class FrenoMotoCarro implements PruebaDefault {
             System.out.println("Desequilibrio Eje " + (i + 1) + ": " + desequilibrio.get(i));
         }
 
-        System.out.println("Eficacia del Freno: " + eficacia);
+        System.out.println("Eficacia del Freno: " + eficaciaVariable);
         System.out.println("Eficacia del Freno de Mano " + eficaciaFrenoMano);
         if (!fuerzaDerechaEnseñanza.isEmpty()) {
             for (int i = 0; i < fuerzaDerechaEnseñanza.size(); i++) {

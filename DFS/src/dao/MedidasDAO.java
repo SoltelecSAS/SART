@@ -28,6 +28,7 @@ public class MedidasDAO {
      public boolean guardarMedidas(PruebaDefault prueba, int idPrueba, String lugarTomaDatos) throws NoPersistException 
      {
 
+        
 
         System.out.println("---------------------------------------------------");
         System.out.println("------------------Guardar Medidas desde "+lugarTomaDatos+"------------------");
@@ -60,6 +61,8 @@ public class MedidasDAO {
         System.out.println("--------------------------------------");
         System.out.println("--PRUEBA SUSPENSION 12/04/2021--------");
         System.out.println("--------------------------------------");
+
+        prueba.imprimirValores("guardarMedidas desde MedidasDAO");
         
         System.out.println("Numero tipos de medida: "+tiposMedida.size());
         for (int i = 0; i < tiposMedida.size(); i++) 
@@ -98,7 +101,7 @@ public class MedidasDAO {
             }
         }
 
-        prueba.imprimirValores("guardarMedidas desde MedidasDAO");
+        
         return false;
     }
 }

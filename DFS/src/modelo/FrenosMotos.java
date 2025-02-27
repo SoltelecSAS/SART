@@ -67,7 +67,7 @@ public class FrenosMotos implements PruebaDefault {
         eficacia = (sumaFuerza / sumaPeso) * 100;        
         System.out.println("entro a calcular eficacia: suma peso: "+ sumaPeso+ "sumaFUERZA: " + sumaFuerza+ " eficacia: "+ eficacia);
     }
-@Override
+    @Override
     public Double verifPesoVacioXPista() {
      return 0.0;
     }

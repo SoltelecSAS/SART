@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import javax.swing.JOptionPane;
 
 import vistas.DlgIntegradoLiviano;
@@ -31,10 +30,10 @@ public class FrenosPrueba implements PruebaDefault {
 
     private final List<Double> fuerzaDerechaEnseñanza;
     private final List<Double> fuerzaIzquierdaEnseñanza;
-    public static double eficacia;
+    public static double eficaciaVariable;
     private double eficaciaEnseñanza;
     public static double eficaciaFrenoMano;
-    public static List<Double> desequilibrio;
+    public static List<Double> desequilibrioVariable;
     private List<Double> desequilibrioEnseñanza;
     private List<Integer> tiposMedida;
     private List<Double> valoresMedida;
@@ -247,7 +246,7 @@ public class FrenosPrueba implements PruebaDefault {
     public List<Double> getValoresMedida() {
         valoresMedida = new ArrayList<>();
         calcularDesequilibrio();
-        calcularEficacia();
+        calcularEficaciaMethod();
 
         DecimalFormat def = new DecimalFormat("#####.##");
         try {
@@ -287,11 +286,11 @@ public class FrenosPrueba implements PruebaDefault {
             valoresMedida.add(fuerzaIzquierdaAux.get(i));
         }
 
-        for (Double desequilibrio1 : desequilibrio) {
+        for (Double desequilibrio1 : desequilibrioVariable) {
             valoresMedida.add(desequilibrio1);
         }
 
-        valoresMedida.add(eficacia);
+        valoresMedida.add(eficaciaVariable);
         valoresMedida.add(eficaciaFrenoMano);
 
         // Validamos si el vehiculo es de enseñanza para agregar los valores
@@ -327,7 +326,7 @@ public class FrenosPrueba implements PruebaDefault {
             getValoresMedida();
         }
 
-        if (eficacia < EFICACIA_FRENADO_A) {
+        if (eficaciaVariable < EFICACIA_FRENADO_A) {
             defectos.add(50028);
             aprobada = "N";
         } else if (!fuerzaDerechaEnseñanza.isEmpty() && eficaciaEnseñanza < EFICACIA_FRENADO_A) {
@@ -339,7 +338,7 @@ public class FrenosPrueba implements PruebaDefault {
             defectos.add(50029);
         }
 
-        for (Double desequilibrio1 : desequilibrio) {
+        for (Double desequilibrio1 : desequilibrioVariable) {
             if (desequilibrio1 > DESEQUILIBRIO_A) {
                 defectos.add(50026);
                 aprobada = "N";
@@ -347,7 +346,7 @@ public class FrenosPrueba implements PruebaDefault {
             }
         }
 
-        for (Double desequilibrio1 : desequilibrio) {
+        for (Double desequilibrio1 : desequilibrioVariable) {
             if (desequilibrio1 >= DESEQUILIBRIO_B && desequilibrio1 <= DESEQUILIBRIO_A) {
                 defectos.add(50027);
                 break;
@@ -355,90 +354,7 @@ public class FrenosPrueba implements PruebaDefault {
         }
     }
 
-    /**
-     * Metodo para calcular la eficacia de cada eje incluyendo el freno de mano
-     * Formula = Eficacia = 100 * (sumaFuerzas / sumaPesos)
-     */
-    /* private void calcularEficacia() {
-        double sumaFuerzas = 0;
-        double sumaPesos = 0;
-        double sumFreAux = 0;
-
-        for (int i = 0; i < pesoIzquierdo.size(); i++) {
-            sumaPesos += Math.round(pesoDerecho.get(i)) +Math.round(pesoIzquierdo.get(i));
-        }
-        System.out.println("Sumatoria Pesos para calculo "+sumaPesos);
-        for (int i = 0; i < fuerzaDerecha.size(); i++) {
-            if (fuerzaDerecha.size() > 0 && fuerzaDerecha.get(0) > 0) {
-                sumaFuerzas += Math.round(fuerzaDerecha.get(i)) + Math.round(fuerzaIzquierda.get(i));
-            }
-        System.out.println("Sumatoria Fuerzas para calculo "+sumaFuerzas);
-            if (fuerzaDerecha.get(i) < 71 || fuerzaIzquierda.get(i) < 71) {
-                imprimirValores();
-               // Object[] choices = {"REPETIR"};
-                //            int dato = JOptionPane.showOptionDialog(null, "<html><div><center><img src='file:images/flag-red-icon.png' alt='algo'/><h2 style='font-family: \"Open Sans Condensed Light\"; color:#069'>Falla en el proceso</h2><hr/><p align='justify' style='font-family: 'Open Sans Condensed Light'; font-size: 15px; '>Eficacia superior a el 100%, debe repetir la prueba</p><hr/><br/></center></div></html>", "FALLA EN EL PROCESO", 0, -1, null, choices, choices[0]);
-                //int dato = JOptionPane.showOptionDialog(null, "<html><div><center><img src='file:images/flag-red-icon.png' alt='algo'/><h2 style='font-family: \"Open Sans Condensed Light\"; color:#069'>Falla en el proceso</h2><hr/><p align='justify' style='font-family: 'Open Sans Condensed Light'; font-size: 15px; '>LAS FUERZAS NO DEBEN ESTAR EN  0 EJE "+i+1+"</p><hr/><br/></center></div></html>", "SART 1.7.3 FUERZAS EN 0", 0, -1, null, choices, choices[0]);
-               //repetirPrueba = true;
-               return;
-            }
-        }
-
-        for (int i = 0; i < fuerzaDerechaAux.size(); i++) {
-            sumFreAux += Math.round(fuerzaDerechaAux.get(i)) + Math.round(fuerzaIzquierdaAux.get(i));
-            System.out.println(" *****************----------");
-            System.out.println("fuerz Aux. DEr "+fuerzaDerechaAux.get(i) +" FuerzaAux. Izq: "+fuerzaIzquierdaAux.get(i));
-            if (fuerzaDerechaAux.get(i) < 71 || fuerzaIzquierdaAux.get(i) < 71) {
-                imprimirValores();
-               // Object[] choices = {"REPETIR"};
-                //            int dato = JOptionPane.showOptionDialog(null, "<html><div><center><img src='file:images/flag-red-icon.png' alt='algo'/><h2 style='font-family: \"Open Sans Condensed Light\"; color:#069'>Falla en el proceso</h2><hr/><p align='justify' style='font-family: 'Open Sans Condensed Light'; font-size: 15px; '>Eficacia superior a el 100%, debe repetir la prueba</p><hr/><br/></center></div></html>", "FALLA EN EL PROCESO", 0, -1, null, choices, choices[0]);
-               // int dato = JOptionPane.showOptionDialog(null, "<html><div><center><img src='file:images/flag-red-icon.png' alt='algo'/><h2 style='font-family: \"Open Sans Condensed Light\"; color:#069'>Falla en el proceso( FUERZAS EN 0)</h2><hr/><p align='justify' style='font-family: 'Open Sans Condensed Light'; font-size: 15px; '>LAS FUERZAS AUXILIARES NO DEBEN ESTAR EN 0</p><hr/><br/></center></div></html>", "SART 1.7.3  FUERZAS AUX. EN 0", 0, -1, null, choices, choices[0]);
-              // repetirPrueba = true;
-               return;
-            }
-        }
-
-        //Si es motocarro se agrega los valores que no se agregarian en bucle anterior
-        if (fuerzaDerecha.size() == 3 && fuerzaIzquierda.size() == 2) {
-            sumaPesos += Math.round(pesoDerecho.get(1));
-            sumaFuerzas += Math.round(fuerzaDerecha.get(1));
-        }
-        eficaciaFrenoMano = ((sumFreAux) / (sumaPesos)) * 100.0;
-        if (sumaFuerzas > 0) {
-            Frenos.eficacia = ((sumaFuerzas) / (sumaPesos)) * 100.0;
-        } else {
-            Frenos.eficacia = 1;
-        }
-System.out.println("Valor calculado eficacia FRENOS sin recorte decimal"+Frenos.eficacia);
-        if (Frenos.eficacia > 100) {
-            imprimirValores();
-            Object[] choices = {"Aceptar"};
-//            int dato = JOptionPane.showOptionDialog(null, "<html><div><center><img src='file:images/flag-red-icon.png' alt='algo'/><h2 style='font-family: \"Open Sans Condensed Light\"; color:#069'>Falla en el proceso</h2><hr/><p align='justify' style='font-family: 'Open Sans Condensed Light'; font-size: 15px; '>Eficacia superior a el 100%, debe repetir la prueba</p><hr/><br/></center></div></html>", "FALLA EN EL PROCESO", 0, -1, null, choices, choices[0]);
-            int dato = JOptionPane.showOptionDialog(null, "<html><div><center><img src='file:images/flag-red-icon.png' alt='algo'/><h2 style='font-family: \"Open Sans Condensed Light\"; color:#069'>Falla en el proceso</h2><hr/><p align='justify' style='font-family: 'Open Sans Condensed Light'; font-size: 15px; '>Debe repetir la prueba</p><hr/><br/></center></div></html>", "SART 1.7.3 FALLA EN EL PROCESO", 0, -1, null, choices, choices[0]);
-//            Mensajes.mensajeError("Eficacia superior a el 100% debe volver hacer la prueba");
-            repetirPrueba = true;
-        }
-//        
-//        if (eficaciaFrenoMano > 100) {
-//            eficaciaFrenoMano = 100;
-//        }
-
-        // Se valida si el vehiculo es de enseñanza para asi calcular la eficacia
-        // y guardala en su variable asignada
-        if (!fuerzaDerechaEnseñanza.isEmpty()) {
-            sumaFuerzas = 0;
-            for (int i = 0; i < fuerzaDerechaEnseñanza.size(); i++) {
-                sumaFuerzas += fuerzaDerechaEnseñanza.get(i) + fuerzaIzquierdaEnseñanza.get(i);
-            }
-
-            eficaciaEnseñanza = ((sumaFuerzas) / (sumaPesos)) * 100.0;
-
-//            if (eficaciaEnseñanza > 100) {
-//                eficaciaEnseñanza = 100;
-//            }
-        }
-    } */
-
-    private void calcularEficacia() {
+    private void calcularEficaciaMethod() {
         double sumaFuerzas = 0;
         double sumaPesos = 0;
         double sumFreAux = 0;
@@ -463,12 +379,12 @@ System.out.println("Valor calculado eficacia FRENOS sin recorte decimal"+Frenos.
 
         eficaciaFrenoMano = calcularEficaciaFrenoMano(sumFreAux, sumaPesos);
         eficaciaFrenoMano = Double.parseDouble(aproximacion(eficaciaFrenoMano));
-        Frenos.eficacia = calcularEficaciaFrenos(sumaFuerzas, sumaPesos);
-        Frenos.eficacia = Double.parseDouble(aproximacion(Frenos.eficacia));
+        eficaciaVariable = calcularEficaciaFrenos(sumaFuerzas, sumaPesos);
+        eficaciaVariable = Double.parseDouble(aproximacion(eficaciaVariable));
 
-        System.out.println("Valor calculado eficacia FRENOS sin recorte decimal" + Frenos.eficacia);
+        System.out.println("Valor calculado eficacia FRENOS sin recorte decimal" + eficaciaVariable);
 
-        if (Frenos.eficacia > 100) {
+        if (eficaciaVariable > 100) {
             imprimirValores("calcularEficacia desde FrenosPrueba");
             mostrarMensajeFalla();
             repetirPrueba = true;
@@ -582,7 +498,7 @@ System.out.println("Valor calculado eficacia FRENOS sin recorte decimal"+Frenos.
      * = 100 (Fmax - Fmin / Fmax)
      */
     private void calcularDesequilibrio() {
-        desequilibrio = new ArrayList<>();
+        desequilibrioVariable = new ArrayList<>();
         List<Double> fuerzaMaxima = new ArrayList<>();
         List<Double> fuerzaMinima = new ArrayList<>();
 
@@ -625,13 +541,13 @@ System.out.println("Valor calculado eficacia FRENOS sin recorte decimal"+Frenos.
                     desq = ((nFMin - nFMax) / nFMin) * 100.0;
                 }
                 System.out.println("Valor Desequilibrio "+desq);
-                desequilibrio.add(desq);
+                desequilibrioVariable.add(desq);
             } else {
-                desequilibrio.add(desq);
+                desequilibrioVariable.add(desq);
             }
-            if (desequilibrio.get(i).isNaN()) {
-                desequilibrio.remove(i);
-                desequilibrio.add(i, 0.0);
+            if (desequilibrioVariable.get(i).isNaN()) {
+                desequilibrioVariable.remove(i);
+                desequilibrioVariable.add(i, 0.0);
             }
         }
 
@@ -662,24 +578,37 @@ System.out.println("Valor calculado eficacia FRENOS sin recorte decimal"+Frenos.
     public void imprimirValores(String ubicacion) {
         System.out.println("-------ubicacion Frenos prueba: "+ubicacion);
         System.out.println("\n..........TABLA VALORES FRENOS .........\n");
+        Double sumaFuerzas = 0.0;
+        Double sumaPesos = 0.0;
+
         for (int i = 0; i < pesoDerecho.size(); i++) {
             System.out.println("Peso Derecho Eje " + (i + 1) + ": " + pesoDerecho.get(i));
             System.out.println("Peso Izquierdo Eje " + (i + 1) + ": " + pesoIzquierdo.get(i));
+            sumaPesos += (pesoDerecho.get(i) + pesoIzquierdo.get(i));
         }
 
         for (int i = 0; i < (fuerzaDerecha.size()); i++) {
             System.out.println("Fuerza Derecha Eje " + (i + 1) + ": " + fuerzaDerecha.get(i));
             System.out.println("Fuerza Izquierda Eje " + (i + 1) + ": " + fuerzaIzquierda.get(i));
+            sumaFuerzas += (fuerzaDerecha.get(i)+fuerzaIzquierda.get(i));
         }
 
         System.out.println("Fuerza Derecha Freno de Mano: " + fuerzaDerecha.get(fuerzaDerecha.size() - 1));
         System.out.println("Fuerza Izquierda Freno de Mano: " + fuerzaIzquierda.get(fuerzaIzquierda.size() - 1));
 
-        for (int i = 0; i < desequilibrio.size(); i++) {
-            System.out.println("Desequilibrio Eje " + (i + 1) + ": " + desequilibrio.get(i));
+        for (int i = 0; i < desequilibrioVariable.size(); i++) {
+            System.out.println("Desequilibrio Eje " + (i + 1) + ": " + desequilibrioVariable.get(i));
         }
 
-        System.out.println("Eficacia del Freno: " + eficacia);
+        System.out.println("suma fuerzas= "+sumaFuerzas);
+        System.out.println("suma pesos= "+sumaPesos);
+
+        if (eficaciaVariable == 0) {
+            eficaciaVariable = ((sumaFuerzas)/(sumaPesos))*100;
+        }
+
+        //busca freno xd
+        System.out.println("Eficacia del Freno: " + eficaciaVariable);
         System.out.println("Eficacia del Freno de Mano " + eficaciaFrenoMano);
         if (!fuerzaDerechaEnseñanza.isEmpty()) {
             for (int i = 0; i < fuerzaDerechaEnseñanza.size(); i++) {
