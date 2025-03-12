@@ -113,9 +113,6 @@ public class Conexion implements Serializable {
                 password = datos.get(4);
             }
             
-            System.out.println("URL: "+url);
-            System.out.println("user: "+user);
-            System.out.println("password: "+password);
             
             
             boolean tieneInternet = verificarConexionInternet();
@@ -134,7 +131,7 @@ public class Conexion implements Serializable {
                     // Preparar y ejecutar la consulta SQL
                     try (PreparedStatement consultaDagma = conexion.prepareStatement(consulta)) {
 
-                        boolean ingresoALosDatos = false; // Variable para almacenar el valor de 'licence'
+                        boolean ingresoALosDatos = false; // Variable para saber si existe el campo
                         // Ejecutar la consulta
                         try (ResultSet rc = consultaDagma.executeQuery()) {
                             if (rc.next()) {
@@ -152,7 +149,6 @@ public class Conexion implements Serializable {
                             CMensajes.mensajeError("La columna 'id_cda' de la tabla 'cda' de la base de datos debe ser 1 \no el cda no cuenta con NIT registrado en esa misma tabla\n Contactese con Soltelec.\n");
                             throw new RuntimeException("La columna 'id_cda' de la tabla 'cda' de la base de datos debe ser 1");
                         }
-
                     }
 
                 } catch (Exception e) {

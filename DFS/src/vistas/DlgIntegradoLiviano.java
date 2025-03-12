@@ -2652,12 +2652,12 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             }
         }
 
-        if (valoresNulosOCeros) {
+        /* if (valoresNulosOCeros) {
             JOptionPane.showMessageDialog(null, "Hay valores nulos o en ceros. La prueba se repite.");
             System.out.println("Hay valores nulos o en ceros. La prueba se repite.");
         } else {
             System.out.println("voy a registrar suspension DLGintegradoLiviano ");
-        }
+        } */
 
         try {
             PruebaDefaultDAO.escrTrans = "@";
@@ -3741,13 +3741,13 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         }
 
     }
-
+    //AQUI ESTA EL ORDER DE INTEGRADOS
     class Principal extends Thread {
 
         @Override
         public void run() {
             try {
-                try//LEE VARIABLE FrenoEnse DEL ARCHIVO propiedades.properties PARA ACTIVAR O DESACTIVAR EL FRENO DEL INSTRUCTOR
+                try //LEE VARIABLE FrenoEnse DEL ARCHIVO propiedades.properties PARA ACTIVAR O DESACTIVAR EL FRENO DEL INSTRUCTOR
                 {
                     FrenoInst = UtilPropiedades.cargarPropiedad("FrenoEnse", "propiedades.properties");
                     FrenoInst = (FrenoInst == null) ? "True" : FrenoInst;
@@ -3856,6 +3856,111 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
         }
     }
+
+    //start privates methods
+
+    private void verificarRetiroVehiculo() {
+        if (ejemedido > 1) {
+            Mensajes.messageWarningTime("Por Favor Retire el vehiculo de las maquinas, para iniciar con el eje " + ejemedido, 6);
+        }
+    }
+    
+    private void ejecutarPruebaDesviacion() throws InterruptedException {
+        LabelPrueba.setText("PRUEBA DESVIACION LIVIANOS");
+        lblCtxPrueba.setText("USER: " + DlgIntegradoLiviano.NombreUsr + "; PLACA: " + DlgIntegradoLiviano.Placa);
+        EsperaDesviacion();
+        MedirDesviacion();
+    }
+    
+    private void ejecutarPruebasSuspensionFrenos() throws InterruptedException {
+        if (enablehwsusp && enableswsusp) {
+            ejecutarPruebaSuspension();
+        }
+        if (enablehwfren && enableswfren) {
+            ejecutarPruebaFrenos();
+        }
+    }
+    
+    private void ejecutarPruebaSuspension() throws InterruptedException {
+        LabelPrueba.setText("PRUEBA SUSPENSION LIVIANOS");
+        lblCtxPrueba.setText("USER: " + DlgIntegradoLiviano.NombreUsr + "; PLACA: " + DlgIntegradoLiviano.Placa);
+        EsperaPeso();
+        MedirPeso();
+        MoverSuspension("derecho");
+        MedirFuerzaVertical("derecho");
+        MoverSuspension("izquierdo");
+        MedirFuerzaVertical("izquierdo");
+    }
+    
+    private void ejecutarPruebaFrenos() throws InterruptedException {
+        verificarFrenoAuxiliar();
+        LabelPrueba.setText("PRUEBA FRENOS LIVIANOS");
+        lblCtxPrueba.setText("USER: " + DlgIntegradoLiviano.NombreUsr + "; PLACA: " + DlgIntegradoLiviano.Placa);
+        imageOn = new ImageIcon(getClass().getResource("/Imagenes/FrenoOn.png"));
+        imageOff = new ImageIcon(getClass().getResource("/Imagenes/FrenoOf.png"));
+        EsperaRodillos();
+        MoverRodillos(false);
+        ejecutarFrenoInstructor();
+        ejecutarFrenoDeMano();
+        verificarFinalizacionPrueba();
+    }
+    
+    private void verificarFrenoAuxiliar() {
+        if ((ejemedido == 1 && frm.jCheckBox1.isSelected()) || (ejemedido == 2 && frm.jCheckBox2.isSelected())) {
+            aplicFreAux = true;
+        }
+    }
+    
+    private void ejecutarFrenoInstructor() throws InterruptedException {
+        if (FrenoInst.equalsIgnoreCase("True") && isEnsenianza()) {
+            LabelEje.setText("Eje " + ejemedido + " (ENSEÑANZA)");
+            LabelInfo.setText("Ahora la prueba del freno del instructor");
+            Thread.sleep(2000);
+            EsperaRodillos();
+            MoverRodillos(false);
+            LabelEje.setText("Eje " + ejemedido);
+        }
+    }
+    
+    private void ejecutarFrenoDeMano() throws InterruptedException {
+        if (aplicFreAux) {
+            imageOn = new ImageIcon(getClass().getResource("/Imagenes/FrenoManoOn.png"));
+            imageOff = new ImageIcon(getClass().getResource("/Imagenes/FrenoManoOf.png"));
+            LabelEje.setText("EJE " + ejemedido + " (FRENO DE MANO)");
+            LabelInfo.setText("INICIANDO PRUEBA DE FRENO DE MANO");
+            setFrenmano(true);
+            Thread.sleep(2000);
+            EsperaRodillos();
+            MoverRodillos(true);
+            setFrenmano(false);
+        }
+    }
+    
+    private void verificarFinalizacionPrueba() {
+        if (ejemedido == numeroejes && !BotonFinalizar.isEnabled()) {
+            comandoSTOPAnalogo();
+            BotonFinalizar.setEnabled(true);
+            timerfinalizar.setRepeats(false);
+            timerfinalizar.start();
+        }
+    }
+    
+    private void finalizarPruebas() throws InterruptedException {
+        Thread.sleep(100);
+        if (!BotonFinalizar.isEnabled()) {
+            comandoSTOPAnalogo();
+            BotonFinalizar.setEnabled(true);
+            timerfinalizar.setRepeats(false);
+            timerfinalizar.start();
+        }
+    }
+    
+    private void prepararSiguienteEje() {
+        ejemedido++;
+        aplicFreAux = false;
+        LabelEje.setText("EJE: " + ejemedido);
+    }
+    //end privates methods
 
     public class FrmFrenadoAuxLiv extends javax.swing.JDialog {
 

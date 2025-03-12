@@ -1,5 +1,8 @@
 package com.soltelec.util;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 public class Utilidades2 {
     private static char patron = 's';
  
@@ -31,5 +34,24 @@ public class Utilidades2 {
     }
  
     public static void servicio() {
+    }
+
+    public static boolean dialogo2Opciones(String opcion1, String opcion2, String title, String message) {
+        JFrame frame = new JFrame(title);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(300, 200);
+        frame.setLocationRelativeTo(null);
+
+        Object[] options = {opcion1, opcion2};
+        int choice = JOptionPane.showOptionDialog(frame,
+                message,
+                title,
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+        return choice == JOptionPane.YES_OPTION;
     }
  }

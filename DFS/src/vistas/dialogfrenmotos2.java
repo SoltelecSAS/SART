@@ -4,6 +4,8 @@ package vistas;
 //import com.soltelec.integrador.cliente.ClienteSicov;
 import com.soltelec.loginadministrador.UtilPropiedades;
 import com.soltelec.modulopuc.configuracion.modelo.Conexion;
+
+import Utilidades.Utilidades2;
 import dao.PruebasDAO;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -960,7 +962,9 @@ public class dialogfrenmotos2
         instruccion2.setString(3, serialEquipo);
         instruccion2.setLong(4, idPrueba);
         int executeUpdate = instruccion2.executeUpdate();
-        if (eficacia < permisibleprueba) {
+
+
+        if (eficacia < permisibleprueba && Utilidades2.getIsEditable() == 0) {
             String strDefecto = "INSERT INTO defxprueba(id_defecto,id_prueba) VALUES (?,?)";
             PreparedStatement psDefecto = conexion.prepareStatement(strDefecto);
             psDefecto.setInt(1, 54010);
@@ -1013,11 +1017,11 @@ public class dialogfrenmotos2
             throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.jdbc.Driver");
 
-        Connection conexion = DriverManager.getConnection("jdbc:mysql://" + "localhost" + "/db_cda", "root", "admin");
+        Connection conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContraseña());
         String statement = "SELECT permisibles.Valor_minimo FROM permisibles WHERE permisibles.id_permisible = 15";
         PreparedStatement instruccion = conexion.prepareStatement(statement);
         ResultSet rs = instruccion.executeQuery();
-        rs.first();
+        rs.next();
         int valorPermisible = rs.getInt(1);
         System.out.println("Valor permisible:" + valorPermisible);
         return valorPermisible;

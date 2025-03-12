@@ -85,6 +85,7 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
     private boolean fueAprobada = true;
     private double sumaTotal = 0;
     private double valorMaximo = 0;
+    private boolean esLujan = false;
     
     public FrmLuxometroCapelec(String tipoLuxometro, String placa, int idHojaPrueba, int idPrueba, int idUsuario, String location, boolean ver) throws IOException {
         this.placa = placa;
@@ -97,6 +98,10 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
         if(tipoLuxometro.equalsIgnoreCase("CAPELEC")){
             FrmLuxometroCapelec.error = cargarPlacaCapelec();
             leerDatos.setEnabled(true);
+        }else if(tipoLuxometro.equalsIgnoreCase("LUJAN")){
+            FrmLuxometroCapelec.error = cargarPlacaCapelec();
+            leerDatos.setEnabled(true);
+            esLujan = true;
         }else{
             altaDerecha1.setEnabled(true);
             altaIzquierda1.setEnabled(true);
@@ -1283,7 +1288,7 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
 
             while ((line = config.readLine()) != null) {
 
-                if (line.startsWith("7703")){
+                if (line.startsWith(esLujan ? "491" :"7703")){
                     medidas[0][3] = Math.abs(Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length())));
                     if(mostrarMedidas){
                         desviIzqui1.setText(String.valueOf(medidas[0][3])+ "%");
@@ -1293,7 +1298,7 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                     medidas[1][3] = Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length()));
                     bajaDerecha1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/baja-izquierda-ok.png")));
                     if(mostrarMedidas) intBajaIzquierda1.setText(line.substring(line.indexOf("=") + 1, line.length()) + " Klux" );
-                }if (line.startsWith("7708")){
+                }if (line.startsWith(esLujan ? "493" : "7708")){
                     medidas[0][2] = Math.abs(Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length())));
                     if(mostrarMedidas){
                         desvidere1.setText(medidas[0][2] + "%" );
@@ -1306,49 +1311,49 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                 }
                 
                 
-                if (line.startsWith("7847")){
+                if (line.startsWith(esLujan ? "4912" : "7847")){
                     medidas[0][4] = Math.abs(Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length())));
                     if(mostrarMedidas){
                         desviIzqui2.setText(medidas[0][4] + "%" );
                         desviIzqui2.setVisible(true);
                     } 
-                }if (line.startsWith("7848")){
+                }if (line.startsWith(esLujan ? "77042" : "7848")){
                     medidas[1][4] = Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length()));
                     bajaIzquierda2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/baja-izquierda-ok.png")));
                     bajaIzquierda2.setEnabled(true);
                     if(mostrarMedidas) intBajaIzquierda2.setText(line.substring(line.indexOf("=") + 1, line.length()) + " Klux" );
                     
-                }if (line.startsWith("7851")){
+                }if (line.startsWith(esLujan ? "4932" : "7851")){
                     medidas[0][1] = Math.abs(Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length())));
                     if(mostrarMedidas){
                         desvidere2.setText(medidas[0][1] + "%" );
                         desvidere2.setVisible(true);
                     } 
-                }if (line.startsWith("7852")){
+                }if (line.startsWith(esLujan ? "77092" : "7852")){
                     medidas[1][1] = Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length()));
                     bajaDerecha2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/baja-izquierda-ok.png")));
                     bajaDerecha2.setEnabled(true);
                     if(mostrarMedidas) intBajaDerecha2.setText(line.substring(line.indexOf("=") + 1, line.length()) + " Klux" );
                 }
                 
-                if (line.startsWith("7867")){
+                if (line.startsWith(esLujan ? "4913" : "7867")){
                     medidas[0][5] = Math.abs(Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length())));
                     if(mostrarMedidas){
                         desviIzqui3.setText(medidas[0][5] + "%" );
                         desviIzqui3.setVisible(true);
                     } 
-                }if (line.startsWith("7868")){
+                }if (line.startsWith(esLujan ? "77043" : "7868")){
                     medidas[1][5] = Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length()));
                     bajaIzquierda3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/baja-izquierda-ok.png")));
                     bajaIzquierda3.setEnabled(true);
                     if(mostrarMedidas) intBajaIzquierda3.setText(line.substring(line.indexOf("=") + 1, line.length()) + " Klux" );
-                }if (line.startsWith("7871")){
+                }if (line.startsWith(esLujan ? "4933" : "7871")){
                     medidas[0][0] = Math.abs(Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length())));
                     if(mostrarMedidas){
                         desvidere3.setText(medidas[0][0] + "%" );
                         desvidere3.setVisible(true);
                     } 
-                }if (line.startsWith("7872")){
+                }if (line.startsWith(esLujan ? "77093" : "7872")){
                     medidas[1][0] = Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length()));
                     bajaDerecha3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/baja-izquierda-ok.png")));
                     bajaDerecha3.setEnabled(true);
@@ -1393,37 +1398,37 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                 }
 
 
-                if (line.startsWith("7744")){
+                if (line.startsWith(esLujan ? "7771" : "7744")){
                     medidas[3][2] = Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length()));
                     exploIzquierda1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/exploradoras-izquierdas-ok.png")));
                     exploIzquierda1.setEnabled(true);
                     if(mostrarMedidas) intExploIzquierda1.setText(line.substring(line.indexOf("=") + 1, line.length()) + " Klux" );
                 }
-                if (line.startsWith("7749")){
+                if (line.startsWith(esLujan ? "7733" : "7749")){
                     medidas[3][3] = Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length()));
                     exploDerecha1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/exploradoras-izquierdas-ok.png")));
                     exploDerecha1.setEnabled(true);
                     if(mostrarMedidas) intExploDerecha1.setText(line.substring(line.indexOf("=") + 1, line.length()) + " Klux" );
                 }
-                if (line.startsWith("7813")){
+                if (line.startsWith(esLujan ? "77712" : "7813")){
                     medidas[3][1] = Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length()));
                     exploIzquierda2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/exploradoras-izquierdas-ok.png")));
                     exploIzquierda2.setEnabled(true);
                     if(mostrarMedidas) intExploIzquierda2.setText(line.substring(line.indexOf("=") + 1, line.length()) + " Klux" );
                 }
-                if (line.startsWith("7818")){
+                if (line.startsWith(esLujan ? "77332" : "7818")){
                     medidas[3][4] = Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length()));
                     exploDerecha2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/exploradoras-izquierdas-ok.png")));
                     exploDerecha2.setEnabled(true);
                     if(mostrarMedidas) intExploDerecha2.setText(line.substring(line.indexOf("=") + 1, line.length()) + " Klux" );
                 }
-                if (line.startsWith("7886")){
+                if (line.startsWith(esLujan ? "77713" : "7886")){
                     medidas[3][0] = Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length()));
                     exploIzquierda3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/exploradoras-izquierdas-ok.png")));
                     exploIzquierda3.setEnabled(true);
                     if(mostrarMedidas) intExploIzquierda3.setText(line.substring(line.indexOf("=") + 1, line.length()) + " Klux" );
                 }
-                if (line.startsWith("7891")){
+                if (line.startsWith(esLujan ? "77333" : "7891")){
                     medidas[3][5] = Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length()));
                     exploDerecha3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/exploradoras-izquierdas-ok.png")));
                     exploDerecha3.setEnabled(true);

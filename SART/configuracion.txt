@@ -4,7 +4,7 @@ puerto: COM3
 [BANCO]
 desviacion: si
 suspension: si
-frenos: no
+frenos: si
 pista_mixta: no
 
 [SOFTWARE]

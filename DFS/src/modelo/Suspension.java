@@ -186,6 +186,7 @@ public class Suspension implements PruebaDefault {
         }
     }
 
+    //calculosss
     public void calcularSuspension() 
     {
         System.out.println("---------------------------------------------------");
@@ -193,9 +194,49 @@ public class Suspension implements PruebaDefault {
         System.out.println("---------------------------------------------------");
 
         suspension = new ArrayList<>();
+
+        System.out.println("----------------------------------------------------");
+        System.out.println("---------- INICIO RECALCULO    -------------");
+        System.out.println("----------------------------------------------------");
+
+        int numeroDeDatos = 0;
+        Double sumaDatos = 0.0;
+        System.out.println("Datos:");
+        for (int i = 0; i < (fuerzaDerecha.size()); i++) 
+        {
+            if (fuerzaDerecha.get(i) != 0){
+                numeroDeDatos++;
+                sumaDatos+=fuerzaDerecha.get(i);
+                System.out.println("fuerza derecha "+i+"="+fuerzaDerecha.get(i));
+            }else System.out.println("fuerza derecha "+i+"= 0");
+            if (fuerzaIzquierda.get(i) != 0) {
+                numeroDeDatos++;
+                sumaDatos+=fuerzaIzquierda.get(i);
+                System.out.println("fuerza izquierda "+i+"="+fuerzaIzquierda.get(i));
+            }else System.out.println("fuerza izquierda "+i+"= 0");
+        }
+
+        System.out.println("\n\nnumero de elementos: "+numeroDeDatos);
+        System.out.println("sumaTotal: "+numeroDeDatos);
+        Double promedio = sumaDatos / numeroDeDatos;
+        System.out.println("Promedio recalculo: "+promedio);
+
+        for (int i = 0; i < (fuerzaDerecha.size()); i++) 
+        {
+            if (fuerzaDerecha.get(i) >=0 && fuerzaDerecha.get(i) <1){
+                fuerzaDerecha.set(i, promedio);
+                System.out.println("Derecha C " + (i + 1) + ": " + fuerzaDerecha.get(i));
+            }
+            if (fuerzaIzquierda.get(i) >=0 && fuerzaIzquierda.get(i) <1) {
+                fuerzaIzquierda.set(i, promedio);
+                System.out.println("Izquierda C " + (i + 1) + ": " + fuerzaIzquierda.get(i));
+            }
+        }
+
         
         System.out.println("----------------------------------------------------");
         System.out.println("---------- INICIO PRUEBA SUSPENSION    -------------");
+        System.out.println("----------------------------------------------------");
         
         System.out.println("---   VALORES TOMADOS FUERZA DERECHA  -------------");
         for (int i = 0; i < fuerzaDerecha.size(); i++) 
@@ -238,6 +279,8 @@ public class Suspension implements PruebaDefault {
         
     }
     
+
+    //impresioens
     @Override
     public void imprimirValores(String ubicacion)
     {
@@ -255,10 +298,11 @@ public class Suspension implements PruebaDefault {
             System.out.println("Fuerza Izquierda Eje " + (i + 1) + ": " + fuerzaIzquierda.get(i));
             System.out.println("Fuerza Derecha Eje " + (i + 1) + ": " + fuerzaDerecha.get(i));
         }
+
         System.out.println("Suspension DD " + suspension.get(0));
-        System.out.println("Suspension DI : " + suspension.get(1));
-        System.out.println("Suspension TI " + suspension.get(2));
-        System.out.println("Suspension TD " + suspension.get(3));
+        System.out.println("Suspension TD : " + suspension.get(1));
+        System.out.println("Suspension DI " + suspension.get(2));
+        System.out.println("Suspension TI " + suspension.get(3));
     }
 
     @Override

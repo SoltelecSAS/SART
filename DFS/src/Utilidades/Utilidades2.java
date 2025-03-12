@@ -196,5 +196,33 @@ public class Utilidades2 {
             System.err.println("Error al escribir en el archivo: " + e.getMessage());
         }
     }
+
+
+    public static int getIsEditable(){
+        String consulta = "SELECT artf FROM cda WHERE id_cda = 1";
+        Conexion.setConexionFromFile();
+        try (Connection con = DriverManager.getConnection(
+            Conexion.getUrl(), 
+            Conexion.getUsuario(), 
+            Conexion.getContrasena()
+        ); 
+            PreparedStatement consultaDagma = con.prepareStatement(consulta)) {
+
+            //rc representa el resultado de la consulta
+            try (ResultSet rc = consultaDagma.executeQuery()) {
+                while (rc.next()) {
+                    return rc.getInt("cont_test");
+                }
+            }
+            return 0;
+        } catch (Exception e) {
+            CMensajes.mensajeError(
+                "Hubo un error al tratar de conectarse a la base de datos, contactese con Soltelec.\n"+
+                "Revise por favor el archivo conexion.soltelec\n"
+            );
+            e.printStackTrace();
+            throw new RuntimeException("Error al tratar de conectarse con el base de datos: \n"+ e.getMessage());
+        }
+    }
   
  }

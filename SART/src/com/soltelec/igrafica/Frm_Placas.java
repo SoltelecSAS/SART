@@ -70,7 +70,9 @@ import java.util.List;
 import myplayer.CapturarFoto;
 import org.soltelec.pruebasgases.DialogoVehiculo;
 import com.soltelec.util.MensajesOut;
+import com.soltelec.util.Utilidades2;
 
+import org.apache.axis.wsdl.symbolTable.Utils;
 import org.apache.commons.lang.StringUtils;
 import org.soltelec.models.controllers.EquipoController;
 import org.soltelec.util.UtilSicov;
@@ -1193,6 +1195,12 @@ public class Frm_Placas extends javax.swing.JDialog {
                         regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
 
                         break;
+
+                    case "CUATRIMOTO":
+                        new DlgIntegradoLiviano(frame, 0, idPrueba, 0, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), v.getCarplate(), cam_usuario.getText()).setVisible(true);
+                        System.out.println("VOY A REGISTAR TIMER DE TRANSACCION (LIVIANO) SUSPENSION ");
+                        regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
+                        break;
                 }
             }//end else vehiculo autorizada prueba
 
@@ -1574,6 +1582,9 @@ public class Frm_Placas extends javax.swing.JDialog {
                 doClose(0);
                 return;
             } else {
+
+                
+
 //                PruebaDefaultDAO.escrTrans = "";
                 registarPruebaLog(placas, usuarioJPA, "Frenos");
 //                System.out.println("valor inicial  " + PruebaDefaultDAO.escrTrans);
@@ -1581,7 +1592,16 @@ public class Frm_Placas extends javax.swing.JDialog {
                 boolean ensenianza = vehiculoVariable.getEsEnsenaza() > 0;
                 //CAMBIO FRENO DE ENSEÑANZA
                 System.out.println("c5");
+
+                boolean esCuatrimoto = false;
+                boolean esCuatrimoto4x4 = false;
+                if (vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("CUATRIMOTO")) {
+                    esCuatrimoto = true;
+                    esCuatrimoto4x4 = Utilidades2.dialogo2Opciones("Normal", "4x4", "Seleccion tipo cuatrimoto", "Por favor seleccione el tipo de cuatrimoto.");
+                }
+
                 if (revTec == 1) {
+
                     if (cda.getProveedorSicov().equalsIgnoreCase("INDRA")) {
                         ClienteSicov clienteIndra = new ClienteSicov();
                         eventoDTO.setNombrePrueba("FAS");
@@ -1645,7 +1665,10 @@ public class Frm_Placas extends javax.swing.JDialog {
                         doClose(0);
                         regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
                     }
-                } else if (vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Liviano") || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis_AplTaximetro") || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis")) {
+                } else if (vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Liviano") || 
+                    vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis_AplTaximetro") || 
+                    vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis") || 
+                    (esCuatrimoto && !esCuatrimoto4x4)) {
                     System.out.println(" c7");
                     DlgIntegradoLiviano dlgFrenLivianos = new DlgIntegradoLiviano(frame, 0, 0, idPrueba, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, vehiculoVariable.getTipoVehiculo().getNombre(), vehiculoVariable.getCarplate(), cam_usuario.getText());
                     dlgFrenLivianos.setVisible(true);
@@ -1663,7 +1686,8 @@ public class Frm_Placas extends javax.swing.JDialog {
                     System.out.println("VOY A REGISTAR TIMER DE TRANSACCION ");
                     regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
 
-                } else if (vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("4x4")) {
+                } else if (vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("4x4") ||
+                            (esCuatrimoto && esCuatrimoto4x4)) {
                     DlgIntegrado4x4 dlgFren4x4 = new DlgIntegrado4x4(frame, 0, 0, idPrueba, idUsuario, idHojaPruebaLocal, aplicTrans, ipEquipo, vehiculoVariable.getTipoVehiculo().getNombre(), vehiculoVariable.getCarplate(), cam_usuario.getText());
                     dlgFren4x4.setVisible(true);
                     doClose(0);
@@ -1893,7 +1917,11 @@ public class Frm_Placas extends javax.swing.JDialog {
                     }
                 }
 
-                if (vehiculo.getTipoVehiculo().getNombre().equalsIgnoreCase("Liviano") || vehiculo.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis_AplTaximetro") || vehiculo.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis")) {
+                if (vehiculo.getTipoVehiculo().getNombre().equalsIgnoreCase("Liviano") || 
+                vehiculo.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis_AplTaximetro") || 
+                vehiculo.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis") || 
+                vehiculo.getTipoVehiculo().getNombre().equalsIgnoreCase("CUATRIMOTO")
+                ) {
                     registarPruebaLog(placas, usuarioJPA, "Desviacion");
                     new DlgIntegradoLiviano(frame, idPrueba, 0, 0, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, vehiculo.getTipoVehiculo().getNombre(), vehiculo.getCarplate(), cam_usuario.getText()).setVisible(true);
                     regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
@@ -1979,6 +2007,7 @@ public class Frm_Placas extends javax.swing.JDialog {
                 || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Motocarro")
                 || v.getTipoVehiculo().getNombre().equalsIgnoreCase("CICLOMOTOR")
                 || v.getTipoVehiculo().getNombre().equalsIgnoreCase("TRICIMOTO")
+                || v.getTipoVehiculo().getNombre().equalsIgnoreCase("CUATRIMOTO")
             ) {
                 if (v.getTiposGasolina().getNombregasolina().equalsIgnoreCase("Diesel")) {
                     boolean flag = combustibleDieselMotoMotocarro(idHojaPruebaLocal, revTec, cda, eventoDTO, frame, aplicTrans);
@@ -2150,6 +2179,7 @@ public class Frm_Placas extends javax.swing.JDialog {
                 || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Motocarro")
                 || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("CICLOMOTOR")
                 || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("TRICIMOTO")
+                || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("CUATRIMOTO")
             ) {
                 motoMotoCarros(vehiculoVariable, frame);
             }
@@ -2385,6 +2415,7 @@ public class Frm_Placas extends javax.swing.JDialog {
         } catch (Exception ex) {
             System.err.println("Error en el metodo : combustibleDieselOtros()" + ex.getLocalizedMessage() + ex.getMessage());
             Logger.getLogger(Frm_Placas.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
         return true;
     }
