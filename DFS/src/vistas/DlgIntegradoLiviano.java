@@ -73,6 +73,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     private boolean enablereg = false; //Habilitación de registro de medidas en el servidor
     private boolean enablebackup = false; //Habilitación de generar backup del registro de medidas
     private boolean enablehwdesv, enablehwsusp, enablehwfren;  //Habilitacion por parte
+    private String ordenPruebas = "DSF";
     //del banco de las pruebas a realizar
     private boolean enableswdesv, enableswsusp, enableswfren;  //Habilitacion por parte
     //del servidor de las pruebas a realizar
@@ -206,6 +207,11 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         enableswdesv = idPruebadesv > 0;
         enableswfren = idPruebafren > 0;
         enableswsusp = idPruebasusp > 0;
+        System.out.println("-------------------------------------------------------------");
+        System.out.println("-------------Id_prueba_desv: "+idPruebadesv+"------------------");
+        System.out.println("-------------id_prueba_frenos: "+idPruebafren+"----------------");
+        System.out.println("-------------idPruebaSusp: "+idPruebasusp+"--------------------");
+        System.out.println("-------------------------------------------------------------");
         this.aplicTrans = aplicTrans;
         this.ipEquipo = ipEquipo;
         this.tipoVehiculo = tipoVehiculo;
@@ -241,6 +247,8 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             while (!config.readLine().startsWith("[BANCO]")) {
             }
 
+            
+
             if ((line = config.readLine()).startsWith("desviacion:")) {
                 setEnablehwdesv((line.substring(line.indexOf(" ") + 1, line.length())).equals("si"));
             } else {
@@ -270,6 +278,10 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                 JOptionPane.showMessageDialog(null, "Falla en el archivo de configuración campo pista_mixta. Llame a servicio técnico",
                         "SART 1.7.3", JOptionPane.ERROR_MESSAGE);
                 setError_config(true);
+            }
+
+            if ((line = config.readLine()).startsWith("orden:")) {
+                ordenPruebas = line.split(" ")[1];
             }
 
             System.out.println("-------------Lectura de configuración de parametros para el software----");
@@ -2680,7 +2692,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
     void RegistrarMedidasFrenos() {
         int facEnseñanza = 1;
-        Frenos frenos = new Frenos(factor_desq);
+        Frenos frenos = new Frenos(factor_desq, tipoVehiculo);
         PruebaDefaultDAO frenosDAO = new PruebaDefaultDAO();
 
         if (FrenoInst.equalsIgnoreCase("True") && isEnsenianza()) {//SI EL VEHICULO ES DE ENSEÑANZA Y LA VARIBLE ESTA ACTIVA HACE DOBLE FRENADO
@@ -3756,100 +3768,63 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                 }
                 ejemedido = 1;
                 LabelEje.setText("EJE: " + ejemedido);
+
+
+                int conteoPruebasHabilitadas = 0;
+                if (enablehwdesv && enableswdesv){
+                    conteoPruebasHabilitadas++;
+                    System.out.println("DESVIACION HABILITADA(enablehwdesv="+enablehwdesv+" y prueba pendiente: "+enableswdesv+")");
+                } else{
+                    System.out.println("DESVIACION DESHABILITADA(enablehwdesv="+enablehwdesv+" y prueba pendiente: "+enableswdesv+")");
+                    ordenPruebas = ordenPruebas.replaceAll("D", "");
+                } 
+                if (enablehwsusp && enableswsusp){
+                    System.out.println("SUSPENSION HABILITADA(enablehwsusp="+enablehwsusp+" y prueba pendiente: "+enableswsusp+")");
+                    conteoPruebasHabilitadas++;
+                } else{
+                    ordenPruebas = ordenPruebas.replaceAll("S", "");
+                    System.out.println("SUSPENSION DESHABILITADA(enablehwsusp="+enablehwsusp+" y prueba pendiente: "+enableswsusp+")");
+                } 
+                if (enablehwfren && enableswfren){
+                    System.out.println("FRENOS HABILITADA(enablehwfren="+enablehwfren+" y prueba pendiente: "+enableswfren+")");
+                    conteoPruebasHabilitadas++;
+                } else{
+                    ordenPruebas = ordenPruebas.replaceAll("F", "");
+                    System.out.println("FRENOS DESHABILITADA(enablehwfren="+enablehwfren+" y prueba pendiente: "+enableswfren+")");
+                } 
+                
+                System.out.println("ORDEN: "+ordenPruebas);
+                int conteoCiclo = 0;
                 while (true) {
                     System.out.println("prueba------------------");
-                    if (ejemedido > 1) {
-                        Mensajes.messageWarningTime("Por Favor Retire el vehiculo de las maquinas, para iniciar con el eje " + DlgIntegradoLiviano.this.ejemedido, 6);
-                    }
-                    if (enablehwdesv && enableswdesv) {
-                        LabelPrueba.setText("PRUEBA DESVIACION LIVIANOS ");
-                        lblCtxPrueba.setText("USER: " + DlgIntegradoLiviano.NombreUsr + "; PLACA: " + DlgIntegradoLiviano.Placa);
-                        EsperaDesviacion();
-                        MedirDesviacion();
-                    }
-                    if ((enablehwsusp && enableswsusp) || (enablehwfren && enableswfren)) {
-                        if (enablehwsusp && enableswsusp) {
-                            LabelPrueba.setText("PRUEBA SUSPENSION LIVIANOS ");
-                            lblCtxPrueba.setText("USER: " + DlgIntegradoLiviano.NombreUsr + "; PLACA: " + DlgIntegradoLiviano.Placa);
-                        } else if (enablehwfren && enableswfren) {
-                            LabelPrueba.setText("PRUEBA FRENOS LIVIANOS ");
-                            lblCtxPrueba.setText("USER: " + DlgIntegradoLiviano.NombreUsr + "; PLACA: " + DlgIntegradoLiviano.Placa);
-                        }
-                        EsperaPeso();
-                        MedirPeso();
-                        if (enablehwsusp && enableswsusp) {
-                            LabelPrueba.setText("PRUEBA SUSPENSION LIVIANOS ");
-                            lblCtxPrueba.setText("USER: " + DlgIntegradoLiviano.NombreUsr + "; PLACA: " + DlgIntegradoLiviano.Placa);
-                            MoverSuspension("derecho");
-                            MedirFuerzaVertical("derecho");
-                            MoverSuspension("izquierdo");
-                            MedirFuerzaVertical("izquierdo");
-                        }
-                        if (enablehwfren && enableswfren) {
-                            if (ejemedido == 1) {
-                                if (frm.jCheckBox1.isSelected()) {
-                                    aplicFreAux = true;
-                                }
-                            }
-                            if (ejemedido == 2) {
-                                if (frm.jCheckBox2.isSelected()) {
-                                    aplicFreAux = true;
-                                }
-                            }
-                            LabelPrueba.setText("PRUEBA FRENOS LIVIANOS ");
-                            lblCtxPrueba.setText("USER: " + DlgIntegradoLiviano.NombreUsr + "; PLACA: " + DlgIntegradoLiviano.Placa);
-                            imageOn = new ImageIcon(getClass().getResource("/Imagenes/FrenoOn.png"));
-                            imageOff = new ImageIcon(getClass().getResource("/Imagenes/FrenoOf.png"));
-                            EsperaRodillos();
-                            MoverRodillos(false);
-//JFM               Freno del instructor                                     
-                            if (FrenoInst.equalsIgnoreCase("True") && isEnsenianza()) //SI EL VEHICULO ES DE ENSEÑANZA Y LA VARIBLE ESTA ACTIVA HACE DOBLE FRENADO
-                            {
-                                LabelEje.setText("Eje " + ejemedido + " (ENSEÑANZA)");
-                                LabelInfo.setText("Ahora la prueba del freno del instructor");
-                                Thread.sleep(2000);
-                                EsperaRodillos();
-                                MoverRodillos(false);
-                                LabelEje.setText("Eje " + ejemedido);
-                            }
-//JFM                                  
-                            if (aplicFreAux == true) {
-                                imageOn = new ImageIcon(getClass().getResource("/Imagenes/FrenoManoOn.png"));
-                                imageOff = new ImageIcon(getClass().getResource("/Imagenes/FrenoManoOf.png"));
-                                LabelEje.setText("EJE " + ejemedido + " (FRENO DE MANO)");
-                                LabelInfo.setText("INICIANDO PRUEBA DE FRENO DE MANO");
-                                setFrenmano(true);
-                                Thread.sleep(2000);
-                                EsperaRodillos();
-                                MoverRodillos(true);
-                                setFrenmano(false);
-                            }
-                            if (ejemedido == numeroejes) {
-                                if (!BotonFinalizar.isEnabled()) {
-                                    comandoSTOPAnalogo();
-                                    BotonFinalizar.setEnabled(true);
-                                    timerfinalizar.setRepeats(false);
-                                    timerfinalizar.start();
-                                }
-                            }
-                        }
+                    
+                    verificarRetiroVehiculo();
+                    
+                    if (enablehwdesv && enableswdesv && ordenPruebas.charAt(conteoCiclo) == 'D' ) {
+                        ejecutarPruebaDesviacion();
                     }
 
+                    if (enablehwsusp && enableswsusp && ordenPruebas.charAt(conteoCiclo) == 'S') {
+                        ejecutarPruebaSuspension();
+                    }
+
+                    if (enablehwfren && enableswfren && ordenPruebas.charAt(conteoCiclo) == 'F') {
+                        ejecutarPruebaFrenos();
+                    }
+
+                    conteoCiclo++;
+
+                    if (conteoPruebasHabilitadas != conteoCiclo) {
+                        continue;
+                    }else conteoCiclo = 0;
+                    
                     if (ejemedido == numeroejes) {
-                        Thread.sleep(100);
-                        if (!BotonFinalizar.isEnabled()) {
-                            comandoSTOPAnalogo();
-                            BotonFinalizar.setEnabled(true);
-                            timerfinalizar.setRepeats(false);
-                            timerfinalizar.start();
-                        }
+                        finalizarPruebas();
                         break;
                     } else {
-                        ejemedido++;
-                        aplicFreAux = false;
-                        LabelEje.setText("EJE: " + ejemedido);
+                        prepararSiguienteEje();
                     }
-                }// END WHILE
+                }
             } catch (InterruptedException ex) {
                 throw new RuntimeException("Interrupted", ex);
             }
@@ -3870,15 +3845,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         lblCtxPrueba.setText("USER: " + DlgIntegradoLiviano.NombreUsr + "; PLACA: " + DlgIntegradoLiviano.Placa);
         EsperaDesviacion();
         MedirDesviacion();
-    }
-    
-    private void ejecutarPruebasSuspensionFrenos() throws InterruptedException {
-        if (enablehwsusp && enableswsusp) {
-            ejecutarPruebaSuspension();
-        }
-        if (enablehwfren && enableswfren) {
-            ejecutarPruebaFrenos();
-        }
+        if (ordenPruebas.length() > 1 && ordenPruebas.charAt(2) == 'D') verificarFinalizacionPrueba();
     }
     
     private void ejecutarPruebaSuspension() throws InterruptedException {
@@ -3890,6 +3857,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         MedirFuerzaVertical("derecho");
         MoverSuspension("izquierdo");
         MedirFuerzaVertical("izquierdo");
+        if (ordenPruebas.length() > 1 && ordenPruebas.charAt(2) == 'S') verificarFinalizacionPrueba();
     }
     
     private void ejecutarPruebaFrenos() throws InterruptedException {
@@ -3902,7 +3870,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         MoverRodillos(false);
         ejecutarFrenoInstructor();
         ejecutarFrenoDeMano();
-        verificarFinalizacionPrueba();
+        if (ordenPruebas.length() == 1 || ordenPruebas.charAt(2) == 'F') verificarFinalizacionPrueba();
     }
     
     private void verificarFrenoAuxiliar() {
