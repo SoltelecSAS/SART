@@ -371,7 +371,11 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
             } else {
                 Logger.getRootLogger().error(ejex);
                 ejex.printStackTrace();
-                JOptionPane.showMessageDialog(panel, "Excepcion durante la prueba " + ejex.getMessage());
+                JOptionPane.showMessageDialog(panel, 
+                    "Excepcion durante la prueba.\n "+
+                    "Por favor revise que el kit de RPM este conectado y funcionando.\n"+
+                    "En 'Servicio de gases/cental auto' puede revisar si esta comunicando el kit.\n"+
+                    "Info exta del error:"+ ejex.getMessage());
             }
         } catch (Exception exc) {
             Logger.getRootLogger().error(exc);

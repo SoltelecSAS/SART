@@ -43,13 +43,18 @@ public class FrenosPrueba implements PruebaDefault {
 
     //Constantes para los valores minimos y maximos permitidos para la prueba
     //de frenos.
-    public static final double EFICACIA_FRENADO_A = 50; //50028
-    public static final double DESEQUILIBRIO_A = 30; //50026
-    public static final double DESEQUILIBRIO_B = 20; //50027
-    public static final double EFICACIA_ESTACIONAMIENTO_B = 18; //50029
+    public final double EFICACIA_FRENADO_A; //50028 o 140103 para cuatrimotos
+    public final double DESEQUILIBRIO_A = 30; //50026 o 140101 para cuatrimotos
+    public final double DESEQUILIBRIO_B = 20; //50027 o 140102 para cuatrimotos
+    public final double EFICACIA_ESTACIONAMIENTO_B = 18; //50029 o 140104 para cuatrimotos
+    private final int CODIGO_EFICACIA_FRENADO_A;
+    private final int CODIGO_DESEQUILIBRIO_A;
+    private final int CODIGO_DESEQUILIBRIO_B;
+    private final int CODIGO_EFICACIA_ESTACIONAMIENTO_B;
+
     private float factorDesq;
 
-    public FrenosPrueba(float factorDesq) {
+    public FrenosPrueba(float factorDesq, String tipoVehiculo) {
         pesoDerecho = new ArrayList<>();
         pesoIzquierdo = new ArrayList<>();
         fuerzaDerecha = new ArrayList<>();
@@ -60,6 +65,11 @@ public class FrenosPrueba implements PruebaDefault {
         fuerzaDerechaAux = new ArrayList<>();
         fuerzaIzquierdaAux = new ArrayList<>();
         this.factorDesq = factorDesq;
+        EFICACIA_FRENADO_A = tipoVehiculo.equals("CUATRIMOTO") ? 30 : 50; //50 o 30 para cuatrimotos
+        CODIGO_EFICACIA_FRENADO_A = tipoVehiculo.equals("CUATRIMOTO") ? 140103 : 50028; //50028 o 140103 para cuatrimotos
+        CODIGO_DESEQUILIBRIO_A = tipoVehiculo.equals("CUATRIMOTO") ? 140101 : 50026; //50026 o 140101 para cuatrimotos
+        CODIGO_DESEQUILIBRIO_B = tipoVehiculo.equals("CUATRIMOTO") ? 140102 : 50027; //50027 o 140102 para cuatrimotos
+        CODIGO_EFICACIA_ESTACIONAMIENTO_B = tipoVehiculo.equals("CUATRIMOTO") ? 140104 : 50029; //50029 o 140104 para cuatrimotos
     }
 
     public List<Double> getPesoDerecho() {
@@ -327,20 +337,20 @@ public class FrenosPrueba implements PruebaDefault {
         }
 
         if (eficaciaVariable < EFICACIA_FRENADO_A) {
-            defectos.add(50028);
+            defectos.add(CODIGO_EFICACIA_FRENADO_A);
             aprobada = "N";
         } else if (!fuerzaDerechaEnseñanza.isEmpty() && eficaciaEnseñanza < EFICACIA_FRENADO_A) {
-            defectos.add(50028);
+            defectos.add(CODIGO_EFICACIA_FRENADO_A);
             aprobada = "N";
         }
 
         if (eficaciaFrenoMano < EFICACIA_ESTACIONAMIENTO_B) {
-            defectos.add(50029);
+            defectos.add(CODIGO_EFICACIA_ESTACIONAMIENTO_B);
         }
 
         for (Double desequilibrio1 : desequilibrioVariable) {
             if (desequilibrio1 > DESEQUILIBRIO_A) {
-                defectos.add(50026);
+                defectos.add(CODIGO_DESEQUILIBRIO_A);
                 aprobada = "N";
                 break;
             }
@@ -348,7 +358,7 @@ public class FrenosPrueba implements PruebaDefault {
 
         for (Double desequilibrio1 : desequilibrioVariable) {
             if (desequilibrio1 >= DESEQUILIBRIO_B && desequilibrio1 <= DESEQUILIBRIO_A) {
-                defectos.add(50027);
+                defectos.add(CODIGO_DESEQUILIBRIO_B);
                 break;
             }
         }

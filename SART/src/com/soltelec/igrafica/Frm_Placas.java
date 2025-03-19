@@ -878,14 +878,14 @@ public class Frm_Placas extends javax.swing.JDialog {
         System.out.println("-----------------------------------------------------");
         System.out.println("--------------realizando pruebaIntegracion------------");
         System.out.println("-----------------------------------------------------");
-        String F = "", A = "", S = "";
+        String pruebaFrenos = "", pruebaDesviacion = "", pruebaSuspension = "";
         serialEquipo = "";
 
         try {//lee los datos de configuracion.txT depediendo de que variable este en "si" toma el serial del equipo
-            F = UtilPropiedades.cargarPropiedad("frenos", "configuracion.txt");//LEE EL VALOR DE LA VARIABLE desviacion 
-            A = UtilPropiedades.cargarPropiedad("desviacion", "configuracion.txt");//LEE EL VALOR DE LA VARIABLE suspension
-            S = UtilPropiedades.cargarPropiedad("suspension", "configuracion.txt");//LEE EL VALOR DE LA VARIABLE frenos
-            System.out.println("se realizara la prueba de \n Frenos: " + F + "\nDesviaacion: " + A + "\nSuspension: " + S);
+            pruebaFrenos = UtilPropiedades.cargarPropiedad("frenos", "configuracion.txt");//LEE EL VALOR DE LA VARIABLE desviacion 
+            pruebaDesviacion = UtilPropiedades.cargarPropiedad("desviacion", "configuracion.txt");//LEE EL VALOR DE LA VARIABLE suspension
+            pruebaSuspension = UtilPropiedades.cargarPropiedad("suspension", "configuracion.txt");//LEE EL VALOR DE LA VARIABLE frenos
+            System.out.println("se realizara la prueba de \n Frenos: " + pruebaFrenos + "\nDesviaacion: " + pruebaDesviacion + "\nSuspension: " + pruebaSuspension);
 
         } catch (Exception e) {
             System.out.println(" error leyendo el archivo configuracion.txt");
@@ -907,9 +907,9 @@ public class Frm_Placas extends javax.swing.JDialog {
                         ClienteSicov clienteIndra = new ClienteSicov();
                         eventoDTO.setNombrePrueba("FAS");
                         //envia los parametros para consultar el serial de los equipos dependiendo de la prueba 
-                        serialEquipo = (F.equals("si")) ? serialEquipo.concat(UtilSicov.BusqSerialRegistrado("FRENO", valida_tipo).concat("_")) : serialEquipo;
-                        serialEquipo = (A.equals("si")) ? serialEquipo.concat(UtilSicov.BusqSerialRegistrado("DESVIACION", valida_tipo).concat("_")) : serialEquipo;
-                        serialEquipo = (S.equals("si")) ? serialEquipo.concat(UtilSicov.BusqSerialRegistrado("SUSPENSION", valida_tipo).concat("_")) : serialEquipo;
+                        serialEquipo = (pruebaFrenos.equals("si")) ? serialEquipo.concat(UtilSicov.BusqSerialRegistrado("FRENO", valida_tipo).concat("_")) : serialEquipo;
+                        serialEquipo = (pruebaDesviacion.equals("si")) ? serialEquipo.concat(UtilSicov.BusqSerialRegistrado("DESVIACION", valida_tipo).concat("_")) : serialEquipo;
+                        serialEquipo = (pruebaSuspension.equals("si")) ? serialEquipo.concat(UtilSicov.BusqSerialRegistrado("SUSPENSION", valida_tipo).concat("_")) : serialEquipo;
                         serialEquipo = StringUtils.removeEnd(serialEquipo, "_");//remuevo el _ que se encuentre al final de la trama
                         System.out.println("serial de prueba fas que voy a enviar :" + serialEquipo);
                         //serialEquipo = UtilSicov.BusqSerialRegistrado("TAXIMETRO",valida_tipo);
@@ -1648,7 +1648,7 @@ public class Frm_Placas extends javax.swing.JDialog {
                     if (plancha) {
                         if (version.equals("v1")) {
                             Logger.getLogger(Frm_Placas.class.getName()).log(Level.WARNING, null, "entre frenos  dialogfrenmotos".concat(eventoDTO.getPlaca()));
-                            dialogfrenmotos d = new dialogfrenmotos(frame, true, idPrueba, idUsuario, idHojaPruebaLocal, aplicTrans, ipEquipo);
+                            dialogfrenmotos d = new dialogfrenmotos(frame, true, idPrueba, idUsuario, idHojaPruebaLocal, aplicTrans, ipEquipo, vehiculoVariable.getCarplate());
                             d.setVisible(true);
                             doClose(0);
                             regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);

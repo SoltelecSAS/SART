@@ -98,11 +98,12 @@ public class dialogfrenmotos extends javax.swing.JDialog implements ActionListen
     private int aplicTrans=1;
     private String ipEquipo;
      public static String escrTrans = "";
+    private String placa;
 
     /**
      * Creates new form dalogfrenmotos
      */
-    public dialogfrenmotos(java.awt.Frame parent, boolean modal, int idPrueba, int idUsuario, int idHojaPruebaLocal,int aplicTrans,String ipEquipo) {
+    public dialogfrenmotos(java.awt.Frame parent, boolean modal, int idPrueba, int idUsuario, int idHojaPruebaLocal,int aplicTrans,String ipEquipo, String placa) {
         super(parent, modal);
         initComponents();
         //this.setSize(new JFrame().getMaximumSize());
@@ -113,6 +114,7 @@ public class dialogfrenmotos extends javax.swing.JDialog implements ActionListen
         this.idUsuario = idUsuario;
          this.aplicTrans= aplicTrans;
         this.ipEquipo=ipEquipo;
+        this.placa = placa;
     }
 
     private void configuracion() {
@@ -877,7 +879,7 @@ public class dialogfrenmotos extends javax.swing.JDialog implements ActionListen
         PruebaDefaultDAO frenosDAO = new PruebaDefaultDAO();
         try 
         {
-           repetirPrueba = frenosDAO.persist(frenos, idPrueba, idUsuario,aplicTrans,this.ipEquipo,"Moto","Moto","", "dialogfrenmotos");
+           repetirPrueba = frenosDAO.persist(frenos, idPrueba, idUsuario,aplicTrans,this.ipEquipo,"Moto","Moto", this.placa, "dialogfrenmotos");
            if (repetirPrueba == false) 
            {
                 tramaAuditoria = "{\"eficaciaTotal\":\"".concat(String.valueOf(eficacia)).concat("\",").concat("\"eficaciaAuxiliar\":\"").concat(String.valueOf(" ")).concat("\",");
@@ -1071,7 +1073,7 @@ public class dialogfrenmotos extends javax.swing.JDialog implements ActionListen
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                dialogfrenmotos dialog = new dialogfrenmotos(new javax.swing.JFrame(), true, 1, 1, 1,1,"");
+                dialogfrenmotos dialog = new dialogfrenmotos(new javax.swing.JFrame(), true, 1, 1, 1,1,"","");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

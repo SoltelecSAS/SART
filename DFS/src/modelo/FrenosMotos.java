@@ -133,10 +133,10 @@ public class FrenosMotos implements PruebaDefault {
     }
 
     @Override
-    public List<Integer> getDefectos(String tipoVehiculo) {
+    public List<Integer> getDefectos(String placa) {
         if (defectos == null) {
             calcularEficacia();
-            verificarDefectos(tipoVehiculo);
+            verificarDefectos(placa);
         }
         return defectos;
     }

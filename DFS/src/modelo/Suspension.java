@@ -223,7 +223,7 @@ public class Suspension implements PruebaDefault {
 
         for (int i = 0; i < (fuerzaDerecha.size()); i++) 
         {
-            if (fuerzaDerecha.get(i) >=0 && fuerzaDerecha.get(i) <1){
+            if ((fuerzaDerecha.get(i) >=0 && fuerzaDerecha.get(i) <1)){
                 fuerzaDerecha.set(i, promedio);
                 System.out.println("Derecha C " + (i + 1) + ": " + fuerzaDerecha.get(i));
             }

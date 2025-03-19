@@ -2002,7 +2002,7 @@ public class DlgIntegradoPesado extends javax.swing.JDialog implements ActionLis
 
     void RegistrarMedidasFrenos() {
         int facEnseñanza = 1;
-        FrenosPrueba frenos = new FrenosPrueba(ajusteDsq);
+        FrenosPrueba frenos = new FrenosPrueba(ajusteDsq, "Vehiculo Pesado");
         PruebaDefaultDAO frenosDAO = new PruebaDefaultDAO();
 
         if (FrenoInst.equalsIgnoreCase("True") && isEnsenianza()) {

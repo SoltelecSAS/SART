@@ -6,6 +6,7 @@ desviacion: si
 suspension: si
 frenos: si
 pista_mixta: no
+orden: SFD
 
 [SOFTWARE]
 pruebas_unidas: si

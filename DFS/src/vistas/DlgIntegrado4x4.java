@@ -2070,7 +2070,7 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
 
     void RegistrarMedidasFrenos() {
         int facEnseñanza = 1;
-        Frenos frenos = new Frenos(ajusteDsq);
+        Frenos frenos = new Frenos(ajusteDsq, "Vehiculo 4x4");
         PruebaDefaultDAO frenosDAO = new PruebaDefaultDAO();
         if (isEnsenianza()) {
             for (int k = 1; k < fuerzasfd.size(); k += 2) {
