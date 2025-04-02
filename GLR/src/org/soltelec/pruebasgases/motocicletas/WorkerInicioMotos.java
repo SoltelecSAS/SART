@@ -70,7 +70,7 @@ public class WorkerInicioMotos extends SwingWorker<Void, Void> {
      * @param idHojaPrueba
      * @param panel
      */
-    public WorkerInicioMotos(long idUsuario, long idPrueba, long idHojaPrueba, PanelPruebaGases panel, String placas, TermoHigrometroArtisan termoHigrometroArtisan) {
+    public WorkerInicioMotos(long idUsuario, long idPrueba, long idHojaPrueba, PanelPruebaGases panel, String placas, TermoHigrometroArtisan termoHigrometroArtisan, String tipoVehiculo) {
         this.idUsuario = idUsuario;
         this.idPrueba = idPrueba;
         this.idHojaPrueba = idHojaPrueba;
@@ -82,6 +82,7 @@ public class WorkerInicioMotos extends SwingWorker<Void, Void> {
         this.termoHigrometroArtisan = termoHigrometroArtisan;
         Utilidades.setIdUsuarioMotos(idUsuario);
         Utilidades.setIdPrueba(idPrueba);
+        Utilidades.setTipoVehiculo(tipoVehiculo);
     }
 
     @Override

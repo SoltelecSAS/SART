@@ -264,7 +264,8 @@ public class WorkerCiclosMoto extends SwingWorker<Void, Void> {
                     if (escrTrans == true) {
                         if (!pruebaAprobada) {
                             List<DefectoGeneral> listaDefectos = new ArrayList<>();
-                            listaDefectos.add(new DefectoGeneral(84018, TipoDefecto.DEFECTO_A));
+                            String tipoVehiculo = Utilidades.getTipoVehiculo();
+                            listaDefectos.add(new DefectoGeneral(tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? 140100 : 84018, TipoDefecto.DEFECTO_A));
                             regMedidas.registrarDefectos(listaDefectos, idPrueba, cn);
                         }
                     }
@@ -397,7 +398,7 @@ public class WorkerCiclosMoto extends SwingWorker<Void, Void> {
         System.out.println("voy a mostrar  logica de Rechazo");
         panel.cerrar();
         try {
-            frmC = new JDialogMotosGases(null, false, 0, 0, 0, null, "", null);
+            frmC = new JDialogMotosGases(null, false, 0, 0, 0, null, "", null, "");
 
         } catch (IOException ex) {
             java.util.logging.Logger.getLogger(WorkerCiclosMoto.class.getName()).log(Level.SEVERE, null, ex);
@@ -424,7 +425,8 @@ public class WorkerCiclosMoto extends SwingWorker<Void, Void> {
         if (Mensajes.mensajePregunta("¿Desea Agregar otra Observacion Referente a la causal de Rechazo?")) {
             frmC.setModal(true);
             panelCancelacion.getMensaje().setText("Registro de Ampliacion de Observaciones Encontradas..! ");
-            org.soltelec.pruebasgases.FrmComentario frm = new org.soltelec.pruebasgases.FrmComentario(SwingUtilities.getWindowAncestor(panelCancelacion), idPrueba, JDialog.DEFAULT_MODALITY_TYPE, causa.toUpperCase(), idUsuario, "rechazo", 84018);
+            String tipoVehiculo = Utilidades.getTipoVehiculo();
+            org.soltelec.pruebasgases.FrmComentario frm = new org.soltelec.pruebasgases.FrmComentario(SwingUtilities.getWindowAncestor(panelCancelacion), idPrueba, JDialog.DEFAULT_MODALITY_TYPE, causa.toUpperCase(), idUsuario, "rechazo", tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? 140100 : 84018);
             frm.setLocationRelativeTo(panelCancelacion);
             System.out.println("RECHAZO PRUEBA");
             frm.setVisible(true);
@@ -434,7 +436,8 @@ public class WorkerCiclosMoto extends SwingWorker<Void, Void> {
                 RegistrarMedidas regMedidas = new RegistrarMedidas();
                 Connection cn = regMedidas.getConnection();
                 ConsultasLogin consultasLogin = new ConsultasLogin();
-                regMedidas.registraRechazo(causa, causa, this.idUsuario, idPrueba, 84018);//Registra la prueba como Rechazada
+                String tipoVehiculo = Utilidades.getTipoVehiculo();
+                regMedidas.registraRechazo(causa, causa, this.idUsuario, idPrueba, tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? 140100 : 84018);//Registra la prueba como Rechazada
             } catch (SQLException | ClassNotFoundException exc) {
                 Mensajes.mostrarExcepcion(exc);
             } finally {

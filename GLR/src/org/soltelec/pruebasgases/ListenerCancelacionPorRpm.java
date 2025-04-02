@@ -11,6 +11,7 @@ import java.util.concurrent.Future;
 import org.soltelec.medicionrpm.MedidorRevTemp;
 import org.soltelec.procesosbanco.BancoGasolina;
 import org.soltelec.util.RegistrarMedidas;
+import org.soltelec.util.Utilidades;
 
 /**
  *
@@ -47,7 +48,8 @@ public class ListenerCancelacionPorRpm implements ActionListener {
             RegistrarMedidas regMedidas = new RegistrarMedidas();
             regMedidas.registrarTemperaturInicio(temperatura, this.idPrueba);
             regMedidas.registrarHumedadInicio(humedad, this.idPrueba);
-            regMedidas.registraRechazoRpm(" ", "4.1.1.1.5 Revoluciones fuera de rango. ", idUsuario, idPrueba, 84018);
+            String tipoVehiculo = Utilidades.getTipoVehiculo();
+            regMedidas.registraRechazoRpm(" ", "4.1.1.1.5 Revoluciones fuera de rango. ", idUsuario, idPrueba, tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? 140100 : 84018);
             System.out.println("Ya registre medidas de rechazo por RPM: " + "idPrueba = " + idPrueba);
             System.out.println("Cierre de Panel ");
             System.out.println(panel.getFuncion().getText());

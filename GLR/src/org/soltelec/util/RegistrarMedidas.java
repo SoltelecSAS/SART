@@ -629,7 +629,8 @@ public class RegistrarMedidas {
             int n = psFinalizar.executeUpdate();
             // --- registrar defectos visual
             conjuntoDefectos.clear();
-            conjuntoDefectos.add(84018);
+            String tipoVehiculo = Utilidades.getTipoVehiculo();
+            conjuntoDefectos.add(tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? 140100 : 84018);
             this.registrarDefectos(conjuntoDefectos, idPrueba, idUsuario);
 
             //cn.commit();

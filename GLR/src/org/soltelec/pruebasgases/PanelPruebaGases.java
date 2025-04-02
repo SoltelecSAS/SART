@@ -195,8 +195,8 @@ public class PanelPruebaGases extends JPanel implements ActionListener {
                 Logger.getLogger(PanelPruebaGases.class.getName()).log(Level.SEVERE, null, ex);
             }
             //putttttt
-
-            Utilidades.cargarDefectos(84018, Utilidades.getIdPrueba());
+            String tipoVehiculo = Utilidades.getTipoVehiculo();
+            Utilidades.cargarDefectos(tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? 140100 : 84018 , Utilidades.getIdPrueba());
             Utilidades.guardarOModificarMedida(8031, (int)Utilidades.getIdPrueba(), Utilidades.getTempAmbiente(), "N");
             Utilidades.guardarOModificarMedida(8032, (int)Utilidades.getIdPrueba(), Utilidades.getHumedadAmbiente(), "N");
             Utilidades.actualizarPrueba(true, false, Utilidades.getIdUsuarioMotos(), serial, Utilidades.getIdPrueba(), "4.1.1.1.5 Revoluciones fuera de rango.");
@@ -295,7 +295,7 @@ public class PanelPruebaGases extends JPanel implements ActionListener {
         cerrar();
         String causarAborto = null;
         try {
-            frmC = new JDialogMotosGases(null, false, 0, 0, 0, null, placas, null);
+            frmC = new JDialogMotosGases(null, false, 0, 0, 0, null, placas, null, "");
         } catch (IOException ex) {
         }
         frmC.setTitle("SART 1.7.3 ABORTO DE PRUEBA");

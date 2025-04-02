@@ -568,8 +568,9 @@ public class FrenoMotoCarro implements PruebaDefault {
         System.out.println("_|_ Sumatoria Fuerzas Aux :  " + aproximacion(sumFreAux));
     
         if (esMotocarro()) {
-            sumaPesos += pesoDerecho.get(1);
-            sumaFuerzas += fuerzaDerecha.get(1);
+            System.out.println("-------- Si es motocarro   --------");
+            //sumaPesos += pesoDerecho.get(1);
+            //sumaFuerzas += fuerzaDerecha.get(1);
         }
     
         eficaciaFrenoMano = calcularEficaciaFrenoMano(sumFreAux, sumaPesos);
@@ -600,8 +601,13 @@ public class FrenoMotoCarro implements PruebaDefault {
     private double calcularSumatoriaFuerzas() {
         double suma = 0;
         for (int i = 0; i < fuerzaDerecha.size(); i++) {
+
+            System.out.println("--------------SUMA DE FUERZAS---------------");
+            System.out.println("fuerzaDerecha con i:"+i+" = "+fuerzaDerecha.get(i));
+            System.out.println("fuerzaIzquierda con i:"+i+" = "+fuerzaIzquierda.get(i));
+
             double fuerzaDe = fuerzaDerecha.get(i);
-            double fuerzaIz = fuerzaIzquierda.get(i);
+            double fuerzaIz = i==0 ? 0 : fuerzaIzquierda.get(i);
             if (!fuerzaDerecha.isEmpty() && fuerzaDerecha.get(0) > 0) {
                 suma += fuerzaDe + fuerzaIz;
             }
@@ -666,12 +672,12 @@ public class FrenoMotoCarro implements PruebaDefault {
         DecimalFormat df = new DecimalFormat("0.0#");
         if (valor >= 100) {
             df = new DecimalFormat("0");
-            return df.format(valor);
+            return df.format(valor).replaceAll(",", ".");
         }if(valor >=10){
             df = new DecimalFormat("0.#");
-            return df.format(valor);
+            return df.format(valor).replaceAll(",", ".");
         }
-        return df.format(valor);
+        return df.format(valor).replaceAll(",", ".");
     }
 
     /**

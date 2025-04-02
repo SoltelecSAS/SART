@@ -14,6 +14,8 @@ import org.soltelec.procesosbanco.BancoSensors;
 import eu.hansolo.steelseries.tools.BackgroundColor;
 import org.soltelec.util.MedicionGases;
 import org.soltelec.util.PortSerialUtil;
+import org.soltelec.util.Utilidades;
+
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.PortInUseException;
@@ -1187,7 +1189,8 @@ public class HiloPruebaMotos implements Runnable, ActionListener {
         if (!pruebaAprobada) {
             String strDefecto = "INSERT INTO defxprueba(id_defecto,id_prueba) VALUES (?,?)";
             PreparedStatement psDefecto = conexion.prepareStatement(strDefecto);
-            psDefecto.setInt(1, 84018);
+            String tipoVehiculo = Utilidades.getTipoVehiculo();
+            psDefecto.setInt(1, tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? 140100 : 84018);
             psDefecto.setInt(2, idPrueba);
             //psDefecto.setInt(3,idHojaPrueba);
             psDefecto.executeUpdate();

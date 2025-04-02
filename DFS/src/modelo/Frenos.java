@@ -63,6 +63,9 @@ public class Frenos implements PruebaDefault {
         fuerzaDerechaAux = new ArrayList<>();
         fuerzaIzquierdaAux = new ArrayList<>();
         this.factorDesq = factorDesq;
+        System.out.println("------------------------------------------------");
+        System.out.println("----------tipo vehiculo: "+tipoVehiculo+"----------------");
+        System.out.println("------------------------------------------------");
         EFICACIA_FRENADO_A = tipoVehiculo.equals("CUATRIMOTO") ? 30 : 50; //50 o 30 para cuatrimotos
         CODIGO_EFICACIA_FRENADO_A = tipoVehiculo.equals("CUATRIMOTO") ? 140103 : 50028; //50028 o 140103 para cuatrimotos
         CODIGO_DESEQUILIBRIO_A = tipoVehiculo.equals("CUATRIMOTO") ? 140101 : 50026; //50026 o 140101 para cuatrimotos

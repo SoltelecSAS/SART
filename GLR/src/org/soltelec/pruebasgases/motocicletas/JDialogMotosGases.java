@@ -33,7 +33,7 @@ public class JDialogMotosGases extends JDialog {
     private TermoHigrometroArtisan termoHigrometroArtisan;
     
 
-    public JDialogMotosGases(Frame owner, boolean modal, int idPrueba, int idUsuario, int idHojaPruebas, JDialog frm_Placas, String placas, TermoHigrometroArtisan termoHigrometroArtisan) throws IOException {
+    public JDialogMotosGases(Frame owner, boolean modal, int idPrueba, int idUsuario, int idHojaPruebas, JDialog frm_Placas, String placas, TermoHigrometroArtisan termoHigrometroArtisan, String tipoVehiculo) throws IOException {
         super(owner, modal);        
         panelPruebaGases = new PanelPruebaGases();
         panelPruebaGases.setDialogMotosGases(this);
@@ -42,14 +42,14 @@ public class JDialogMotosGases extends JDialog {
         this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         this.setTitle("SART 1.7.3 PRUEBA DE GASES PARA MOTO");       
         if (idPrueba != 0 && idUsuario != 0) {
-            iniciarHilo(idPrueba, idUsuario, idHojaPruebas, placas);
+            iniciarHilo(idPrueba, idUsuario, idHojaPruebas, placas, tipoVehiculo);
             panelPruebaGases.cerrar();
             frm_Placas.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         }
         this.termoHigrometroArtisan = termoHigrometroArtisan;
     }
 
-    public JDialogMotosGases(Frame owner, boolean modal, int idPrueba, int idUsuario, int idHojaPruebas) throws IOException {
+    public JDialogMotosGases(Frame owner, boolean modal, int idPrueba, int idUsuario, int idHojaPruebas, String tipoVehiculo) throws IOException {
         super(owner, modal);
         panelPruebaGases = new PanelPruebaGases();
         panelPruebaGases.setDialogMotosGases(this);
@@ -57,7 +57,7 @@ public class JDialogMotosGases extends JDialog {
         this.setSize(this.getToolkit().getScreenSize());
         //this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);       
         if (owner != null) {
-            iniciarHilo(idPrueba, idUsuario, idHojaPruebas, "");
+            iniciarHilo(idPrueba, idUsuario, idHojaPruebas, "", tipoVehiculo);
         }
     }
 
@@ -99,11 +99,11 @@ public class JDialogMotosGases extends JDialog {
         return estado;
     }
 
-    private void iniciarHilo(int idPrueba, int idUsuario, int idHojaPruebas, String placas) {
+    private void iniciarHilo(int idPrueba, int idUsuario, int idHojaPruebas, String placas, String tipoVehiculo) {
         try {
             System.out.println("Estoy en iniciarHilo");
             panelPruebaGases.getProgressBar().setVisible(false);
-            WorkerInicioMotos wi = new WorkerInicioMotos(idUsuario, idPrueba, idHojaPruebas, panelPruebaGases, placas, termoHigrometroArtisan);
+            WorkerInicioMotos wi = new WorkerInicioMotos(idUsuario, idPrueba, idHojaPruebas, panelPruebaGases, placas, termoHigrometroArtisan, tipoVehiculo);
             wi.execute();
             System.out.println("Estoy en JDialogo motos gases de motos");
         } catch (Exception exc) {

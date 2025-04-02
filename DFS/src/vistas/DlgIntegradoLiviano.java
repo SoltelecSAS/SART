@@ -1706,6 +1706,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     }
 
     public void EsperaRodillos() throws InterruptedException {
+        System.out.println("Esperando rodillos start");
         int conteoreg = 0;
         LabelInfo.setText("ESPERANDO EJE  " + ejemedido + " EN LOS RODILLO..!");
         LabelAviso.setText("RODILLOS");
@@ -1744,6 +1745,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         LabelAviso.setText("");
         timeraviso.stop();
         LabelAviso.setBackground(PanelTitulos.getBackground());
+        System.out.println("Esperando rodillos end");
     }
 
     public void MoverSuspension(String lado) throws InterruptedException {
@@ -1776,6 +1778,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     }
 
     public void MoverRodillos(Boolean freAux) throws InterruptedException {
+        System.out.println("moviendo rodillos start");
         puerto.setFlujoEnt(puerto);
         comandoFREN();
         for (this.pasoactual = 1; this.pasoactual <= this.numpasos / 2; this.pasoactual = ((byte) (this.pasoactual + 1))) {
@@ -1893,6 +1896,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         }
         Thread.sleep(100L);
         comandoSTOP();
+        System.out.println("moviendo rodillos end");
     }
 
     public double CalcularDesviacion(double media, List<Double> Datosfil) {
@@ -2647,7 +2651,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
             if (fuerzasvd.get(i) == null || fuerzasvi.get(i) == null || fuerzasvd.get(i) == 0 || fuerzasvi.get(i) == 0) {
                 valoresNulosOCeros = true;
-                break;
+                //break;
             }
         }
 
@@ -2660,7 +2664,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
             if (pesosd.get(k) == null || pesosi.get(k) == null || pesosd.get(k) == 0 || pesosi.get(k) == 0) {
                 valoresNulosOCeros = true;
-                break;
+                //break;
             }
         }
 
@@ -3845,7 +3849,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         lblCtxPrueba.setText("USER: " + DlgIntegradoLiviano.NombreUsr + "; PLACA: " + DlgIntegradoLiviano.Placa);
         EsperaDesviacion();
         MedirDesviacion();
-        if (ordenPruebas.length() > 1 && ordenPruebas.charAt(2) == 'D') verificarFinalizacionPrueba();
+        if (ordenPruebas.length() > 1 && ordenPruebas.charAt(ordenPruebas.length()-1) == 'D') verificarFinalizacionPrueba();
     }
     
     private void ejecutarPruebaSuspension() throws InterruptedException {
@@ -3857,7 +3861,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         MedirFuerzaVertical("derecho");
         MoverSuspension("izquierdo");
         MedirFuerzaVertical("izquierdo");
-        if (ordenPruebas.length() > 1 && ordenPruebas.charAt(2) == 'S') verificarFinalizacionPrueba();
+        if (ordenPruebas.length() > 1 && ordenPruebas.charAt(ordenPruebas.length()-1) == 'S') verificarFinalizacionPrueba();
     }
     
     private void ejecutarPruebaFrenos() throws InterruptedException {
@@ -3866,11 +3870,15 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         lblCtxPrueba.setText("USER: " + DlgIntegradoLiviano.NombreUsr + "; PLACA: " + DlgIntegradoLiviano.Placa);
         imageOn = new ImageIcon(getClass().getResource("/Imagenes/FrenoOn.png"));
         imageOff = new ImageIcon(getClass().getResource("/Imagenes/FrenoOf.png"));
+        if (ordenPruebas.length() == 1){
+            EsperaPeso();
+            MedirPeso();
+        }
         EsperaRodillos();
         MoverRodillos(false);
         ejecutarFrenoInstructor();
         ejecutarFrenoDeMano();
-        if (ordenPruebas.length() == 1 || ordenPruebas.charAt(2) == 'F') verificarFinalizacionPrueba();
+        if (ordenPruebas.length() == 1 || ordenPruebas.charAt(ordenPruebas.length()-1) == 'F') verificarFinalizacionPrueba();
     }
     
     private void verificarFrenoAuxiliar() {

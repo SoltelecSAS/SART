@@ -197,6 +197,28 @@ public class Utilidades2 {
         }
     }
 
+    public static boolean eliminarMedida(int test, int measureType) {
+        Conexion.setConexionFromFile();
+        String eliminacion = "DELETE FROM medidas WHERE TEST = ? AND MEASURETYPE = ?";
+    
+        try (Connection conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContrasena());
+             PreparedStatement consultaEliminacion = conexion.prepareStatement(eliminacion)) {
+            
+            consultaEliminacion.setInt(1, test);
+            consultaEliminacion.setInt(2, measureType);
+            
+            int filasEliminadas = consultaEliminacion.executeUpdate();
+            if (filasEliminadas > 0) {
+                System.out.println("Medida de la prueba con id: "+test+" y con tipo de medida: "+measureType+ " Eliminada con exito");
+            }
+            return filasEliminadas > 0; // Retorna true si se eliminó al menos una fila
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return false; // Retorna false si ocurre un error
+    }
+
 
     public static int getIsEditable(){
         String consulta = "SELECT artf FROM cda WHERE id_cda = 1";

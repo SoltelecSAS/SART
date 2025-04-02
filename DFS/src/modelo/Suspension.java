@@ -41,7 +41,8 @@ public class Suspension implements PruebaDefault {
     }
 
     public void setFuerzaDerecha(Double fuerzaDerecha, String ubicacion) {
-        System.out.println("---ubicacion de seteo fuerza derecha double: "+ubicacion);
+        System.out.println("---ubicacion de seteo fuerza derecha double: "+ubicacion+ " fuerzaDerecha.size() = " +this.fuerzaDerecha.size());
+        System.out.println("fuerzaIzquierda.size() = " +fuerzaIzquierda.size());
         this.fuerzaDerecha.add(fuerzaDerecha);
     }
 
@@ -50,7 +51,7 @@ public class Suspension implements PruebaDefault {
     }
 
     public void setFuerzaIzquierda(Double fuerzaIzquierda, String ubicacion) {
-        System.out.println("---ubicacion de seteo fuerza izquierda double: "+ubicacion);
+        System.out.println("---ubicacion de seteo fuerza izquierda double: "+ubicacion+ "fuerzaIzquierda.size() = " +this.fuerzaIzquierda.size());
         this.fuerzaIzquierda.add(fuerzaIzquierda);
     }
 
@@ -193,7 +194,8 @@ public class Suspension implements PruebaDefault {
         System.out.println("-------------- Calcular Suspension ----------------");
         System.out.println("---------------------------------------------------");
 
-        suspension = new ArrayList<>();
+            suspension = new ArrayList<>();
+        
 
         System.out.println("----------------------------------------------------");
         System.out.println("---------- INICIO RECALCULO    -------------");
@@ -201,6 +203,10 @@ public class Suspension implements PruebaDefault {
 
         int numeroDeDatos = 0;
         Double sumaDatos = 0.0;
+        
+        System.out.println("fuerzaDerecha.size() = " +fuerzaDerecha.size());
+        System.out.println("fuerzaIzquierda.size() = " +fuerzaIzquierda.size());
+        
         System.out.println("Datos:");
         for (int i = 0; i < (fuerzaDerecha.size()); i++) 
         {

@@ -115,6 +115,16 @@ public class Utilidades {
         return idPrueba;
     }
 
+    private static String tipoVehiculo;
+
+    public static String getTipoVehiculo(){
+        return tipoVehiculo;
+    }
+
+    public static void setTipoVehiculo(String tipoVehiculo){
+        Utilidades.tipoVehiculo = tipoVehiculo;
+    }
+
     public static void setIdPrueba(long idPrueba) {
         Utilidades.idPrueba = idPrueba;
     }

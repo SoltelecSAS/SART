@@ -5,6 +5,8 @@
 package dao;
 
 import com.soltelec.modulopuc.utilidades.Mensajes;
+
+import Utilidades.Utilidades2;
 import excepciones.NoPersistException;
 import java.util.List;
 
@@ -85,6 +87,18 @@ public class PruebaDefaultDAO {
         if (prueba instanceof Suspension) {
             tipoPrueba = "Suspension";
         }
+
+        System.out.println("Tipo de vehiculo: "+tipoVehiculo);
+
+        if (tipoVehiculo.equalsIgnoreCase("Motocarro")) {
+
+            System.out.println("Entrando a eliminar medidas innecesarias de motocarro");
+
+            Utilidades2.eliminarMedida(idPrueba, 5012);
+            Utilidades2.eliminarMedida(idPrueba, 5004);
+            Utilidades2.eliminarMedida(idPrueba, 5032);
+        }
+
         
         Mensajes.messageDoneTime("Se ha Registrado la Prueba de " + tipoPrueba + " de una manera Exitosa ..¡", 3);
         return false;

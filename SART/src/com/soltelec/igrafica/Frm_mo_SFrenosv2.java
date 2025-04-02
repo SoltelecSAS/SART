@@ -4542,6 +4542,7 @@ public final class Frm_mo_SFrenosv2 extends javax.swing.JDialog
         try 
         {
             Class.forName("com.mysql.jdbc.Driver");
+            Conexion.getInstance();
             Connection cn = (Connection) DriverManager.getConnection("jdbc:mysql://" + Conexion.getIpServidor() + ":" + Conexion.getPuerto() + "/" + Conexion.getBaseDatos(), Conexion.getUsuario(), Conexion.getContraseña());
 //            Connection cn = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/db_cda", "root", "50lt3l3c545");
             return cn;
