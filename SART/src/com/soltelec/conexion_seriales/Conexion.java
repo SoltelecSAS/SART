@@ -261,11 +261,18 @@ public class Conexion implements Serializable {
     }
     
     public static boolean verificarConexionInternet() {
+        String urlString = "http://api.soltelec.com:8087/api/public/3054775526";
         try {
-            // Intentamos conectarnos a un servidor confiable, por ejemplo, Google DNS
-            InetAddress.getByName("8.8.8.8").isReachable(10000); // Timeout de 10 segundos
-            return true;
-        } catch (Exception e) {
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(10000); // 10 segundos de timeout
+            connection.setReadTimeout(10000);
+            connection.connect();
+            
+            int responseCode = connection.getResponseCode();
+            return (responseCode >= 200 && responseCode < 300); // Verifica si el código es 2xx (éxito)
+        } catch (IOException e) {
             return false;
         }
     }

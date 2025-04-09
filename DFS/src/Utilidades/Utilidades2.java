@@ -1,6 +1,7 @@
 package Utilidades;
 
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
@@ -9,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Properties;
 
 import conexion.Conexion;
 
@@ -141,6 +143,7 @@ public class Utilidades2 {
   }
 
     public static boolean guardarOModificarMedida(int measureType, int test, Double nuevoValorMedida, String nuevoSimult) {
+        Conexion.setConexionFromFile();
         String verificarExistencia = "SELECT COUNT(*) FROM medidas WHERE MEASURETYPE = ? AND TEST = ?";
         String actualizacion = "UPDATE medidas SET Valor_medida = ?, Simult = ? WHERE MEASURETYPE = ? AND TEST = ?";
         String insercion = "INSERT INTO medidas (MEASURETYPE, TEST, Valor_medida, Simult) VALUES (?, ?, ?, ?)";
@@ -233,7 +236,7 @@ public class Utilidades2 {
             //rc representa el resultado de la consulta
             try (ResultSet rc = consultaDagma.executeQuery()) {
                 while (rc.next()) {
-                    return rc.getInt("cont_test");
+                    return rc.getInt("artf");
                 }
             }
             return 0;
@@ -246,5 +249,114 @@ public class Utilidades2 {
             throw new RuntimeException("Error al tratar de conectarse con el base de datos: \n"+ e.getMessage());
         }
     }
+
+    public static void cargarDefectos(int codigoDefecto, Long idPrueba) {
+        Conexion.setConexionFromFile();
+        String addDefecto = "INSERT INTO defxprueba (id_defecto, id_prueba) VALUES(?, ?)";
+    
+        try (Connection conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContrasena());
+                PreparedStatement pstmt = conexion.prepareStatement(addDefecto)) {
+    
+            // Asigna los valores al PreparedStatement
+            pstmt.setInt(1, codigoDefecto);
+            pstmt.setLong(2, idPrueba);
+    
+            System.out.println("Ejecutando query para insertar defecto con código: " + codigoDefecto + " en la prueba con ID: " + idPrueba);
+    
+            // Ejecuta la actualización
+            int filasAfectadas = pstmt.executeUpdate();
+            if (filasAfectadas > 0) {
+                System.out.println("Defecto insertado correctamente.");
+            } else {
+                System.out.println("No se pudo insertar el defecto.");
+            }
+    
+        } catch (SQLException e) {
+            System.err.println("Error al intentar insertar el defecto (ID: " + codigoDefecto + ") para la prueba (ID: " + idPrueba + "). " +
+                    "Es posible que el defecto y la prueba ya estén registrados en 'defxprueba'. Detalles del error: " + e.getMessage());
+        }
+    }
+
+    public static String obtenerSerialResolucionPorId(int idEquipo) {
+        Conexion.setConexionFromFile();
+        String consulta = "SELECT serialresolucion FROM equipos WHERE id_equipo = ?";
+    
+        try (Connection conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContrasena());
+             PreparedStatement statement = conexion.prepareStatement(consulta)) {
+            
+            statement.setInt(1, idEquipo);
+    
+            try (ResultSet resultado = statement.executeQuery()) {
+                if (resultado.next()) {
+                    return resultado.getString("serialresolucion");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return null; // Retorna null si no se encontró o hubo error
+    }
+
+    public static void actualizarPrueba(boolean finalizada, boolean aprobada, Long usuario, String serialEquipo, Long idPruebas, String comentario) {
+        // Consulta SQL para actualizar los valores en la tabla pruebas
+        String query = "UPDATE pruebas " +
+                       "SET Finalizada = ?, " +
+                       "    Aprobada = ?, " +
+                       "    Abortada = 'N', " +
+                       "    usuario_for = ?, " +
+                       "    serialEquipo = ?, " +
+                       "    observaciones = ?" +
+                       "WHERE Id_Pruebas = ?";
+        
+        try (Connection conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContrasena());
+                PreparedStatement stmt = conexion.prepareStatement(query)) {
+    
+            // Asigna los valores a los parámetros de la consulta
+            stmt.setString(1, finalizada ? "Y" : "N");
+            stmt.setString(2, aprobada ? "Y" : "N");
+            stmt.setLong(3, usuario);
+            stmt.setString(4, serialEquipo);
+            stmt.setString(5, comentario);
+            stmt.setLong(6, idPruebas);
+    
+            // Ejecuta la actualización
+            int filasActualizadas = stmt.executeUpdate();
+    
+            // Verifica cuántas filas fueron actualizadas
+            if (filasActualizadas > 0) {
+                System.out.println("La prueba con Id_Pruebas " + idPruebas + " fue actualizada exitosamente.");
+            } else {
+                System.out.println("No se encontró ninguna prueba con Id_Pruebas " + idPruebas + " para actualizar.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al actualizar la base de datos.", e);
+        }
+    }
+
+    public static String obtenerDatos(String rutaArchivo, String key) {
+        Properties propiedades = new Properties();
+
+        try (FileInputStream input = new FileInputStream(rutaArchivo)) {
+            propiedades.load(input);
+            return propiedades.getProperty(key); // Retorna el valor asociado a la clave FRENO
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null; // Retorna null si no se encuentra o si ocurre un error
+    }
+
+    public static double[][] medidasCuatrimotoPequena = {
+        /*Pesos                            Fuerzas*/
+        {0                   ,                   0}, //llanta 1 DI 
+        {0                   ,                   0}, //llanta 2 TI
+        {0                   ,                   0}, //llanta 3 DD
+        {0                   ,                   0}, //llanta 4 TD
+        //-----------------------------------------------------------------------------
+        {0                   ,                   0}, //fuerzas de estacionamiento I , D
+        /*esIzq                              esDer*/
+    };
   
  }

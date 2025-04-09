@@ -73,6 +73,10 @@ public class Conexion implements Serializable {
             puerto = datos.get(3);
             contrasena = datos.get(4);
 
+            if (contrasena.equalsIgnoreCase("Dental") ) {
+                contrasena = "Dental~moovi#31053017byGod";
+            }
+
             bufferedReader.close();
         } catch (IOException ex) {
             CMensajes.mensajeError("No se pudo leer el archivo de conexion "+ CARPETA + NOMBRE_ARCHIVO + EXTENSION);

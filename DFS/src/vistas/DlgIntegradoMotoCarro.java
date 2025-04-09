@@ -12,6 +12,8 @@ package vistas;
 
 import Utilidades.CreacionCarpetas;
 import Utilidades.UtilPropiedades;
+import Utilidades.Utilidades2;
+
 import com.soltelec.loginadministrador.UtilLogin;
 import com.soltelec.modulopuc.utilidades.Mensajes;
 import dao.PruebaDefaultDAO;
@@ -54,6 +56,7 @@ import modelo.Frenos;
 import modelo.FrenoMotoCarro;
 import static modelo.Frenos.eficaciaVariable;
 import modelo.Suspension;
+
 import org.jdesktop.swingx.JXLoginPane;
 import static vistas.DlgIntegradoPesado.byteToInt;
 
@@ -174,7 +177,8 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
         initComponents();
         this.setSize(this.getToolkit().getScreenSize());
         dialogCancelacion.setLocationRelativeTo(null);
-        this.setTitle("SART 1.7.3 MOD FRENOS PARA MOTOCARRO");
+        
+        this.setTitle("SART 1.7.3 MOD FRENOS");
         umbral_peso = 0;
         spanfd = 0;
         spanfi = 0;
@@ -196,7 +200,8 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
         }
     }
 
-    public DlgIntegradoMotoCarro(java.awt.Frame parent, int idPruebadesv, int idPruebasusp, int idPruebafren, int idUsuario, int idHojaPrueba, Boolean esEnsenanza, int aplicTrans, String ipEquipo, String tipoVehiculo, String Placa, String NombreUsr) {
+    public DlgIntegradoMotoCarro(java.awt.Frame parent, int idPruebadesv, int idPruebasusp, int idPruebafren, int idUsuario, int idHojaPrueba, 
+        Boolean esEnsenanza, int aplicTrans, String ipEquipo, String tipoVehiculo, String Placa, String NombreUsr) {
         this(parent, true);
         this.idPruebadesv = idPruebadesv;
         this.idPruebasusp = idPruebasusp;
@@ -211,6 +216,10 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
         this.tipoVehiculo = tipoVehiculo;
         this.Placa = Placa;
         this.NombreUsr = NombreUsr;
+        this.numeroejes = tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? 4 : 2;
+
+        String motoOCuatrimoto = tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? "CUATRIMOTO" : "MOTOCARRO";
+        LabelPrueba.setText("PRUEBA FRENOS "+motoOCuatrimoto);
     }
 
     /**
@@ -897,15 +906,34 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
             if (freAux == false) {
                 System.out.println("Entro Trata de Fuerza Menor A Cero " + auxfuerzad);
                 this.fuerzasfd.add(Math.abs(auxfuerzad - this.valcalcero1));
+                //fuerza turbo
                 // this.fuerzasfd.add(Double.valueOf(ThreadLocalRandom.current().nextDouble(15.10, 25.99)));
+                if (tipoVehiculo.equalsIgnoreCase("CUATRIMOTO")) {
+                    Utilidades2.medidasCuatrimotoPequena[ejemedido-1][1] = ((auxfuerzad - valcalcero1) * spanfd);
+                }
             } else {
                 fuerzasfdAux.add(Math.abs(auxfuerzad - this.valcalcero1));
+                if (tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") && ejemedido == 2) {
+                    Utilidades2.medidasCuatrimotoPequena[4][0] = ((auxfuerzad - valcalcero1) * spanfd);
+                }
+                if (ejemedido == 4) {
+                    Utilidades2.medidasCuatrimotoPequena[4][1] = ((auxfuerzad - valcalcero1) * spanfd);
+                }
             }
         } else {
             if (freAux == false) {
                 this.fuerzasfd.add(Double.valueOf(auxfuerzad - this.valcalcero1));
+                if (tipoVehiculo.equalsIgnoreCase("CUATRIMOTO")) {
+                    Utilidades2.medidasCuatrimotoPequena[ejemedido-1][1] = ((auxfuerzad - valcalcero1) * spanfd);
+                }
             } else {
                 fuerzasfdAux.add(auxfuerzad - valcalcero1);
+                if (tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") && ejemedido == 2) {
+                    Utilidades2.medidasCuatrimotoPequena[4][0] = ((auxfuerzad - valcalcero1) * spanfd);
+                }
+                if (ejemedido == 4) {
+                    Utilidades2.medidasCuatrimotoPequena[4][1] = ((auxfuerzad - valcalcero1) * spanfd);
+                }
             }
         }
 
@@ -919,7 +947,99 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
         //this.Datos2.clear();
         this.Datosfil1.clear();
         //this.Datosfil2.clear();
+        if (tipoVehiculo.equalsIgnoreCase("CUATRIMOTO")){
+            System.out.println("Datos hasta el momento:\n");
+            for (int i = 0; i < Utilidades2.medidasCuatrimotoPequena.length; i++) {
+                if (i<4) System.out.println("Llanta " + (i + 1) + ": Peso = " + Utilidades2.medidasCuatrimotoPequena[i][0] + ", Fuerza = " + Utilidades2.medidasCuatrimotoPequena[i][1]);
+                else System.out.println("Fuerza frenoMano izq = " + Utilidades2.medidasCuatrimotoPequena[i][0] + ", Fuerza frenoMano der = " + Utilidades2.medidasCuatrimotoPequena[i][1]);
+            }
+        }
     }
+
+    public void medirFuerzaRuedasDer(boolean freAux) {
+        //implementar
+        armonizar(this.Datos2, this.valcalcero2);
+        this.Datosfil1 = filtrar(this.Datos2);
+        double auxfuerzad = CalcularMaximo(this.Datosfil1);
+        auxfuerzad = round(auxfuerzad, 5);
+        System.out.println(new StringBuilder().append("Maximo fuerza der: ").append(auxfuerzad).toString());
+        long s = this.Datosfil1.size() - 1;
+
+        int bc;
+        if (this.enablebackup) {
+            try {
+                if (ejemedido == 1) {
+                    regdatosffd1.write(new StringBuilder().append("el cero de fuerza derecha es: ").append(this.valcalcero2).toString());
+                    regdatosffd1.newLine();
+                    regdatosffd1.write(new StringBuilder().append("el span de fuerza derecha es: ").append(this.spanfd).toString());
+                    regdatosffd1.newLine();
+                    regdatosffd1.flush();
+                    for (this.t = 0; this.t < s; this.t += 1) {
+                        this.regdatosffd1.write(new StringBuilder().append(((Double) this.Datosfil1.get(this.t)).toString()).append("  ").append(this.Datos2.get(this.t)).toString());
+                        this.regdatosffd1.newLine();
+                    }
+                    this.regdatosffd1.close();
+                }
+
+            } catch (IOException ex) {
+                System.out.println(new StringBuilder().append("No se pudo escribir el dato de peso en el backup ").append(ex).toString());
+            }
+        }
+        if (auxfuerzad - this.valcalcero2 < 0.0) {
+            if (freAux == false) {
+                System.out.println("Entro Trata de Fuerza Menor A Cero " + auxfuerzad);
+                this.fuerzasfd.add(Math.abs(auxfuerzad - this.valcalcero2));
+                //fuerza turbo
+                // this.fuerzasfd.add(Double.valueOf(ThreadLocalRandom.current().nextDouble(15.10, 25.99)));
+                if (tipoVehiculo.equalsIgnoreCase("CUATRIMOTO")) {
+                    Utilidades2.medidasCuatrimotoPequena[ejemedido-1][1] = ((auxfuerzad - valcalcero2) * spanfd);
+                }
+            } else {
+                fuerzasfdAux.add(Math.abs(auxfuerzad - this.valcalcero2));
+                if (tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") && ejemedido == 2) {
+                    Utilidades2.medidasCuatrimotoPequena[4][0] = ((auxfuerzad - valcalcero2) * spanfd);
+                }
+                if (ejemedido == 4) {
+                    Utilidades2.medidasCuatrimotoPequena[4][1] = ((auxfuerzad - valcalcero2) * spanfd);
+                }
+            }
+        } else {
+            if (freAux == false) {
+                this.fuerzasfd.add(Double.valueOf(auxfuerzad - this.valcalcero2));
+                if (tipoVehiculo.equalsIgnoreCase("CUATRIMOTO")) {
+                    Utilidades2.medidasCuatrimotoPequena[ejemedido-1][1] = ((auxfuerzad - valcalcero2) * spanfd);
+                }
+            } else {
+                fuerzasfdAux.add(auxfuerzad - valcalcero2);
+                if (tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") && ejemedido == 2) {
+                    Utilidades2.medidasCuatrimotoPequena[4][0] = ((auxfuerzad - valcalcero2) * spanfd);
+                }
+                if (ejemedido == 4) {
+                    Utilidades2.medidasCuatrimotoPequena[4][1] = ((auxfuerzad - valcalcero2) * spanfd);
+                }
+            }
+        }
+
+        if (freAux == false) {
+            bc = fuerzasfd.size();
+        } else {
+            bc = fuerzasfdAux.size();
+        }
+
+        this.Datos2.clear();
+        //this.Datos2.clear();
+        this.Datosfil1.clear();
+        //this.Datosfil2.clear();
+        if (tipoVehiculo.equalsIgnoreCase("CUATRIMOTO")){
+            System.out.println("Datos hasta el momento:\n");
+            for (int i = 0; i < Utilidades2.medidasCuatrimotoPequena.length; i++) {
+                if (i<4) System.out.println("Llanta " + (i + 1) + ": Peso = " + Utilidades2.medidasCuatrimotoPequena[i][0] + ", Fuerza = " + Utilidades2.medidasCuatrimotoPequena[i][1]);
+                else System.out.println("Fuerza frenoMano izq = " + Utilidades2.medidasCuatrimotoPequena[i][0] + ", Fuerza frenoMano der = " + Utilidades2.medidasCuatrimotoPequena[i][1]);
+            }
+        }
+    }
+
+
 
     public void MedirFuerzaVertical(String lado) throws InterruptedException {
         //double ab = CalcularMaximo(Datos1);
@@ -1283,7 +1403,7 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
         Datosfil2.clear();
     }
 
-    public void medirPesoEje1() throws InterruptedException {
+    public void medirPesoEjer1Der() throws InterruptedException {
         double auxpesod, auxpesoi;
         int bc;
         long s, r;
@@ -1314,7 +1434,7 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
 
         if (enablebackup) {
             try {
-                if (ejemedido == 1) {
+                if (ejemedido == 1  || (tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") && ejemedido < 3)) {
                     regdatospd1.write("el cero de peso derecho es: " + valcalcero3);
                     regdatospd1.newLine();
                     regdatospd1.write("el span de peso derecho es: " + spanpd);
@@ -1332,6 +1452,8 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
             }
         }
         auxpesod = CalcularMediana(Datos3);
+
+        
         System.out.println("  ");
         System.out.println("  ");
         System.out.println("Tabla de Valores MIDIENDO PESOS ");
@@ -1355,6 +1477,95 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
             pesosd.add(0.0);
         } else {
             pesosd.add(auxpesod - valcalcero3);
+            if (tipoVehiculo.equalsIgnoreCase("CUATRIMOTO")) {
+                Utilidades2.medidasCuatrimotoPequena[ejemedido-1][0] = ((auxpesod - valcalcero3) * spanpd);
+            }
+        }
+
+        bc = pesosd.size();
+        // System.out.println("de nuevo el cero de peso derecho e izquierdo " + (valcalcero3 * spanpd) + " Newton "   + (valcalcero4 * spanpi) + " N");
+        // System.out.println("peso sin calibrar " + ejemedido + " derecho e izquierdo: " + (auxpesod * spanpd) + " Newton " + (auxpesoi * spanpi) + " N");
+        //System.out.println("peso del eje " + ejemedido + " derecho e izquierdo: " + (pesosd.get(bc - 1) * spanpd));
+        Thread.sleep(100);
+        Datos3.clear();
+        Datos4.clear();
+    }
+
+    public void medirPesoEjer1Izq() throws InterruptedException {
+        double auxpesoi;
+        int bc;
+        long s, r;
+        LabelInfo.setText("MIDIENDO PESO...!");
+        for (i = 0; i < 10; i++) {
+            if (i == 1) {
+                jProgressBar1.setMaximum(10);
+            }
+            if (i == 7) {
+                puerto.setFlujoEnt(puerto);
+                comandoCEROS(0);
+                Thread.sleep(170);
+            }
+            jProgressBar1.setValue(i + 1);
+            jProgressBar1.setString((i + 1) * 10 + "%");
+            Thread.sleep(500);
+        }
+        CapturarDatos("ceros");
+        s = Datos3.size();
+        r = Datos4.size();
+        comandoSTOP();
+        try {
+            puerto.clearFlujoEnt();
+            Thread.sleep(1000);
+            numtimer1 = 0;
+        } catch (InterruptedException ex) {
+        }
+
+        if (enablebackup) {
+            try {
+                if (ejemedido > 2) {
+                    regdatospd1.write("el cero de peso derecho es: " + valcalcero3);
+                    regdatospd1.newLine();
+                    regdatospd1.write("el span de peso derecho es: " + spanpd);
+                    regdatospd1.newLine();
+                    regdatospd1.flush();
+                    for (t = 0; t < r; t++) {
+                        regdatospd1.write(Datos4.get(t).toString());
+                        regdatospd1.newLine();
+                    }
+                    regdatospd1.close();
+                }
+
+            } catch (IOException ex) {
+                System.out.println("No se pudo escribir el dato de peso en el backup " + ex);
+            }
+        }
+        auxpesoi = CalcularMediana(Datos4);
+        System.out.println("  ");
+        System.out.println("  ");
+        System.out.println("Tabla de Valores MIDIENDO PESOS ");
+        System.out.println("----------------------");
+        System.out.println("----------------------");
+        System.out.println("valcalcero3 es: " + valcalcero3 + " Mv");
+        System.out.println("valcalcero4 es: " + valcalcero4);
+        System.out.println("*****************************");
+        System.out.println("spanpd es: " + spanpd);
+        System.out.println("spanpi es: " + spanpi);
+        System.out.println("*****************************");
+        System.out.println("Captura Peso Izquierdo es: " + auxpesoi + " Mv");
+        System.out.println("*****************************");
+        System.out.println("peso medido en lado Izquierdo " + ((auxpesoi - valcalcero4) * spanpd) + " Newton");
+        System.out.println("--------------------");
+        System.out.println("-------------------");
+        System.out.println("  ");
+        System.out.println("  ");
+
+        if ((auxpesoi - valcalcero4) < 0) {
+            pesosd.add(0.0);
+        } else {
+            pesosd.add(auxpesoi - valcalcero4);
+            if (tipoVehiculo.equalsIgnoreCase("CUATRIMOTO")) {
+                Utilidades2.medidasCuatrimotoPequena[ejemedido-1][0] = ((auxpesoi - valcalcero4) * spanpd);
+            }
         }
 
         bc = pesosd.size();
@@ -1647,7 +1858,8 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
         double calcPesoIzq = 0;
         boolean neceReinTrama = false;
         System.out.println("Entre Metodo esperaPeso ");
-        LabelInfo.setText((ejemedido == 1) ? "ESPERANDO EJE " + ejemedido + " EN LA PLANCHA DE PESO " + Lado.toUpperCase() : "ESPERANDO EJE " + ejemedido + " EN LA PLANCHA DE PESO..!");
+        String ejeORueda = tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? "RUEDA " : "EJE ";
+        LabelInfo.setText((ejemedido == 1) ? "ESPERANDO"+ejeORueda + ejemedido + " EN LA PLANCHA DE PESO " + Lado.toUpperCase() : "ESPERANDO EJE " + ejemedido + " EN LA PLANCHA DE PESO..!");
         LabelAviso.setText("PLANCHA");
         timeraviso.start();
         comandoCEROS(0);
@@ -1853,12 +2065,13 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
         }
     }
 
-    public void esperarPesoEje1() throws InterruptedException {
+    public void waitPesoEje1Der() throws InterruptedException {  //esperarPeso
         double pesomedd;
         double calcPesoDer = 0;
         boolean neceReinTrama = false;
         System.out.println("Entre Metodo esperaPeso ");
-        LabelInfo.setText("ESPERANDO EJE " + ejemedido + " EN LA PLANCHA DE PESO ");
+        String ejeORueda = tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? "RUEDA " : "EJE ";
+        LabelInfo.setText("ESPERANDO "+ejeORueda + ejemedido + " EN LA PLANCHA DE PESO ");
         LabelAviso.setText("PLANCHA");
         timeraviso.start();
         comandoCEROS(0);
@@ -1915,6 +2128,75 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
             Datos3.clear();
             Datos4.clear();
             if (calcPesoDer >= umbral_peso) {
+                break;
+            }
+        }
+    }
+
+
+    public void waitPesoEje1Izq() throws InterruptedException { //esperarPeso
+        double pesomedi;
+        double calcPesoIzq = 0;
+        boolean neceReinTrama = false;
+        System.out.println("Entre Metodo esperaPeso ");
+        String ejeORueda = tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? "RUEDA " : "EJE ";
+        LabelInfo.setText("ESPERANDO "+ejeORueda + ejemedido + " EN LA PLANCHA DE PESO ");
+        LabelAviso.setText("PLANCHA");
+        timeraviso.start();
+        comandoCEROS(0);
+        Thread.sleep(500);
+        while (true) {
+            CapturarDatos("ceros");
+            pesomedi = CalcularMediana(Datos4);
+            System.out.println("  ");
+            System.out.println("  ");
+            System.out.println("Tabla de Valores Leidos para el Comand Suspension eje 1 lado " + Lado);
+            System.out.println("----------------------");
+            System.out.println("----------------------");
+            System.out.println("valcalcero3 es: " + valcalcero4 + " Mv");
+            System.out.println("spanpd es: " + spanpd);
+            System.out.println("Peso Medido Izquierdo: " + pesomedi + " Mv");
+            System.out.println("*****************************");
+            System.out.println("calcPesoIzq en lado Izquierdo " + ((pesomedi - valcalcero4) * spanpd) + " Newton");
+            System.out.println("--------------------");
+            System.out.println("-------------------");
+            System.out.println("umbral peso: " + umbral_peso + " Newton.");
+            System.out.println("-------------------");
+            System.out.println("tot BYTES CANAL 3: " + Datos4.size() + " UND");
+            if (Datos4.size() > 21) {
+                calcPesoIzq = (pesomedi - valcalcero4) * spanpd;
+            } else {
+                calcPesoIzq = 0;
+                neceReinTrama = true;
+                System.out.println(" reiniciando trama X derecho");
+            }
+            if (calcPesoIzq < 0) {
+                neceReinTrama = true;
+                System.out.println(" reiniciando trama X valores en NEGATIVOS");
+            }
+            if (calcPesoIzq == 0) {
+                neceReinTrama = true;
+                System.out.println(" reiniciando trama X valores LISTAS VACIOS");
+            }
+            if (neceReinTrama == true) {
+                comandoSTOP();
+                try {
+                    puerto.clearFlujoEnt();
+                    puerto.setFlujoEnt(puerto);
+                    Thread.sleep(1900);
+                    comandoCEROS(0);
+                    Thread.sleep(500);
+                    neceReinTrama = false;
+                } catch (InterruptedException ex) {
+                }
+            } else {
+                puerto.clearFlujoEnt();
+                puerto.setFlujoEnt(puerto);
+                Thread.sleep(540);
+            }
+            Datos3.clear();
+            Datos4.clear();
+            if (calcPesoIzq >= umbral_peso) {
                 break;
             }
         }
@@ -1995,7 +2277,7 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
                     }
                 }
                 //setCanal0((ComandoRecibido[1] & 0x01) >0);
-                led1.setLedOn(isCanal0());
+                led1Varaible.setLedOn(isCanal0());
             } else {
                 comandoFREN();
             }
@@ -2011,6 +2293,7 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
     public void EsperaDesviacion() {
         LabelAviso.setText("PLACA");
         timeraviso.start();
+        
         if (tiempomensajes == 0) {
             JOptionPane.showMessageDialog(this, "Asegurese de que el eje No." + this.ejemedido + " del vehiculo pase sobre la plancha de desviación", "Precaución", JOptionPane.WARNING_MESSAGE);
         } else {
@@ -2029,7 +2312,8 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
 
     public void esperarRodillosMoto() throws InterruptedException {
         int conteoreg = 0;
-        LabelInfo.setText("ESPERANDO EJE  " + ejemedido + " EN LOS RODILLO..!");
+        String ejeORueda = tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? "RUEDA " : "EJE ";
+        LabelInfo.setText("ESPERANDO "+ejeORueda + ejemedido + " EN LOS RODILLO..!");
         LabelAviso.setText("RODILLOS");
         timeraviso.start();
         jProgressBar1.setMaximum(10);
@@ -2070,7 +2354,8 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
     
     public void esperarRodillosMotoIzq() throws InterruptedException {
         int conteoreg = 0;
-        LabelInfo.setText("ESPERANDO EJE  " + ejemedido + " EN LOS RODILLO..!");
+        String ejeORueda = tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? "RUEDA " : "EJE ";
+        LabelInfo.setText("ESPERANDO "+ejeORueda + ejemedido + " EN LOS RODILLO..!");
         LabelAviso.setText("RODILLOS");
         timeraviso.start();
         jProgressBar1.setMaximum(10);
@@ -2111,7 +2396,8 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
 
     public void EsperaRodillos() throws InterruptedException {
         int conteoreg = 0;
-        LabelInfo.setText("ESPERANDO EJE  " + ejemedido + " EN LOS RODILLO..!");
+        String ejeORueda = tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? "RUEDA " : "EJE ";
+        LabelInfo.setText("ESPERANDO "+ejeORueda + ejemedido + " EN LOS RODILLO..!");
         LabelAviso.setText("RODILLOS");
         timeraviso.start();
         jProgressBar1.setMaximum(10);
@@ -2158,6 +2444,7 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
                     Thread.sleep(2800);
                 }
                 EnviaSalidas(0, salidamotorderecho);
+                
                 LabelInfo.setText("MOVIENDO EJE No." + ejemedido + " EN EL LADO DERECHO");
                 break;
             case "izquierdo":
@@ -2238,7 +2525,7 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
                             cont1s = this.tiempo_paso / 1000;
                         } else {
                             this.LabelInfo.setText("El eje se salio de los rodillos");
-                            this.led1.setLedOn(false);
+                            this.led1Varaible.setLedOn(false);
                             this.led2.setLedOn(false);
                             this.timeraviso.stop();
                             this.LabelAviso.setText("");
@@ -2358,7 +2645,7 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
                             cont1s = this.tiempo_paso / 1000;
                         } else {
                             this.LabelInfo.setText("El eje se salio de los rodillos");
-                            this.led1.setLedOn(false);
+                            this.led1Varaible.setLedOn(false);
                             this.led2.setLedOn(false);
                             this.timeraviso.stop();
                             this.LabelAviso.setText("");
@@ -2391,7 +2678,11 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
                         this.LabelAviso.setText("FRENE");
                         break;
                     case 4:
-                        medirFuerzaFrenadoEje1(freAux);
+                        if (tipoVehiculo.equalsIgnoreCase("CUATRIMOTO")) {
+                            medirFuerzaRuedasDer(freAux);
+                        }else{
+                            medirFuerzaFrenadoEje1(freAux);
+                        }
                         this.timeraviso.stop();
                         this.LabelAviso.setText("");
                         this.LabelAviso.setIcon(null);
@@ -2478,7 +2769,7 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
                             cont1s = this.tiempo_paso / 1000;
                         } else {
                             this.LabelInfo.setText("El eje se salio de los rodillos");
-                            this.led1.setLedOn(false);
+                            this.led1Varaible.setLedOn(false);
                             this.led2.setLedOn(false);
                             this.timeraviso.stop();
                             this.LabelAviso.setText("");
@@ -2884,7 +3175,7 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
                 }
                 //setCanal0((ComandoRecibido[1] & 0x01) >0);
                 //setCanal1((ComandoRecibido[1] & 0x02) >0);
-                led1.setLedOn(isCanal0());
+                led1Varaible.setLedOn(isCanal0());
             } else {
                 comandoFREN();
             }
@@ -3283,7 +3574,7 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
                         }
                         //setCanal0((ComandoRecibido[1] & 0x01) >0);
                         //setCanal1((ComandoRecibido[1] & 0x02) >0);
-                        led1.setLedOn(isCanal0());
+                        led1Varaible.setLedOn(isCanal0());
                         led2.setLedOn(isCanal1());
                     } else {
                         comandoFREN();
@@ -3524,6 +3815,136 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
         }
     }
 
+    void registrarMedidasCuatrimoto(){
+
+
+        double fuerzaDI = Utilidades2.medidasCuatrimotoPequena[0][1]; //fuerza Delantera Izquierda
+        double fuerzaTI = Utilidades2.medidasCuatrimotoPequena[1][1]; //fuerza Trasera Izquierda
+        double fuerzaDD = Utilidades2.medidasCuatrimotoPequena[2][1]; //fuerza Delantera Derecha
+        double fuerzaTD = Utilidades2.medidasCuatrimotoPequena[3][1]; //fuerza Trasera Derecha
+
+        double pesoDI = Utilidades2.medidasCuatrimotoPequena[0][0]; //peso Delantera Izquierda
+        double pesoTI = Utilidades2.medidasCuatrimotoPequena[1][0]; //peso Trasera Izquierda
+        double pesoDD = Utilidades2.medidasCuatrimotoPequena[2][0]; //peso Delantera Derecha
+        double pesoTD = Utilidades2.medidasCuatrimotoPequena[3][0]; //peso Trasera Derecha
+
+        double fIzqFrenoMano = Utilidades2.medidasCuatrimotoPequena[4][0]; //Fuerza freno mano Izquierda
+        double fDerFrenoMano = Utilidades2.medidasCuatrimotoPequena[4][1]; //Fuerza freno mano derecha
+
+        double fMayorEje1 = getMayor(fuerzaDI, fuerzaDD); // fuerzaMayorEje1
+        double fMenorEje1 = getMenor(fuerzaDI, fuerzaDD); // fuerzaMenorEje1
+        double fMayorEje2 = getMayor(fuerzaTI, fuerzaTD); // fuerzaMayorEje2
+        double fMenorEje2 = getMenor(fuerzaTI, fuerzaTD); // fuerzaMenorEje2
+
+        double desequilibrioEje1 = (100*(fMayorEje1-fMenorEje1))/fMayorEje1;
+        double desequilibrioEje2 = (100*(fMayorEje2-fMenorEje2))/fMayorEje2;
+
+        double sumaFuerzas = fuerzaDI+fuerzaTI+fuerzaDD+fuerzaTD;
+        double sumaPesos = pesoDI+pesoTI+pesoDD+pesoTD;
+        double sumaFuerzasMano = fIzqFrenoMano+fDerFrenoMano;
+
+        double eficaciaTotal = (sumaFuerzas/sumaPesos)*100;
+        double eficaciaMano = (sumaFuerzasMano/sumaPesos)*100;
+
+        Utilidades2.guardarOModificarMedida(5012, idPruebafren, fuerzaDI, "N");
+        Utilidades2.guardarOModificarMedida(5013, idPruebafren, fuerzaTI, "N");
+        Utilidades2.guardarOModificarMedida(5008, idPruebafren, fuerzaDD, "N");
+        Utilidades2.guardarOModificarMedida(5009, idPruebafren, fuerzaTD, "N");
+        Utilidades2.guardarOModificarMedida(5004, idPruebafren, pesoDI, "N");
+        Utilidades2.guardarOModificarMedida(5005, idPruebafren, pesoTI, "N");
+        Utilidades2.guardarOModificarMedida(5000, idPruebafren, pesoDD, "N");
+        Utilidades2.guardarOModificarMedida(5001, idPruebafren, pesoTD, "N");
+        Utilidades2.guardarOModificarMedida(5032, idPruebafren, desequilibrioEje1, "N");
+        Utilidades2.guardarOModificarMedida(5033, idPruebafren, desequilibrioEje2, "N");
+        Utilidades2.guardarOModificarMedida(5024, idPruebafren, eficaciaTotal, "N");
+        Utilidades2.guardarOModificarMedida(5020, idPruebafren, fIzqFrenoMano, "N");
+        Utilidades2.guardarOModificarMedida(5016, idPruebafren, fDerFrenoMano, "N");
+        Utilidades2.guardarOModificarMedida(5036, idPruebafren, eficaciaMano, "N");
+
+        
+        boolean aprobado = true;
+        if (desequilibrioEje1>30 || desequilibrioEje2>30){
+            Utilidades2.cargarDefectos(140101, (long) idPruebafren);
+            aprobado = false;
+        } 
+        else if(desequilibrioEje1>=20 || desequilibrioEje2>=20) Utilidades2.cargarDefectos(140102, (long) idPruebafren);
+        if (eficaciaTotal<30){
+            Utilidades2.cargarDefectos(140103, (long) idPruebafren);
+            aprobado = false;
+        } 
+        if (eficaciaMano<18) Utilidades2.cargarDefectos(140104, (long) idPruebafren);
+
+        int idEquipo = Integer.parseInt(Utilidades2.obtenerDatos("equipos.properties", "FRENO"));
+        String serialEquipo = Utilidades2.obtenerSerialResolucionPorId(idEquipo);
+
+        if (Utilidades2.getIsEditable() == 1 && !aprobado) { //si tiene artefacto y esta desaprobado
+            Utilidades2.actualizarPrueba(false, false, (long) idUsuario, serialEquipo, (long) idPruebafren, "");
+        }else{
+            Utilidades2.actualizarPrueba(true, aprobado, (long) idUsuario, serialEquipo, (long) idPruebafren, "");
+        }
+
+        imprimirDatosCuatrimotoPequena(
+            fuerzaDI, fuerzaTI, fuerzaDD, fuerzaTD,
+            pesoDI, pesoTI, pesoDD, pesoTD,
+            fIzqFrenoMano, fDerFrenoMano,
+            desequilibrioEje1, desequilibrioEje2,
+            sumaFuerzas, sumaPesos, sumaFuerzasMano,
+            eficaciaTotal, eficaciaMano
+        );
+
+        Mensajes.messageDoneTime("Se ha Registrado la Prueba de cuatrimotos de manera Exitosa.", 3);
+    }
+
+    private double getMayor(double num1, double num2){
+        if (num1>num2) return num1;
+        return num2;
+    }
+
+    private double getMenor(double num1, double num2){
+        if (num1<num2) return num1;
+        return num2;
+    }
+
+    public static void imprimirDatosCuatrimotoPequena(
+        double fuerzaDI, double fuerzaTI, double fuerzaDD, double fuerzaTD,
+        double pesoDI, double pesoTI, double pesoDD, double pesoTD,
+        double fIzqFrenoMano, double fDerFrenoMano,
+        double desequilibrioEje1, double desequilibrioEje2,
+        double sumaFuerzas, double sumaPesos, double sumaFuerzasMano,
+        double eficaciaTotal, double eficaciaMano) {
+    
+        System.out.println("====== DATOS DE CUATRIMOTO PEQUEÑA ======");
+        System.out.println("\nFuerzas:");
+        System.out.println("  Delantera Izquierda: " + fuerzaDI);
+        System.out.println("  Trasera Izquierda  : " + fuerzaTI);
+        System.out.println("  Delantera Derecha  : " + fuerzaDD);
+        System.out.println("  Trasera Derecha    : " + fuerzaTD);
+
+        System.out.println("\nPesos:");
+        System.out.println("  Delantera Izquierda: " + pesoDI);
+        System.out.println("  Trasera Izquierda  : " + pesoTI);
+        System.out.println("  Delantera Derecha  : " + pesoDD);
+        System.out.println("  Trasera Derecha    : " + pesoTD);
+
+        System.out.println("\nFuerzas Freno de mano:");
+        System.out.println("  Izquierda: " + fIzqFrenoMano);
+        System.out.println("  Derecha  : " + fDerFrenoMano);
+
+        System.out.println("\nDesequilibrio:");
+        System.out.println("  Eje 1: " + desequilibrioEje1 + " %");
+        System.out.println("  Eje 2: " + desequilibrioEje2 + " %");
+
+        System.out.println("\nSumas:");
+        System.out.println("  Suma Fuerzas       : " + sumaFuerzas);
+        System.out.println("  Suma Pesos         : " + sumaPesos);
+        System.out.println("  Suma Freno de Mano : " + sumaFuerzasMano);
+
+        System.out.println("\nEficacias:");
+        System.out.println("  Total      : " + eficaciaTotal + " %");
+        System.out.println("  Freno Mano : " + eficaciaMano + " %");
+        System.out.println("==========================================");
+    }
+
     void RegistrarMedidasFrenos() {
         int facEnseñanza = 1;
         FrenoMotoCarro frenos = new FrenoMotoCarro(factor_desq);
@@ -3649,6 +4070,9 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
                         .concat("\"tablaAfectada\":\"medidas\",\"idRegistro\":\"")
                         .concat(String.valueOf(idPruebafren))
                         .concat("\"}");
+
+
+                System.out.println("trama auditoria sicov: \n"+tramaAuditoria);
             } else {
                 PruebaDefaultDAO.escrTrans = "@@@";
             }
@@ -3680,7 +4104,7 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
         LabelInfo = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        led1 = new eu.hansolo.steelseries.extras.Led();
+        led1Varaible = new eu.hansolo.steelseries.extras.Led();
         led2 = new eu.hansolo.steelseries.extras.Led();
         PanelInformacion = new javax.swing.JPanel();
         BotonEmpezar = new javax.swing.JButton();
@@ -3769,10 +4193,10 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
         jLabel3.setFont(new java.awt.Font("Andalus", 0, 38)); // NOI18N
         jLabel3.setText("Presencia DER");
 
-        led1.setMinimumSize(new java.awt.Dimension(96, 96));
+        led1Varaible.setMinimumSize(new java.awt.Dimension(96, 96));
 
-        javax.swing.GroupLayout led1Layout = new javax.swing.GroupLayout(led1);
-        led1.setLayout(led1Layout);
+        javax.swing.GroupLayout led1Layout = new javax.swing.GroupLayout(led1Varaible);
+        led1Varaible.setLayout(led1Layout);
         led1Layout.setHorizontalGroup(
             led1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 96, Short.MAX_VALUE)
@@ -3808,7 +4232,7 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
                         .addGap(18, 18, 18)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(led1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(led1Varaible, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -3823,7 +4247,7 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
                     .addGroup(PanelMensajesLayout.createSequentialGroup()
                         .addGap(24, 24, 24)
                         .addComponent(jLabel4))
-                    .addComponent(led1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(led1Varaible, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(led2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(PanelMensajesLayout.createSequentialGroup()
                         .addGap(30, 30, 30)
@@ -4260,9 +4684,10 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
                 puerto.close();
                 dispose();
             }
-        } else {
+        } else {//PO AQUI
             BotonEmpezar.setEnabled(false);
-            LabelEje.setText("EJE " + ejemedido);
+            String ejeORueda = tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? "RUEDA " : "EJE ";
+            LabelEje.setText(ejeORueda + ejemedido);
             if (tiempomensajes == 0) {
                 JOptionPane.showMessageDialog(this, "POR FAVOR ASEGURESE DE QUE LAS PLANCHAS ESTEN LIBRES", "SART 1.7.3",
                         JOptionPane.WARNING_MESSAGE);
@@ -4310,8 +4735,14 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
             System.out.println("Error cerrando el archivo de configuracion");
         }
 
+        //registrar medidas perro
         if (enablehwfren && enableswfren && enablereg) {
-            RegistrarMedidasFrenos();
+            if (tipoVehiculo.equalsIgnoreCase("CUATRIMOTO")) {
+                registrarMedidasCuatrimoto();
+            }else{
+                RegistrarMedidasFrenos();
+            }
+            
         }
         if (!repetirPrueba) {
             if (enablehwdesv && enableswdesv && enablereg) {
@@ -4525,7 +4956,7 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JLabel lblCtxPrueba;
-    private eu.hansolo.steelseries.extras.Led led1;
+    private eu.hansolo.steelseries.extras.Led led1Varaible;
     private eu.hansolo.steelseries.extras.Led led2;
     // End of variables declaration//GEN-END:variables
 
@@ -4580,6 +5011,7 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
 
     class Principal extends Thread {
 
+        //por aqui es lo de cuatrimotos
         @Override
         public void run() {
             try {
@@ -4591,20 +5023,27 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
                     FrenoInst = "True";
                 }
                 ejemedido = 1;
-                LabelEje.setText("EJE: " + ejemedido);
+                String ejeORueda = tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? "RUEDA " : "EJE ";
+                LabelEje.setText(ejeORueda + ejemedido);
                 while (true) {
+
+                    String ejeORueda2 = tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? "la rueda " : "el eje ";
                     System.out.println("prueba------------------");
                     if (ejemedido > 1) {
-                        Mensajes.messageWarningTime("Por Favor Retire el vehiculo de las maquinas, para iniciar con el eje " + DlgIntegradoMotoCarro.this.ejemedido, 6);
+                        Mensajes.messageWarningTime("Por Favor Retire el vehiculo de las maquinas, para iniciar con "+ejeORueda2 + DlgIntegradoMotoCarro.this.ejemedido, 6);
                     }
+                    String motoOCuatrimoto = tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? "CUATRIMOTO" : "MOTOCARRO";
                     if (enablehwfren && enableswfren) {
-                        LabelPrueba.setText("PRUEBA FRENOS MOTOCARRO ");
+                        LabelPrueba.setText("PRUEBA FRENOS "+motoOCuatrimoto);
                         lblCtxPrueba.setText("USER: " + DlgIntegradoMotoCarro.NombreUsr + "; PLACA: " + DlgIntegradoMotoCarro.Placa);
                     }
-                    if (ejemedido == 1) {
-                        esperarPesoEje1();
-                        medirPesoEje1();
-                    } else {
+                    if (ejemedido == 1 || (tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") && ejemedido < 3)) {
+                        waitPesoEje1Der();
+                        medirPesoEjer1Der();
+                    } else if(ejemedido > 2){
+                        waitPesoEje1Izq();
+                        medirPesoEjer1Izq();
+                    }else {
                         EsperaPeso();
                         MedirPeso();
                     }
@@ -4620,16 +5059,20 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
                                 aplicFreAux = true;
                             }
                         }
-                        LabelPrueba.setText("PRUEBA FRENOS MOTOCARRO ");
+                        if (ejemedido == 4) {
+                            aplicFreAux = true;
+                        }
+                        
+                        LabelPrueba.setText("PRUEBA FRENOS "+motoOCuatrimoto);
                         lblCtxPrueba.setText("USER: " + DlgIntegradoMotoCarro.NombreUsr + "; PLACA: " + DlgIntegradoMotoCarro.Placa);
                         imageOn = new ImageIcon(getClass().getResource("/Imagenes/FrenoOn.png"));
                         imageOff = new ImageIcon(getClass().getResource("/Imagenes/FrenoOf.png"));
 
-                        if (ejemedido == 1) {
-                            if (Lado.equalsIgnoreCase("derecho")) {
+                        if (ejemedido == 1 || (tipoVehiculo.equalsIgnoreCase("CUATRIMOTO"))) {
+                            if (Lado.equalsIgnoreCase("derecho") && ejemedido < 3) {
                                 esperarRodillosMoto();
                                 MoverRodillosEje1(false);
-                            }else if(Lado.equalsIgnoreCase("izquierdo")){
+                            }else if(Lado.equalsIgnoreCase("izquierdo") || ejemedido > 2){
                                 esperarRodillosMotoIzq();
                                 MoverRodillosEje1Izq(false);
                             }
@@ -4641,24 +5084,46 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
 //JFM               Freno del instructor                                     
                         if (FrenoInst.equalsIgnoreCase("True") && isEnsenianza()) //SI EL VEHICULO ES DE ENSEÑANZA Y LA VARIBLE ESTA ACTIVA HACE DOBLE FRENADO
                         {
-                            LabelEje.setText("Eje " + ejemedido + " (ENSEÑANZA)");
-                            LabelInfo.setText("Ahora la prueba del freno del instructor");
-                            Thread.sleep(2000);
-                            EsperaRodillos();
-                            MoverRodillos(false);
-                            LabelEje.setText("Eje " + ejemedido);
+                            
+                                LabelEje.setText("Eje " + ejemedido + " (ENSEÑANZA)");
+                                LabelInfo.setText("Ahora la prueba del freno del instructor");
+                                Thread.sleep(2000);
+                                EsperaRodillos();
+                                MoverRodillos(false);
+                                LabelEje.setText("Eje " + ejemedido);
+                            
+                            
                         }
 //JFM                                  
                         if (aplicFreAux == true) {
-                            imageOn = new ImageIcon(getClass().getResource("/Imagenes/FrenoManoOn.png"));
-                            imageOff = new ImageIcon(getClass().getResource("/Imagenes/FrenoManoOf.png"));
-                            LabelEje.setText("EJE " + ejemedido + " (FRENO DE MANO)");
-                            LabelInfo.setText("INICIANDO PRUEBA DE FRENO DE MANO");
-                            setFrenmano(true);
-                            Thread.sleep(2000);
-                            EsperaRodillos();
-                            MoverRodillos(true);
-                            setFrenmano(false);
+                            if (tipoVehiculo.equalsIgnoreCase("CUATRIMOTO")) {
+
+                                imageOn = new ImageIcon(getClass().getResource("/Imagenes/FrenoManoOn.png"));
+                                imageOff = new ImageIcon(getClass().getResource("/Imagenes/FrenoManoOf.png"));
+                                LabelEje.setText(ejemedido + "(FRENO DE MANO)");
+                                LabelInfo.setText("INICIANDO PRUEBA DE FRENO DE MANO");
+                                setFrenmano(true);
+                                Thread.sleep(2000);
+
+                                if (ejemedido < 3) {
+                                    esperarRodillosMoto();
+                                    MoverRodillosEje1(true);
+                                }else{
+                                    esperarRodillosMotoIzq();
+                                    MoverRodillosEje1Izq(true);
+                                }
+                                setFrenmano(false);
+                            }else{
+                                imageOn = new ImageIcon(getClass().getResource("/Imagenes/FrenoManoOn.png"));
+                                imageOff = new ImageIcon(getClass().getResource("/Imagenes/FrenoManoOf.png"));
+                                LabelEje.setText(ejemedido + " (FRENO DE MANO)");
+                                LabelInfo.setText("INICIANDO PRUEBA DE FRENO DE MANO");
+                                setFrenmano(true);
+                                Thread.sleep(2000);
+                                EsperaRodillos();
+                                MoverRodillos(true);
+                                setFrenmano(false);
+                            }
                         }
                         if (ejemedido == numeroejes) {
                             if (!BotonFinalizar.isEnabled()) {
@@ -4682,7 +5147,8 @@ public class DlgIntegradoMotoCarro extends javax.swing.JDialog implements Action
                     } else {
                         ejemedido++;
                         aplicFreAux = false;
-                        LabelEje.setText("EJE: " + ejemedido);
+                        ejeORueda = tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? "RUEDA " : "EJE ";
+                        LabelEje.setText(ejeORueda + ejemedido);
                     }
                 }// END WHILE
             } catch (InterruptedException ex) {

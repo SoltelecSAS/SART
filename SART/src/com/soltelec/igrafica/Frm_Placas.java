@@ -325,22 +325,36 @@ public class Frm_Placas extends javax.swing.JDialog {
             }
             //************************************************************            
             em.getTransaction().begin();
+            
             if (normal == true) {
-                System.out.println("Estoy Ejecutando el stored Procedure ");
 
-                StoredProcedureQuery stQ = em.createStoredProcedureQuery("evtFechaRealPrueba");
-                System.out.println("TEST " + test.getIdPruebas() + " tipo " + test.getTipoPrueba().getTesttype());
-                stQ.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
-                stQ.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
-                stQ.setParameter(1, test.getIdPruebas());
-                stQ.setParameter(2, test.getTipoPrueba().getTesttype());
-                stQ.executeUpdate();
-                em.flush();
+                try {
+                    System.out.println("Estoy Ejecutando el stored Procedure ");
+
+                    StoredProcedureQuery stQ = em.createStoredProcedureQuery("evtFechaRealPrueba");
+                    System.out.println("TEST " + test.getIdPruebas() + " tipo " + test.getTipoPrueba().getTesttype());
+                    stQ.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
+                    stQ.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
+                    stQ.setParameter(1, test.getIdPruebas());
+                    stQ.setParameter(2, test.getTipoPrueba().getTesttype());
+                    stQ.executeUpdate();
+                    em.flush();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                
             }
             //************************************************************
-            test.setFechaaborto(ipEquipo.concat(";").concat(String.valueOf(idAud)));
-            em.merge(test);
-            em.getTransaction().commit();
+            try {
+                test.setFechaaborto(ipEquipo.concat(";").concat(String.valueOf(idAud)));
+                em.merge(test);
+                em.getTransaction().commit(); // Esta es la línea 351
+            } catch (Exception e) {
+                em.getTransaction().rollback(); // <- IMPORTANTE para evitar errores posteriores
+                e.printStackTrace();
+            }
+            
             if (cda.getProveedorSicov().equalsIgnoreCase("INDRA")) {
                 ClienteSicov clienteIndra = new ClienteSicov();
                 if (test.getAbortada().equalsIgnoreCase("N")) {
@@ -375,6 +389,70 @@ public class Frm_Placas extends javax.swing.JDialog {
                 }
             }
             System.out.println("id (Audi) apartado con exito");
+        }
+    }
+
+    public void regIdEvento(Integer indPrueba, int revTec, boolean normal, EventoDTO eventoDTO, Cda cda){
+
+
+        if (revTec == 1) {
+            System.out.println("aparto idSicov para prueba");
+            Query q;
+            int nvoAudi = 0;
+            Integer idAud = 0;
+            try {
+                Thread.sleep(1900);
+            } catch (InterruptedException ex) {
+            }
+            em.clear();
+            em.getTransaction().begin();
+            em.flush();
+            q = em.createQuery("SELECT p FROM Pruebas  p WHERE p.idPruebas= :idPruebas");
+            q.setParameter("idPruebas", indPrueba);
+            Pruebas test = (Pruebas) q.getSingleResult();
+            em.getTransaction().commit();
+            /*if(test.getFinalizada().equalsIgnoreCase("N")){
+                 System.out.println("id (Audi) NO APARTADO PRUEBA ABORTADA");
+                return ;
+            }*/
+            if (test.getTipoPrueba().getTesttype() == 3) {
+                System.out.println("id (Audi) NO APARTADO PRUEBA OF FOTO");
+                return;
+            }
+
+            if (cda.getProveedorSicov().equalsIgnoreCase("INDRA")) {
+                ClienteSicov clienteIndra = new ClienteSicov();
+                if (test.getAbortada().equalsIgnoreCase("N")) {
+                    eventoDTO.setIdEvento(2);
+                    Logger.getLogger(Frm_Placas.class.getName()).log(Level.WARNING, null, "Enviando event 2 FINALIZAR EVENTOS DE PLACA".concat(eventoDTO.getPlaca()).concat(" DE TIPO ").concat(test.getTipoPrueba().getNombretipoprueba()));
+                } else {
+                    eventoDTO.setIdEvento(3);
+                    Logger.getLogger(Frm_Placas.class.getName()).log(Level.WARNING, null, "Enviando event 3 FINALIZAR EVENTOS DE PLACA".concat(eventoDTO.getPlaca()).concat(" DE TIPO ").concat(test.getTipoPrueba().getNombretipoprueba()));
+                    if (test.getComentarioaborto() != null) {
+                        eventoDTO.setMensajeEvento(test.getComentarioaborto());
+                        Logger.getLogger(Frm_Placas.class.getName()).log(Level.WARNING, null, "Prueba abortada por PLACA".concat(eventoDTO.getPlaca()).concat(" TIPO ABORTO: ").concat(test.getComentarioaborto()));
+                    } else {
+                        Logger.getLogger(Frm_Placas.class.getName()).log(Level.WARNING, null, "Prueba abortada por PLACA".concat(eventoDTO.getPlaca()).concat(" TIPO ABORTO: NO ESPECIFICADO"));
+                    }
+                }
+                String fecha = UtilSicov.askDate();
+                //fecha = fecha.substring(0, fecha.length() - 2);
+                eventoDTO.setFecha(fecha);
+                if (test.getTipoPrueba().getTesttype() == 5 || test.getTipoPrueba().getTesttype() == 6 || test.getTipoPrueba().getTesttype() == 4) {
+                    eventoDTO.setNombrePrueba("FAS");
+                }
+
+                RespuestaDTO respuesta = clienteIndra.crearEvento(eventoDTO, cda, "regIdAuditoria");
+                System.out.println("--------------------------------------------Respuesta Evento Verificado Gases");
+                if (respuesta.getCodigoRespuesta().equals("0")) {
+                    Logger.getLogger(Frm_Placas.class.getName()).log(Level.WARNING, null, "NO PUEDE FINALIZAR EVENTOS DE PLACA".concat(eventoDTO.getPlaca()).concat(" DE TIPO ").concat(test.getTipoPrueba().getNombretipoprueba()));
+                    JOptionPane.showMessageDialog(null, "DISCULPE; No Pude FINALIZAR el Evento para la Pruebas Visual");
+                    doClose(0);
+                    return;
+                } else {
+                    Logger.getLogger(Frm_Placas.class.getName()).log(Level.WARNING, null, "ENVIO EVENTOS EXITOSO DE PLACA".concat(eventoDTO.getPlaca()).concat(" DE TIPO ").concat(test.getTipoPrueba().getNombretipoprueba()));
+                }
+            }
         }
     }
 
@@ -441,16 +519,23 @@ public class Frm_Placas extends javax.swing.JDialog {
             //************************************************************            
             em.getTransaction().begin();
             if (normal == true) {
-                System.out.println("Estoy Ejecutando el stored Procedure ");
 
-                StoredProcedureQuery stQ = em.createStoredProcedureQuery("evtFechaRealPrueba");
-                System.out.println("TEST " + test.getIdPruebas() + " tipo " + test.getTipoPrueba().getTesttype());
-                stQ.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
-                stQ.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
-                stQ.setParameter(1, test.getIdPruebas());
-                stQ.setParameter(2, test.getTipoPrueba().getTesttype());
-                stQ.executeUpdate();
-                em.flush();
+                try {
+                    System.out.println("Estoy Ejecutando el stored Procedure ");
+
+                    StoredProcedureQuery stQ = em.createStoredProcedureQuery("evtFechaRealPrueba");
+                    System.out.println("TEST " + test.getIdPruebas() + " tipo " + test.getTipoPrueba().getTesttype());
+                    stQ.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
+                    stQ.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
+                    stQ.setParameter(1, test.getIdPruebas());
+                    stQ.setParameter(2, test.getTipoPrueba().getTesttype());
+                    stQ.executeUpdate();
+                    em.flush();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                
 
             }
             //************************************************************
@@ -1487,11 +1572,27 @@ public class Frm_Placas extends javax.swing.JDialog {
                         doClose(0);
                         dialog.setVisible(true); // Hacer visible el JDialog
                     }
+
+                    if (versionLuxometro.equalsIgnoreCase("LUJANV2")) {
+                        System.out.println("esta es la ubicacion del capelec: "+ubicacionLuxometro);
+                        boolean verMedidas = verPruebas.equalsIgnoreCase("SI");
+                        FrmLuxometroCapelec luxometroCapelec = new FrmLuxometroCapelec("LUJAN", placas, idHojaPruebaLocal, idPrueba, idUsuario, ubicacionLuxometro, verMedidas);
+                            
+                        JDialog dialog = new JDialog(this, true); // Crear un JDialog
+                        dialog.add(luxometroCapelec.getContentPane()); // Agregar el contenido del formulario FrmSeriales al JDialog
+                        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE); // Establecer la operación de cierre del JDialog
+                        dialog.pack(); // Ajustar el tamaño del JDialog al tamaño preferido de su contenido
+                        dialog.setTitle("Luxometro"); // Establecer el título del JDialog
+                        regIdEvento(idPrueba, revTec, true, eventoDTO, cda);
+                        doClose(0);
+                        dialog.setVisible(true); // Hacer visible el JDialog
+                    }
                 }
             }
 
         } catch (Exception e) {
             System.out.println("Error en el metodo :pruebaLuces() " + e.getLocalizedMessage() + e.getMessage());
+            e.printStackTrace();
         }
         doClose(0);
     }

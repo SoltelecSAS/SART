@@ -316,7 +316,9 @@ public class FrmLogin extends javax.swing.JFrame {
                 camContraseña.setText("");
                  
             }
-        } catch (PersistenceException e) {
+        } catch (PersistenceException e) { 
+
+            e.printStackTrace();
             System.out.println("error que presento en el login : " + e);
             JOptionPane.showMessageDialog(null, "No se puede obtener una conexion con la base de datos");
             
