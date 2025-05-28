@@ -313,7 +313,7 @@ public class WorkerCiclosMoto extends SwingWorker<Void, Void> {
                 System.out.println("InterruptedException");
                 this.cancelacion("Prueba Cancelada o InterruptedException");
             } else {
-                JOptionPane.showMessageDialog(panel, "Se desconecto el KIT de RPM");
+                JOptionPane.showMessageDialog(panel, "Se desconecto el KIT de RPM 3");
                 exc.printStackTrace(System.err);
             }
         } catch (CancellationException calexc) {
@@ -437,7 +437,11 @@ public class WorkerCiclosMoto extends SwingWorker<Void, Void> {
                 Connection cn = regMedidas.getConnection();
                 ConsultasLogin consultasLogin = new ConsultasLogin();
                 String tipoVehiculo = Utilidades.getTipoVehiculo();
-                regMedidas.registraRechazo(causa, causa, this.idUsuario, idPrueba, tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? 140100 : 84018);//Registra la prueba como Rechazada
+                int codigoDefectoGases = 0;
+                if (tipoVehiculo.equalsIgnoreCase("CUATRIMOTO")) codigoDefectoGases = 140100;
+                else if (tipoVehiculo.equalsIgnoreCase("Motocarro")) codigoDefectoGases = 15057;
+                else codigoDefectoGases = 84018;
+                regMedidas.registraRechazo(causa, causa, this.idUsuario, idPrueba, codigoDefectoGases);//Registra la prueba como Rechazada
             } catch (SQLException | ClassNotFoundException exc) {
                 Mensajes.mostrarExcepcion(exc);
             } finally {

@@ -2,6 +2,7 @@
 package com.soltelec.igrafica;//GEN-FIRST:event_btn_verificarActionPerformed
 //GEN-LAST:event_btn_verificarActionPerformed
 import com.soltelec.dao.ControladorVerificar;
+import com.soltelec.eventos.utils.CMensajes;
 import com.soltelec.indra.ClienteSicov;
 import com.soltelec.model.AuditoriaSicov;
 import com.soltelec.model.Defxprueba;
@@ -28,8 +29,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
 import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import org.soltelec.luxometro.HiloPruebaLuxometro;
 import org.soltelec.luxometro.JDialogLuces;
@@ -326,7 +329,7 @@ public class Frm_Placas extends javax.swing.JDialog {
             //************************************************************            
             em.getTransaction().begin();
             
-            if (normal == true) {
+            /* if (normal == true) {
 
                 try {
                     System.out.println("Estoy Ejecutando el stored Procedure ");
@@ -344,7 +347,28 @@ public class Frm_Placas extends javax.swing.JDialog {
                 }
 
                 
+            } */
+
+
+            if (normal == true) {
+                try {
+                    System.out.println("Estoy ejecutando el UPDATE manual con SQL nativo");
+            
+                    String sql = "UPDATE pruebas SET Fecha_final = NOW() " +
+                                 "WHERE Id_Pruebas = ? AND Tipo_prueba_for = ?";
+            
+                    int updated = em.createNativeQuery(sql)
+                                    .setParameter(1, test.getIdPruebas())
+                                    .setParameter(2, test.getTipoPrueba().getTesttype())
+                                    .executeUpdate();
+            
+                    em.flush();
+                    System.out.println("Registros actualizados: " + updated);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+
             //************************************************************
             try {
                 test.setFechaaborto(ipEquipo.concat(";").concat(String.valueOf(idAud)));
@@ -966,6 +990,8 @@ public class Frm_Placas extends javax.swing.JDialog {
         String pruebaFrenos = "", pruebaDesviacion = "", pruebaSuspension = "";
         serialEquipo = "";
 
+        
+
         try {//lee los datos de configuracion.txT depediendo de que variable este en "si" toma el serial del equipo
             pruebaFrenos = UtilPropiedades.cargarPropiedad("frenos", "configuracion.txt");//LEE EL VALOR DE LA VARIABLE desviacion 
             pruebaDesviacion = UtilPropiedades.cargarPropiedad("desviacion", "configuracion.txt");//LEE EL VALOR DE LA VARIABLE suspension
@@ -983,7 +1009,8 @@ public class Frm_Placas extends javax.swing.JDialog {
             //08 Noviembre wdistinguir entre dialogo de pesados de 4x4 y de livianos
             Vehiculos v = controladorVerificar.getTipoVehiculo(placas, em);
             boolean ensenianza = v.getEsEnsenaza() > 0;
-
+            System.out.println("TIPO VEHICULO: "+v.getTipoVehiculo().getNombre());
+            System.out.println("CONDICION 4X4: "+v.getTipoVehiculo().getNombre().equalsIgnoreCase("4x4"));
             if (v.getTipoVehiculo().getNombre().equalsIgnoreCase("Liviano") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis_AplTaximetro") || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis")) {
 //                PruebaDefaultDAO.escrTrans = "";
 
@@ -1012,8 +1039,18 @@ public class Frm_Placas extends javax.swing.JDialog {
                         }
                     }
                 }
+                
+                // Si ejesDondeTieneFrenoMano es 0, significa que no tiene freno de mano
+                // Si ejesDondeTieneFrenoMano es 1, significa que el freno de mano está en el eje 1
+                // Si ejesDondeTieneFrenoMano es 2, significa que el freno de mano está en el eje 2
+                // Si ejesDondeTieneFrenoMano es 3, significa que el freno de mano está en ambos ejes
+                int ejesDondeTieneFrenoMano = dialogSeleccionFrenoMano(false, true);// 0=Ninguno 1=Eje1, 2=Eje2, 3=Ambos ejes
 
-                DlgIntegradoLiviano dlgIntegracion = new DlgIntegradoLiviano(frame, idPruebaDesviacion, idPruebaSuspension, idPruebaFreno, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), v.getCarplate(), cam_usuario.getText());
+                DlgIntegradoLiviano dlgIntegracion = 
+                        new DlgIntegradoLiviano(
+                                frame, idPruebaDesviacion, idPruebaSuspension, idPruebaFreno, idUsuario, 
+                                idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), 
+                                v.getCarplate(), cam_usuario.getText(), ejesDondeTieneFrenoMano);
                 dlgIntegracion.setVisible(true);
                 //segun eso configurar apropiadamente el dialogo para que realice solo
                 //las pruebas que deba
@@ -1075,6 +1112,7 @@ public class Frm_Placas extends javax.swing.JDialog {
                     return;
                 }
             } else if (v.getTipoVehiculo().getNombre().equalsIgnoreCase("4x4")) {
+
 //                PruebaDefaultDAO.escrTrans = "";
                 DlgIntegrado4x4 dlgIntegracion = new DlgIntegrado4x4(frame, idPruebaDesviacion, idPruebaSuspension, idPruebaFreno, idUsuario, idHojaPruebaLocal, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), v.getCarplate(), cam_usuario.getText());//Es necesario configurar bien el constructor
                 //segun eso configurar apropiadamente el dialogo para que realice solo 
@@ -1255,34 +1293,41 @@ public class Frm_Placas extends javax.swing.JDialog {
                         }
                     }
                 }
+                
+                // Si ejesDondeTieneFrenoMano es 0, significa que no tiene freno de mano
+                // Si ejesDondeTieneFrenoMano es 1, significa que el freno de mano está en el eje 1
+                // Si ejesDondeTieneFrenoMano es 2, significa que el freno de mano está en el eje 2
+                // Si ejesDondeTieneFrenoMano es 3, significa que el freno de mano está en ambos ejes
+                //int ejesDondeTieneFrenoMano = dialogSeleccionFrenoMano(false, true);// 0=Ninguno 1=Eje1, 2=Eje2, 3=Ambos ejes
+                
                 switch (v.getTipoVehiculo().getNombre()) {
                     case "Liviano":
-                        new DlgIntegradoLiviano(frame, 0, idPrueba, 0, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), v.getCarplate(), cam_usuario.getText()).setVisible(true);
+                        new DlgIntegradoLiviano(frame, 0, idPrueba, 0, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), v.getCarplate(), cam_usuario.getText(), 0).setVisible(true);
                         System.out.println("VOY A REGISTAR TIMER DE TRANSACCION (LIVIANO) SUSPENSION ");
                         regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
                         break;
                     case "Taxis_AplTaximetro":
-                        new DlgIntegradoLiviano(frame, 0, idPrueba, 0, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), v.getCarplate(), cam_usuario.getText()).setVisible(true);
+                        new DlgIntegradoLiviano(frame, 0, idPrueba, 0, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), v.getCarplate(), cam_usuario.getText(), 0).setVisible(true);
 
                         regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
 
                         break;
                     case "Taxis":
-                        new DlgIntegradoLiviano(frame, 0, idPrueba, 0, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), v.getCarplate(), cam_usuario.getText()).setVisible(true);
+                        new DlgIntegradoLiviano(frame, 0, idPrueba, 0, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), v.getCarplate(), cam_usuario.getText(), 0).setVisible(true);
 
                         regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
 
                         break;
                     case "4x4":
-                        //new DlgIntegrado4x4(frame, 0, idPrueba, 0, idUsuario, idHojaPruebaLocal, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), v.getCarplate(), cam_usuario.getText()).setVisible(true);
-                        new DlgIntegradoLiviano(frame, 0, idPrueba, 0, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), v.getCarplate(), cam_usuario.getText()).setVisible(true);
+                        new DlgIntegrado4x4(frame, 0, idPrueba, 0, idUsuario, idHojaPruebaLocal, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), v.getCarplate(), cam_usuario.getText()).setVisible(true);
+                        //new DlgIntegradoLiviano(frame, 0, idPrueba, 0, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), v.getCarplate(), cam_usuario.getText()).setVisible(true);
 
                         regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
 
                         break;
 
                     case "CUATRIMOTO":
-                        new DlgIntegradoLiviano(frame, 0, idPrueba, 0, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), v.getCarplate(), cam_usuario.getText()).setVisible(true);
+                        new DlgIntegradoLiviano(frame, 0, idPrueba, 0, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, v.getTipoVehiculo().getNombre(), v.getCarplate(), cam_usuario.getText(), 0).setVisible(true);
                         System.out.println("VOY A REGISTAR TIMER DE TRANSACCION (LIVIANO) SUSPENSION ");
                         regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
                         break;
@@ -1511,10 +1556,24 @@ public class Frm_Placas extends javax.swing.JDialog {
                             || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("CICLOMOTOR")
                             || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("TRICIMOTO")
                         ) {
-                            tipoVehiculo = 1;
-                            archivoLuxometroMoon.iniciarTomaMedidaLuxometro(placas, idHojaPruebaLocal, idPrueba, idUsuario, tipoVehiculo, ubicacionLuxometro);
+                            //tipoVehiculo = 1;
+                            //archivoLuxometroMoon.iniciarTomaMedidaLuxometro(placas, idHojaPruebaLocal, idPrueba, idUsuario, tipoVehiculo, ubicacionLuxometro);
+
+                            System.out.println("entre luxometro");
+                            boolean verMedidas = verPruebas.equalsIgnoreCase("SI");
+                            
+                            FrmLuxometroCapelec luxometroCapelec = new FrmLuxometroCapelec("MOONMOTOS", placas, idHojaPruebaLocal, idPrueba, idUsuario, ubicacionLuxometro, verMedidas);
+                            
+                            JDialog dialog = new JDialog(this, true); // Crear un JDialog
+                            dialog.add(luxometroCapelec.getContentPane()); // Agregar el contenido del formulario FrmSeriales al JDialog
+                            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE); // Establecer la operación de cierre del JDialog
+                            dialog.pack(); // Ajustar el tamaño del JDialog al tamaño preferido de su contenido
+                            dialog.setTitle("Luxometro"); // Establecer el título del JDialog
+                            regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
+                            doClose(0);
+                            dialog.setVisible(true); // Hacer visible el JDialog
                         } else {
-                            tipoVehiculo = 2;
+                            //tipoVehiculo = 2;
                             System.out.println("entre luxometro");
                             boolean verMedidas = verPruebas.equalsIgnoreCase("SI");
                             
@@ -1730,9 +1789,9 @@ public class Frm_Placas extends javax.swing.JDialog {
                         }
                     }
                 }
+
                 if (
                     vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Moto")
-                    || vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("CICLOMOTOR")
                 ) {//Si es una moto entonces hacer prueba de moto
                     //TODO: Prueba de frenos con plancha o rodillos
                     boolean plancha = false;
@@ -1766,12 +1825,35 @@ public class Frm_Placas extends javax.swing.JDialog {
                         doClose(0);
                         regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
                     }
-                } else if (vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Liviano") || 
+                } else if (
+                    vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Liviano") || 
                     vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis_AplTaximetro") || 
                     vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis") || 
-                    (esCuatrimoto && !esCutrimotoPequena)) {
+                    vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("CICLOMOTOR") ||
+                    esCuatrimoto ||
+                    vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("Motocarro")
+                ) {
+                    String tipoVehiculo = vehiculoVariable.getTipoVehiculo().getNombre();
+                    
+                    // Si ejesDondeTieneFrenoMano es 0, significa que no tiene freno de mano
+                    // Si ejesDondeTieneFrenoMano es 1, significa que el freno de mano está en el eje 1
+                    // Si ejesDondeTieneFrenoMano es 2, significa que el freno de mano está en el eje 2
+                    // Si ejesDondeTieneFrenoMano es 3, significa que el freno de mano está en ambos ejes
+                    int ejesDondeTieneFrenoMano = 0;// 0=Ninguno 1=Eje1, 2=Eje2, 3=Ambos ejes
+
+                    boolean auxEje1PorDefecto = false;
+                    boolean auxEje2PorDefecto = true;
+                    if (esCuatrimoto) tipoVehiculo = esCutrimotoPequena ? "CUATRIMOTOP" : "CUATRIMOTO"; 
+                    if (tipoVehiculo.equalsIgnoreCase("CICLOMOTOR")) auxEje2PorDefecto = false;
+                    
+                    ejesDondeTieneFrenoMano = dialogSeleccionFrenoMano(auxEje1PorDefecto, auxEje2PorDefecto);// 0=Ninguno 1=Eje1, 2=Eje2, 3=Ambos ejes
+                    
                     System.out.println(" c7");
-                    DlgIntegradoLiviano dlgFrenLivianos = new DlgIntegradoLiviano(frame, 0, 0, idPrueba, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, vehiculoVariable.getTipoVehiculo().getNombre(), vehiculoVariable.getCarplate(), cam_usuario.getText());
+                    DlgIntegradoLiviano dlgFrenLivianos = 
+                        new DlgIntegradoLiviano(
+                            frame, 0, 0, idPrueba, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, 
+                            tipoVehiculo, vehiculoVariable.getCarplate(), cam_usuario.getText(), ejesDondeTieneFrenoMano
+                        );
                     dlgFrenLivianos.setVisible(true);
                     doClose(0);
                     System.out.println("VOY A REGISTAR TIMER DE TRANSACCION ");
@@ -1789,8 +1871,9 @@ public class Frm_Placas extends javax.swing.JDialog {
 
                 } else if (vehiculoVariable.getTipoVehiculo().getNombre().equalsIgnoreCase("4x4")) {
                         System.out.println(" c7");
-                        DlgIntegradoLiviano dlgFrenLivianos = new DlgIntegradoLiviano(frame, 0, 0, idPrueba, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, vehiculoVariable.getTipoVehiculo().getNombre(), vehiculoVariable.getCarplate(), cam_usuario.getText());
-                        dlgFrenLivianos.setVisible(true);
+                        DlgIntegrado4x4 dlg4x4 = new DlgIntegrado4x4(frame, idPruebaDesviacion, idPruebaSuspension, idPruebaFreno, idUsuario, idHojaPruebaLocal, aplicTrans, ipEquipo, vehiculoVariable.getTipoVehiculo().getNombre(), vehiculoVariable.getCarplate(), cam_usuario.getText());//Es necesario configurar bien el constructor
+                        //DlgIntegradoLiviano dlgFrenLivianos = new DlgIntegradoLiviano(frame, 0, 0, idPrueba, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, vehiculoVariable.getTipoVehiculo().getNombre(), vehiculoVariable.getCarplate(), cam_usuario.getText());
+                        dlg4x4.setVisible(true);
                         doClose(0);
                         System.out.println("VOY A REGISTAR TIMER DE TRANSACCION ");
                         System.out.println(" c8");
@@ -1823,9 +1906,60 @@ public class Frm_Placas extends javax.swing.JDialog {
 
         } catch (Exception e) {
             System.out.println("Error en el metodo pruebaFrenos(): " + e);
+            e.printStackTrace();
         }
 
         doClose(0);
+    }
+
+    public static int dialogSeleccionFrenoMano(boolean initEje1, boolean initEje2) { // 0=Ninguno 1=Eje1, 2=Eje2, 3=Ambos ejes
+        JCheckBox eje1 = new JCheckBox("Eje 1");
+        JCheckBox eje2 = new JCheckBox("Eje 2");
+
+        eje1.setSelected(initEje1);
+        eje2.setSelected(initEje2);
+
+        JPanel panel = new JPanel();
+        panel.add(eje1);
+        panel.add(eje2);
+
+        int resultado = JOptionPane.showConfirmDialog(
+                null,
+                panel,
+                "Seleccione los Ejes con freno de mano.",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+        // Si retorna 0, significa que no tiene freno de mano
+        // Si retorna 1, significa que el freno de mano está en el eje 1
+        // Si retorna 2, significa que el freno de mano está en el eje 2
+        // Si retorna 3, significa que el freno de mano está en ambos ejes
+        if (resultado == JOptionPane.OK_OPTION) {
+            int suma = 0;
+            if (eje1.isSelected()) suma += 1;
+            if (eje2.isSelected()) suma += 2;
+            String mensaje = getMensajeFrenoMano(suma);
+            Mensajes.messageDoneTime(mensaje, 3);
+            return suma;
+        }
+
+        CMensajes.mensajeError("El usuario canceló la selección de freno de mano.");
+        throw new RuntimeException("El usuario canceló la selección de freno de mano.");
+    }
+
+    private static String getMensajeFrenoMano(int ejesDondeTieneFrenoMano){
+        String mensaje = "Se selecciono que el freno de mano del vehiculo esta en ";
+        if (ejesDondeTieneFrenoMano == 1) {
+            mensaje += "el eje 1.";
+        } else if (ejesDondeTieneFrenoMano == 2) {
+            mensaje += "el eje 2.";
+        } else if (ejesDondeTieneFrenoMano == 3) {
+            mensaje += "ambos ejes.";
+        } else {
+            mensaje = "Se selecciono que no hay freno de mano en el vehiculo.";
+        }
+        return mensaje;
     }
 
     /**
@@ -2028,13 +2162,19 @@ public class Frm_Placas extends javax.swing.JDialog {
                     }
                 }
 
+                // Si ejesDondeTieneFrenoMano es 0, significa que no tiene freno de mano
+                // Si ejesDondeTieneFrenoMano es 1, significa que el freno de mano está en el eje 1
+                // Si ejesDondeTieneFrenoMano es 2, significa que el freno de mano está en el eje 2
+                // Si ejesDondeTieneFrenoMano es 3, significa que el freno de mano está en ambos ejes
+                //int ejesDondeTieneFrenoMano = dialogSeleccionFrenoMano(false, true);// 0=Ninguno 1=Eje1, 2=Eje2, 3=Ambos ejes
+                
                 if (vehiculo.getTipoVehiculo().getNombre().equalsIgnoreCase("Liviano") || 
                 vehiculo.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis_AplTaximetro") || 
                 vehiculo.getTipoVehiculo().getNombre().equalsIgnoreCase("Taxis") || 
                 vehiculo.getTipoVehiculo().getNombre().equalsIgnoreCase("CUATRIMOTO")
                 ) {
                     registarPruebaLog(placas, usuarioJPA, "Desviacion");
-                    new DlgIntegradoLiviano(frame, idPrueba, 0, 0, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, vehiculo.getTipoVehiculo().getNombre(), vehiculo.getCarplate(), cam_usuario.getText()).setVisible(true);
+                    new DlgIntegradoLiviano(frame, idPrueba, 0, 0, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, vehiculo.getTipoVehiculo().getNombre(), vehiculo.getCarplate(), cam_usuario.getText(), 0).setVisible(true);
                     regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
 
                 } else if (vehiculo.getTipoVehiculo().getNombre().equalsIgnoreCase("Pesado")) {
@@ -2368,6 +2508,7 @@ public class Frm_Placas extends javax.swing.JDialog {
         } catch (Exception ex) {
             int e = 0;
             System.err.println("Error en el metodo : combustibleGasolina()" + ex.getLocalizedMessage() + ex.getMessage());
+            ex.printStackTrace();
             Logger.getLogger(Frm_Placas.class.getName()).log(Level.SEVERE, null, ex);
             doClose(0);
             return false;

@@ -13,6 +13,7 @@ package vistas;
 import Utilidades.UtilPropiedades;
 import Utilidades.Utilidades2;
 
+import com.mysql.jdbc.Util;
 import com.soltelec.loginadministrador.UtilLogin;
 import com.soltelec.modulopuc.utilidades.Mensajes;
 import dao.PruebaDefaultDAO;
@@ -20,7 +21,6 @@ import dao.PruebasDAO;
 import excepciones.NoPersistException;
 import java.awt.AWTException;
 import java.awt.Color;
-import java.awt.Frame;
 import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,12 +41,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
+import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
+import javax.swing.JPanel;
 import javax.swing.Timer;
 import modelo.Desviacion;
 import modelo.Frenos;
@@ -139,7 +140,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     private int teporizadorInercia;
     private int numeroejes = 2, ejemedido = 1, tiempomensajes, numtimerautomatico2 = 0;
     //private boolean ladomedido=true; //true=derecho false=izquierdo
-    private double velminimad, velminimai, umbral_velo, umbral_peso;
+    private double velminimad, velminimai, umbral_velo, umbralPeso;
     private Principal hiloPrincipal = new Principal();
     private boolean frenmano = false; //Indica si se esta haciendo la prueba del freno de mano
     private boolean ensenianza = false;
@@ -155,7 +156,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     private boolean repetirPrueba;
     ImageIcon imageOn = null;
     ImageIcon imageOff = null;
-    private FrmFrenadoAuxLiv frm;
+    //private FrmFrenadoAuxLiv claseFrenadoAuxiliar;
     boolean aplicFreAux = false;
     private final List<Double> fuerzasfdAux = new ArrayList<>(); //Valores de las fuerzas de frenado aux derechas de cada eje
     private final List<Double> fuerzasfiAux = new ArrayList<>(); //Valores de las fuerzas de frenado aux  izquierdas de cada 
@@ -169,6 +170,12 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     public static String NombreUsr;
     public static int activarFlag = 0;
     public static boolean activarFlagFrenos;
+    private int ejesDondeTieneFrenoMano = 0; // 0=Ninguno 1=Eje1, 2=Eje2, 3=Ambos ejes
+    private Double offsetCeroFuerzaDer = 0.0, offsetCeroFuerzaIzq = 0.0, offsetCeroPesoDer = 0.0, offsetCeroPesoIzq = 0.0;
+    private String[] ruedasOEjes = {"1 ", "2 ", "3 ", "4 "};
+    private String ejeORueda = "EJE "; 
+    private long tiempoFrenado = 0L;
+    private long tiempoApagarContactores = 0L;
 
     private DlgIntegradoLiviano(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -176,7 +183,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         this.setSize(this.getToolkit().getScreenSize());
         dialogCancelacion.setLocationRelativeTo(null);
         this.setTitle("SART 1.7.3 MOD D.F.S. PARA LIVIANO");
-        umbral_peso = 0;
+        umbralPeso = 0;
         spanfd = 0;
         spanfi = 0;
         spanpd = 0;
@@ -197,10 +204,12 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         }
     }
 
-    public DlgIntegradoLiviano(java.awt.Frame parent, int idPruebadesv, int idPruebasusp, int idPruebafren, int idUsuario, int idHojaPrueba, Boolean esEnsenanza, int aplicTrans, String ipEquipo, String tipoVehiculo, String Placa, String NombreUsr) {
+    public DlgIntegradoLiviano(java.awt.Frame parent, int idPruebadesv, int idPruebasusp, int idPruebafren, int idUsuario, int idHojaPrueba, Boolean esEnsenanza, int aplicTrans, String ipEquipo, String tipoVehiculo, String Placa, String NombreUsr, int frenoMano) {
+        
         this(parent, true);
         this.idPruebadesv = idPruebadesv;
         this.idPruebasusp = idPruebasusp;
+        
         this.idPruebafren = idPruebafren;
         this.idUsuario = idUsuario;
         this.ensenianza = esEnsenanza;
@@ -217,6 +226,47 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         this.tipoVehiculo = tipoVehiculo;
         this.Placa = Placa;
         this.NombreUsr = NombreUsr;
+        offsetCeroFuerzaDer = Utilidades2.leerDoubleDesdeArchivo("calibracion.properties", "offsetceroder");
+        offsetCeroFuerzaIzq = Utilidades2.leerDoubleDesdeArchivo("calibracion.properties", "offsetceroizq");
+        offsetCeroPesoDer = Utilidades2.leerDoubleDesdeArchivo("calibracion.properties", "offsetCeroPesoDer");
+        offsetCeroPesoIzq = Utilidades2.leerDoubleDesdeArchivo("calibracion.properties", "offsetCeroPesoIzq");
+        
+        //solo funciona para cuatrimotos pequeñas, motocarros y ciclomotores lo siguiente
+        tiempoFrenado =  Utilidades2.leerLongDesdeArchivo("calibracion.properties", "tiempoFrenado"); 
+        tiempoApagarContactores = Utilidades2.leerLongDesdeArchivo("calibracion.properties", "tiempoApagarContactores");
+
+        System.out.println("Valores desde calibracion.properties: ");
+        System.out.println("offsetCeroFuerzaDer: " + offsetCeroFuerzaDer); 
+        System.out.println("offsetCeroFuerzaIzq: " + offsetCeroFuerzaIzq);
+        System.out.println("offsetCeroPesoDer: " + offsetCeroPesoDer);
+        System.out.println("offsetCeroPesoIzq: " + offsetCeroPesoIzq);
+        System.out.println("tiempoFrenado: " + tiempoFrenado);
+        System.out.println("tiempoApagarContactores: " + tiempoApagarContactores);
+
+        if(tipoVehiculo.equalsIgnoreCase("CUATRIMOTOP")){
+            numeroejes = 4;
+            ejeORueda = "RUEDA ";
+            ruedasOEjes[0] = "DIzq ";
+            ruedasOEjes[1] = "TIzq ";
+            ruedasOEjes[2] = "DDer ";
+            ruedasOEjes[3] = "TDer ";
+        }
+        this.setTitle("SART 1.7.3 MOD D.F.S. PARA "+tipoVehiculo.toLowerCase());
+        LabelPrueba.setText("PRUEBA PARA "+tipoVehiculo.toUpperCase());
+
+        
+
+        if(tipoVehiculo.equalsIgnoreCase("CICLOMOTOR")){
+            this.led2.setVisible(false);
+            jLabel4.setVisible(false);
+            jLabel3.setText("Presencia");
+        } 
+
+        // Si ejesDondeTieneFrenoMano es 0, significa que no tiene freno de mano
+        // Si ejesDondeTieneFrenoMano es 1, significa que el freno de mano está en el eje 1
+        // Si ejesDondeTieneFrenoMano es 2, significa que el freno de mano está en el eje 2
+        // Si ejesDondeTieneFrenoMano es 3, significa que el freno de mano está en ambos ejes
+        ejesDondeTieneFrenoMano = frenoMano; // 0=Ninguno 1=Eje1, 2=Eje2, 3=Ambos ejes
     }
 
     /**
@@ -358,7 +408,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             while (!config.readLine().startsWith("[SUSPENSION]")) {
             }
             if ((line = config.readLine()).startsWith("umbral_peso_susp")) {
-                umbral_peso = Double.parseDouble(line.substring(line.indexOf(" ") + 1, line.length()));
+                umbralPeso = Double.parseDouble(line.substring(line.indexOf(" ") + 1, line.length()));
             } else {
                 JOptionPane.showMessageDialog(null, "Falla en el archivo de configuración campo umbral_peso_susp. Llame a servicio técnico",
                         "SART 1.7.3", JOptionPane.ERROR_MESSAGE);
@@ -416,7 +466,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                 setError_config(true);
             }
             if ((line = config.readLine()).startsWith("umbral_peso_fren")) {
-                umbral_peso = Double.parseDouble(line.substring(line.indexOf(" ") + 1, line.length()));
+                umbralPeso = Double.parseDouble(line.substring(line.indexOf(" ") + 1, line.length()));
             } else {
                 JOptionPane.showMessageDialog(null, "Falla en el archivo de configuración campo umbral_peso_fren. Llame a servicio técnico",
                         "SART 1.7.3", JOptionPane.ERROR_MESSAGE);
@@ -997,52 +1047,302 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                 System.out.println(new StringBuilder().append("No se pudo escribir el dato de peso en el backup ").append(ex).toString());
             }
         }
-        if (auxfuerzad - this.valcalcero1 < 0.0) {
-            if (freAux == false) {
-                System.out.println("Entro Trata de Fuerza Menor A Cero " + auxfuerzad);
-                this.fuerzasfd.add(Math.abs(auxfuerzad - this.valcalcero1));
-                // this.fuerzasfd.add(Double.valueOf(ThreadLocalRandom.current().nextDouble(15.10, 25.99)));
-            } else {
-                fuerzasfdAux.add(Math.abs(auxfuerzad - this.valcalcero1));
-            }
-        } else {
-            if (freAux == false) {
-                this.fuerzasfd.add(Double.valueOf(auxfuerzad - this.valcalcero1));
-            } else {
-                fuerzasfdAux.add(auxfuerzad - valcalcero1);
-            }
-        }
+        
+        double ceroFuerzaDer = this.valcalcero1 + offsetCeroFuerzaDer;
+        double ceroFuerzaIzq = this.valcalcero2 + offsetCeroFuerzaIzq;
+        double fuerzaDerSinSpan = Math.abs(auxfuerzad - ceroFuerzaDer);
+        double fuerzaIzqSinSpan = Math.abs(auxfuerzai - ceroFuerzaIzq);
 
-        if (auxfuerzai - this.valcalcero2 < 0.0) {
-            if (freAux == false) {
-                System.out.println("EntroTratadeFuerzaMenorACero " + auxfuerzai);
-                // this.fuerzasfi.add(Double.valueOf(ThreadLocalRandom.current().nextDouble(15.10, 25.99)));
-                this.fuerzasfi.add(Math.abs(auxfuerzai - this.valcalcero2));
-            } else {
-                fuerzasfiAux.add(Math.abs(auxfuerzai - this.valcalcero2));
-            }
+        if (freAux == false) {
+            this.fuerzasfd.add(Math.abs(fuerzaDerSinSpan));
+            System.out.println("fuerzaDer sin cero: " + auxfuerzad + " mV. Valor cero: "+ valcalcero1 + " mV. span: "+spanfd +". offset: "+ offsetCeroFuerzaDer+" mV.");
+            Utilidades2.medidasCuatrimotoPequena[ejemedido - 1][1] = fuerzaDerSinSpan * spanfd;
+            Utilidades2.parametros[ejemedido - 1][0] = valcalcero1;
+            Utilidades2.parametros[ejemedido - 1][1] = auxfuerzad;
+            Utilidades2.parametros[ejemedido - 1][2] = offsetCeroFuerzaDer;
+            Utilidades2.parametros[ejemedido - 1][3] = spanfd;
         } else {
-            if (freAux == false) {
-                this.fuerzasfi.add(Double.valueOf(auxfuerzai - this.valcalcero2));
-            } else {
-                fuerzasfiAux.add(auxfuerzai - valcalcero2);
-            }
+            fuerzasfdAux.add(Math.abs(fuerzaDerSinSpan));
+            System.out.println("fuerzaDerMano sin cero: " + auxfuerzad + " mV. Valor cero: "+ valcalcero1 + " mV. span: "+spanfd +". offset: "+ offsetCeroFuerzaDer+" mV.");
+            Utilidades2.medidasCuatrimotoPequena[4][0] = fuerzaDerSinSpan * spanfd;
+            Utilidades2.parametros[4][0] = valcalcero1;
+            Utilidades2.parametros[4][1] = auxfuerzad;
+            Utilidades2.parametros[4][2] = offsetCeroFuerzaDer;
+            Utilidades2.parametros[4][3] = spanfd;
         }
+        
+        if (freAux == false) {
+            this.fuerzasfi.add(Math.abs(fuerzaIzqSinSpan));
+            System.out.println("fuerzaIzq sin cero: " + auxfuerzai + " mV. Valor cero: "+ valcalcero2 + " mV. span: "+spanfi +". offset: "+ offsetCeroFuerzaIzq+" mV.");
+            Utilidades2.medidasCuatrimotoPequena[ejemedido + 1][1] = fuerzaIzqSinSpan * spanfi;
+            Utilidades2.parametros[ejemedido + 1][0] = valcalcero2;
+            Utilidades2.parametros[ejemedido + 1][1] = auxfuerzai;
+            Utilidades2.parametros[ejemedido + 1][2] = offsetCeroFuerzaIzq;
+            Utilidades2.parametros[ejemedido + 1][3] = spanfi;
+        } else {
+            fuerzasfiAux.add(Math.abs(fuerzaIzqSinSpan));
+            System.out.println("fuerzaIzqMano sin cero: " + auxfuerzai + " mV. Valor cero: "+ valcalcero2 + " mV. span: "+spanfi +". offset: "+ offsetCeroFuerzaIzq+" mV.");
+            Utilidades2.medidasCuatrimotoPequena[4][1] = fuerzaIzqSinSpan * spanfi;
+            Utilidades2.parametros[5][0] = valcalcero1;
+            Utilidades2.parametros[5][1] = auxfuerzad;
+            Utilidades2.parametros[5][2] = offsetCeroFuerzaDer;
+            Utilidades2.parametros[5][3] = spanfd;
+        }
+        
         if (freAux == false) {
             bc = fuerzasfd.size();
         } else {
             bc = fuerzasfdAux.size();
         }
-        System.out.println(new StringBuilder().append("de nuevo los cero de fuerza derecho e izquierdo ").append(this.valcalcero1 * this.spanfd).append(" N ").append(this.valcalcero2 * this.spanfi).append(" N").toString());
 
-        System.out.println(new StringBuilder().append("fuerza sin calibrar ").append(this.ejemedido).append(" derecha e izquierda: ").append(auxfuerzad * this.spanfd).append(" N ").append(auxfuerzai * this.spanfi).append(" N").toString());
+        if (tipoVehiculo.equals("Motocarro")) {
+            System.out.println("Ejemedido: " + ejemedido);
+            String logDer = 
+                "LogFuerzaDerecha"+ejeORueda+ruedasOEjes[ejemedido-1]+"\n"+
+                "\nCero con offset (cero+offset) { "+rd2(valcalcero1)+" + "+rd2(offsetCeroFuerzaDer)+" } = "+ ceroFuerzaDer + " mV.\n"+
+                "Fuerza con cero sin span(fuerzaSinCero-CeroConOffset) { "+rd2(auxfuerzad)+" - "+rd2(ceroFuerzaDer)+" } = "+ fuerzaDerSinSpan + " mV.\n"+
+                "Fuerza total(FuerzaConCeroSinSpan*Span) { "+rd2(fuerzaDerSinSpan)+" * "+rd2(spanfd)+" } = "+ (fuerzaDerSinSpan* spanfd) + " NEWTON.\n";
+            System.out.println(logDer);
 
-        System.out.println(new StringBuilder().append("fuerza del eje ").append(this.ejemedido).append(" derecha e izquierda: ").append(((Double) this.fuerzasfd.get(bc - 1)).doubleValue() * this.spanfd).append(" N ").append(((Double) this.fuerzasfi.get(bc - 1)).doubleValue() * this.spanfi).append(" N").toString());
+            String logIzq = 
+                "LogFuerzaIzquierda"+ejeORueda+ruedasOEjes[ejemedido-1]+"\n"+
+                "\nCero con offset (cero+offset) { "+rd2(valcalcero2)+" + "+rd2(offsetCeroFuerzaIzq)+" } = "+ ceroFuerzaIzq + " mV.\n"+
+                "Fuerza con cero sin span(fuerzaSinCero-CeroConOffset) { "+rd2(auxfuerzai)+" - "+rd2(ceroFuerzaIzq)+" } = "+ fuerzaIzqSinSpan + " mV.\n"+
+                "Fuerza total(FuerzaConCeroSinSpan*Span) { "+rd2(fuerzaIzqSinSpan)+" * "+rd2(spanfi)+" } = "+ (fuerzaIzqSinSpan* spanfi) + " NEWTON.\n";
+            System.out.println(logIzq);
 
+            imprimirDatosHastaElMomento();
+        }else{
+            System.out.println(new StringBuilder().append("de nuevo los cero de fuerza derecho e izquierdo ").append(this.valcalcero1 * this.spanfd).append(" N ").append(this.valcalcero2 * this.spanfi).append(" N").toString());
+            System.out.println(new StringBuilder().append("fuerza sin calibrar ").append(this.ejemedido).append(" derecha e izquierda: ").append(auxfuerzad * this.spanfd).append(" N ").append(auxfuerzai * this.spanfi).append(" N").toString());
+            System.out.println(new StringBuilder().append("fuerza del eje ").append(this.ejemedido).append(" derecha e izquierda: ").append(((Double) this.fuerzasfd.get(bc - 1)).doubleValue() * this.spanfd).append(" N ").append(((Double) this.fuerzasfi.get(bc - 1)).doubleValue() * this.spanfi).append(" N").toString());
+        }
+        
         this.Datos1.clear();
         this.Datos2.clear();
         this.Datosfil1.clear();
         this.Datosfil2.clear();
+    }
+
+    public void MedirFuerzaFrenado(boolean freAux, String lado) {
+        armonizar(this.Datos1, this.valcalcero1);
+        armonizar(this.Datos2, this.valcalcero2);
+        this.Datosfil1 = filtrar(this.Datos1);
+        this.Datosfil2 = filtrar(this.Datos2);
+        double auxfuerzad = CalcularMaximo(this.Datosfil1);
+        auxfuerzad = round(auxfuerzad, 5);
+        double auxfuerzai = CalcularMaximo(this.Datosfil2);
+        auxfuerzai = round(auxfuerzai, 5);
+        System.out.println(new StringBuilder().append("Maximo fuerza der: ").append(auxfuerzad).toString());
+        System.out.println(new StringBuilder().append("Maximo fuerza izq: ").append(auxfuerzai).toString());
+        long s = this.Datosfil1.size() - 1;
+        long r = this.Datosfil2.size() - 1;
+
+        int bc;
+        if (this.enablebackup) {
+            try {
+                if (ejemedido == 1) {
+                    regdatosffd1.write(new StringBuilder().append("el cero de fuerza derecha es: ").append(this.valcalcero1).toString());
+                    regdatosffd1.newLine();
+                    regdatosffd1.write(new StringBuilder().append("el span de fuerza derecha es: ").append(this.spanfd).toString());
+                    regdatosffd1.newLine();
+                    regdatosffd1.flush();
+                    
+                    int minSize = Math.min(Datosfil1.size(), Datos1.size());
+                    int maxIndex = (int) Math.min(s, minSize);
+        
+                    for (this.t = 0; this.t < maxIndex; this.t++) {
+                        regdatosffd1.write(new StringBuilder()
+                            .append(this.Datosfil1.get(this.t).toString())
+                            .append("  ")
+                            .append(this.Datos1.get(this.t))
+                            .toString());
+                        regdatosffd1.newLine();
+                    }
+                    regdatosffd1.close();
+                } else if (this.ejemedido == 2) {
+                    if (!isFrenmano()) {
+                        regdatosffd2.write(new StringBuilder().append("el cero de fuerza derecha es: ").append(this.valcalcero1).toString());
+                        regdatosffd2.newLine();
+                        regdatosffd2.write(new StringBuilder().append("el span de fuerza derecha es: ").append(this.spanfd).toString());
+                        regdatosffd2.newLine();
+                        regdatosffd2.flush();
+                        
+                        int minSize = Math.min(Datosfil1.size(), Datos1.size());
+                        int maxIndex = (int) Math.min(s, minSize);
+        
+                        for (this.t = 0; this.t < maxIndex; this.t++) {
+                            regdatosffd2.write(new StringBuilder()
+                                .append(this.Datosfil1.get(this.t).toString())
+                                .append("  ")
+                                .append(this.Datos1.get(this.t))
+                                .toString());
+                            regdatosffd2.newLine();
+                        }
+                        regdatosffd2.close();
+                    } else {
+                        regdatosffda.write(new StringBuilder().append("(Freno Mano) El cero de fuerza derecha es: ").append(this.valcalcero1).toString());
+                        regdatosffda.newLine();
+                        regdatosffda.write(new StringBuilder().append("(Freno Mano) El span de fuerza derecha es: ").append(this.spanfd).toString());
+                        regdatosffda.newLine();
+                        regdatosffda.flush();
+                        
+                        int minSize = Math.min(Datosfil1.size(), Datos1.size());
+                        int maxIndex = (int) Math.min(s, minSize);
+        
+                        for (this.t = 0; this.t < maxIndex; this.t++) {
+                            regdatosffda.write(new StringBuilder()
+                                .append(this.Datosfil1.get(this.t).toString())
+                                .append("  ")
+                                .append(this.Datos1.get(this.t))
+                                .toString());
+                            regdatosffda.newLine();
+                        }
+                        regdatosffda.close();
+                    }
+                }
+                if (this.ejemedido == 1) {
+                    regdatosffi1.write(new StringBuilder().append("el cero de fuerza izquierda es: ").append(this.valcalcero2).toString());
+                    regdatosffi1.newLine();
+                    regdatosffi1.write(new StringBuilder().append("el span de fuerza izquierda es: ").append(this.spanfi).toString());
+                    regdatosffi1.newLine();
+                    regdatosffi1.flush();
+                    
+                    int minSize = Math.min(Datosfil1.size(), Datos2.size());
+                    int maxIndex = (int) Math.min(s, minSize);
+        
+                    for (this.t = 0; this.t < maxIndex; this.t++) {
+                        regdatosffi1.write(new StringBuilder()
+                            .append(this.Datosfil1.get(this.t).toString())
+                            .append("  ")
+                            .append(this.Datos2.get(this.t))
+                            .toString());
+                        regdatosffi1.newLine();
+                    }
+                    regdatosffi1.close();
+                } else if (this.ejemedido == 2) {
+                    if (!isFrenmano()) {
+                        regdatosffi2.write(new StringBuilder().append("el cero de fuerza izquierda es: ").append(this.valcalcero2).toString());
+                        regdatosffi2.newLine();
+                        regdatosffi2.write(new StringBuilder().append("el span de fuerza izquierda es: ").append(this.spanfi).toString());
+                        regdatosffi2.newLine();
+                        regdatosffi2.flush();
+                        
+                        int minSize = Math.min(Datosfil1.size(), Datos2.size());
+                        int maxIndex = (int) Math.min(s, minSize);
+        
+                        for (this.t = 0; this.t < maxIndex; this.t++) {
+                            regdatosffi2.write(new StringBuilder()
+                                .append(this.Datosfil1.get(this.t).toString())
+                                .append("  ")
+                                .append(this.Datos2.get(this.t))
+                                .toString());
+                            regdatosffi2.newLine();
+                        }
+                        regdatosffi2.close();
+                    } else {
+                        regdatosffia.write(new StringBuilder().append("(Freno Mano) El cero de fuerza izquierda es: ").append(this.valcalcero2).toString());
+                        regdatosffia.newLine();
+                        regdatosffia.write(new StringBuilder().append("(Freno Mano) El span de fuerza izquierda es: ").append(this.spanfi).toString());
+                        regdatosffia.newLine();
+                        regdatosffia.flush();
+                        
+                        int minSize = Math.min(Datosfil1.size(), Datos2.size());
+                        int maxIndex = (int) Math.min(s, minSize);
+        
+                        for (this.t = 0; this.t < maxIndex; this.t++) {
+                            regdatosffia.write(new StringBuilder()
+                                .append(this.Datosfil1.get(this.t).toString())
+                                .append("  ")
+                                .append(this.Datos2.get(this.t))
+                                .toString());
+                            regdatosffia.newLine();
+                        }
+                        regdatosffia.close();
+                    }
+                }
+            } catch (IOException ex) {
+                System.out.println(new StringBuilder().append("No se pudo escribir el dato de peso en el backup ").append(ex).toString());
+            }
+        }
+
+        boolean isDerecho = lado.equalsIgnoreCase("derecho");
+        
+        double fuerzaDerSinSpan = 0.0;
+        double fuerzaIzqSinSpan = 0.0;
+        
+        if (isDerecho) {
+            double ceroFuerzaDer = this.valcalcero1 + offsetCeroFuerzaDer;
+            fuerzaDerSinSpan = Math.abs(auxfuerzad - ceroFuerzaDer);
+            System.out.println("\n\nFUERZA DERECHA "+ejeORueda+ruedasOEjes[ejemedido-1]+"--(RECORDAR QUE LOS VALORES NEGATIVOS SE LES SACA VALOR ABSOLUTO Y LOS CALCULOS TIENEN EN CUENTA TODAS LAS CIFRAS DECIMALES)-------------------\n");
+            if (freAux == false) {
+                this.fuerzasfd.add(fuerzaDerSinSpan);
+                System.out.println("fuerzaDer sin cero: " + auxfuerzad + " mV. Valor cero: "+ valcalcero1 + " mV. span: "+spanfd +". offset: "+ offsetCeroFuerzaDer+" mV.");
+                Utilidades2.medidasCuatrimotoPequena[ejemedido - 1][1] = fuerzaDerSinSpan * spanfd;
+                Utilidades2.parametros[ejemedido - 1][0] = valcalcero1;
+                Utilidades2.parametros[ejemedido - 1][1] = auxfuerzad;
+                Utilidades2.parametros[ejemedido - 1][2] = offsetCeroFuerzaDer;
+                Utilidades2.parametros[ejemedido - 1][3] = spanfd;
+            } else {
+                fuerzasfdAux.add(fuerzaDerSinSpan);
+                System.out.println("fuerzaDerMano sin cero: " + auxfuerzad + " mV. Valor cero: "+ valcalcero1 + " mV. span: "+spanfd +". offset: "+ offsetCeroFuerzaDer+" mV.");
+                Utilidades2.medidasCuatrimotoPequena[4][0] = fuerzaDerSinSpan * spanfd;
+                Utilidades2.medidasCuatrimotoPequena[4][0] = fuerzaDerSinSpan * spanfd;
+                Utilidades2.parametros[4][0] = valcalcero1;
+                Utilidades2.parametros[4][1] = auxfuerzad;
+                Utilidades2.parametros[4][2] = offsetCeroFuerzaDer;
+                Utilidades2.parametros[4][3] = spanfd;
+            }
+            String logDer = 
+                "\nCero con offset (cero+offset) { "+rd2(valcalcero1)+" + "+rd2(offsetCeroFuerzaDer)+" } = "+ ceroFuerzaDer + " mV.\n"+
+                "Fuerza con cero sin span(fuerzaSinCero-CeroConOffset) { "+rd2(auxfuerzad)+" - "+rd2(ceroFuerzaDer)+" } = "+ fuerzaDerSinSpan + " mV.\n"+
+                "Fuerza total(FuerzaConCeroSinSpan*Span) { "+rd2(fuerzaDerSinSpan)+" * "+rd2(spanfd)+" } = "+ (fuerzaDerSinSpan* spanfd) + " NEWTON.\n";
+            System.out.println(logDer);
+        }else{
+            double ceroFuerzaIzq = this.valcalcero2 + offsetCeroFuerzaIzq;
+            fuerzaIzqSinSpan = Math.abs(auxfuerzai - ceroFuerzaIzq);
+            System.out.println("\n\nFUERZA IZQUIERDA "+ejeORueda+ruedasOEjes[ejemedido-1]+"--(RECORDAR QUE LOS VALORES NEGATIVOS SE LES SACA VALOR ABSOLUTO Y LOS CALCULOS TIENEN EN CUENTA TODAS LAS CIFRAS DECIMALES)-------------------\n");
+            if (freAux == false) {
+                this.fuerzasfi.add(fuerzaIzqSinSpan);
+                System.out.println("fuerzaIzq sin cero: " + auxfuerzai + " mV. Valor cero: "+ valcalcero2 + " mV. span: "+spanfi +". offset: "+ offsetCeroFuerzaIzq+" mV.");
+                Utilidades2.medidasCuatrimotoPequena[ejemedido - 1][1] = fuerzaIzqSinSpan * spanfi;
+                Utilidades2.parametros[ejemedido - 1][0] = valcalcero2;
+                Utilidades2.parametros[ejemedido - 1][1] = auxfuerzai;
+                Utilidades2.parametros[ejemedido - 1][2] = offsetCeroFuerzaIzq;
+                Utilidades2.parametros[ejemedido - 1][3] = spanfi;
+            } else {
+                fuerzasfiAux.add(fuerzaIzqSinSpan);
+                System.out.println("fuerzaIzqMano sin cero: " + auxfuerzai + " mV. Valor cero: "+ valcalcero2 + " mV. span: "+spanfi +". offset: "+ offsetCeroFuerzaIzq+" mV.");
+                Utilidades2.medidasCuatrimotoPequena[4][1] = fuerzaIzqSinSpan * spanfi;
+                Utilidades2.parametros[5][0] = valcalcero1;
+                Utilidades2.parametros[5][1] = auxfuerzad;
+                Utilidades2.parametros[5][2] = offsetCeroFuerzaDer;
+                Utilidades2.parametros[5][3] = spanfd;
+            }
+            String logIzq = 
+                "\nCero con offset (cero+offset) { "+rd2(valcalcero2)+" + "+rd2(offsetCeroFuerzaIzq)+" } = "+ ceroFuerzaIzq + " mV.\n"+
+                "Fuerza con cero sin span(fuerzaSinCero-CeroConOffset) { "+rd2(auxfuerzai)+" - "+rd2(ceroFuerzaIzq)+" } = "+ fuerzaIzqSinSpan + " mV.\n"+
+                "Fuerza total(FuerzaConCeroSinSpan*Span) { "+rd2(fuerzaIzqSinSpan)+" * "+rd2(spanfi)+" } = "+ (fuerzaIzqSinSpan* spanfi) + " NEWTON.\n";
+            System.out.println(logIzq);
+        }
+
+        imprimirDatosHastaElMomento();
+        
+        if (freAux == false) {
+            bc = fuerzasfd.size();
+        } else {
+            bc = fuerzasfdAux.size();
+        }
+        this.Datos1.clear();
+        this.Datos2.clear();
+        this.Datosfil1.clear();
+        this.Datosfil2.clear();
+    }
+
+    public static double rd2(double valor) { // Redondeo a 2 decimales
+        BigDecimal bd = new BigDecimal(Double.toString(valor));
+        bd = bd.setScale(2, RoundingMode.HALF_UP); // Redondeo clásico
+        return bd.doubleValue();
     }
 
     public void MedirFuerzaVertical(String lado) throws InterruptedException {
@@ -1408,10 +1708,197 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     }
 
     public void MedirPeso() throws InterruptedException {
-        double auxpesod, auxpesoi;
+        double pesoDerMv, pesoIqzMv;
         int bc;
-        long s, r;
+        long NumDatosDer, NumDatosIzq;
         LabelInfo.setText("MIDIENDO PESO...!");
+        mostrarProgressBard();
+        CapturarDatos("ceros");
+        NumDatosDer = Datos3.size();
+        NumDatosIzq = Datos4.size();
+        comandoSTOP();
+        try {
+            puerto.clearFlujoEnt();
+            Thread.sleep(1000);
+            numtimer1 = 0;
+        } catch (InterruptedException ex) {
+        }
+
+        guardarDatosRespaldo(NumDatosDer, NumDatosIzq);
+
+        pesoDerMv = CalcularMediana(Datos3);
+        pesoIqzMv = CalcularMediana(Datos4);
+
+        mostrarMedidasPesos(pesoDerMv, pesoIqzMv);
+
+        System.out.println("\n\npesoDerMv: " + pesoDerMv + " mV. Valcalcero3: " + valcalcero3 + " mV. Spanpd: " + spanpd + ". offsetCeroDer: "+offsetCeroPesoDer +" mV.");
+        double valorCeroDer = valcalcero3 + offsetCeroPesoDer;
+        Double pesoSinSpamDer = Math.abs(pesoDerMv - valorCeroDer) ;
+        System.out.println("pesoIqzMv: " + pesoIqzMv + " mV. Valcalcero4: " + valcalcero4 + " mV. Spanpi: " + spanpi + ". offsetCeroIzq: "+offsetCeroPesoIzq +" mV.");
+        double valorCeroIzq = valcalcero4 + offsetCeroPesoIzq;
+        Double pesoSinSpamIzq = Math.abs(pesoIqzMv - valorCeroIzq) ;
+        
+        pesosd.add(pesoSinSpamDer);
+        pesosi.add(pesoSinSpamIzq);
+
+        String logDer = 
+            "logDerecho "+ejeORueda+ruedasOEjes[ejemedido-1]+"\n"+
+            "Cero total(valorCero+offsetCero){ "+rd2(valcalcero3)+" + "+rd2(offsetCeroPesoDer)+" } = "+ valorCeroDer+ "mV.\n"+
+            "Peso con cero sin span(pesoDerMv-ceroTotal){ "+rd2(pesoDerMv)+" - "+rd2(valorCeroDer)+" } = "+ pesoSinSpamDer+" mV.\n"+
+            "Peso total(pesoSinSpam*spanpd){ "+rd2(pesoSinSpamDer)+" * "+rd2(spanpd)+" } = "+ (pesoSinSpamDer * spanpd)+" Newton.\n";
+        System.out.println(logDer);
+
+        String logIzq = 
+            "logIzquierdo "+ejeORueda+ruedasOEjes[ejemedido-1]+"\n"+
+            "Cero total(valorCero+offsetCero){ "+rd2(valcalcero4)+" + "+rd2(offsetCeroPesoIzq)+" } = "+ valorCeroIzq+ "mV.\n"+
+            "Peso con cero sin span(pesoIqzMv-ceroTotal){ "+rd2(pesoIqzMv)+" - "+rd2(valorCeroIzq)+" } = "+ pesoSinSpamIzq+" mV.\n"+
+            "Peso total(pesoSinSpam*spanpi){ "+rd2(pesoSinSpamIzq)+" * "+rd2(spanpi)+" } = "+ (pesoSinSpamIzq * spanpi)+" Newton.\n";
+        System.out.println(logIzq);
+
+        Utilidades2.medidasCuatrimotoPequena[ejemedido-1][0] = pesoSinSpamDer * spanpd;
+        Utilidades2.medidasCuatrimotoPequena[ejemedido+1][0] = pesoSinSpamIzq * spanpi;
+
+        bc = pesosd.size();
+        System.out.println("\n\nLiviano solamente:\n peso del eje " + ejemedido + " derecho e izquierdo: " + (pesosd.get(bc - 1) * spanpd) + " Newton " + (pesosi.get(bc - 1) * spanpi) + " Newton");
+        Thread.sleep(100);
+        Datos3.clear();
+        Datos4.clear();
+    }
+
+    public void MedirPeso(String lado) throws InterruptedException {
+        boolean isDerecho = lado.equalsIgnoreCase("derecho");
+        double pesoDerMv, pesoIqzMv;
+        int bc;
+        long NumDatosDer, NumDatosIzq;
+        LabelInfo.setText("MIDIENDO PESO...!");
+        mostrarProgressBard();
+        CapturarDatos("ceros");
+        NumDatosDer = Datos3.size();
+        NumDatosIzq = Datos4.size();
+        comandoSTOP();
+        try {
+            puerto.clearFlujoEnt();
+            Thread.sleep(1000);
+            numtimer1 = 0;
+        } catch (InterruptedException ex) {
+        }
+
+        guardarDatosRespaldo(NumDatosDer, NumDatosIzq);
+
+        Double pesoSinSpamDer = 0.0;
+        Double pesoSinSpamIzq = 0.0;
+        if (isDerecho) {
+            pesoDerMv = CalcularMediana(Datos3);
+            pesoIqzMv = 0.0;
+            double valorCeroDer = valcalcero3 + offsetCeroPesoDer;
+            pesoSinSpamDer = Math.abs(pesoDerMv - valorCeroDer) ;
+            System.out.println("\n\nPESO DERECHO "+ejeORueda+ruedasOEjes[ejemedido-1]+"--(RECORDAR QUE LOS VALORES NEGATIVOS SE LES SACA VALOR ABSOLUTO Y LOS CALCULOS TIENEN EN CUENTA TODAS LAS CIFRAS DECIMALES)---------------------\n");
+            System.out.println("pesoDerMv: " + pesoDerMv + " mV. Valor cero: " + valcalcero3 + " mV. Spanpd: " + spanpd + ". offsetCeroDer: "+offsetCeroPesoDer);
+
+            String logDer = 
+                "Cero total(valorCero+offsetCero){ "+rd2(valcalcero3)+" + "+rd2(offsetCeroPesoDer)+" } = "+ valorCeroDer+ "mV.\n"+
+                "Peso con cero sin span(pesoDerMv-ceroTotal){ "+rd2(pesoDerMv)+" - "+rd2(valorCeroDer)+" } = "+ pesoSinSpamDer+" mV.\n"+
+                "Peso total(pesoSinSpam*spanpd){ "+rd2(pesoSinSpamDer)+" * "+rd2(spanpd)+" } = "+ (pesoSinSpamDer * spanpd)+" Newton.\n";
+
+            System.out.println(logDer);
+            Utilidades2.medidasCuatrimotoPequena[ejemedido-1][0] = pesoSinSpamDer * spanpd;
+        } else {
+            pesoDerMv = 0.0;
+            pesoIqzMv = CalcularMediana(Datos4);
+            double valorCeroIzq = valcalcero4 + offsetCeroPesoIzq;
+            pesoSinSpamIzq = Math.abs(pesoIqzMv - valorCeroIzq) ;
+            System.out.println("\n\nPESO IZQUIERDO "+ejeORueda+ruedasOEjes[ejemedido-1]+"--(RECORDAR QUE LOS VALORES NEGATIVOS SE LES SACA VALOR ABSOLUTO Y LOS CALCULOS TIENEN EN CUENTA TODAS LAS CIFRAS DECIMALES)-------------------\n");
+            System.out.println("\n\npesoIqzMv: " + pesoIqzMv + " mV. Valcalcero4: " + valcalcero4 + " mV. Spanpi: " + spanpi + ". offsetCeroIzq: "+offsetCeroPesoIzq);
+        
+            String logIzq = 
+                "Cero total(valorCero+offsetCero){ "+rd2(valcalcero4)+" + "+rd2(offsetCeroPesoIzq)+" } = "+ valorCeroIzq+ "mV.\n"+
+                "Peso con cero sin span(pesoIqzMv-ceroTotal){ "+rd2(pesoIqzMv)+" - "+rd2(valorCeroIzq)+" } = "+ pesoSinSpamIzq+" mV.\n"+
+                "Peso total(pesoSinSpam*spanpi){ "+rd2(pesoSinSpamIzq)+" * "+rd2(spanpi)+" } = "+ (pesoSinSpamIzq * spanpi)+" Newton.\n";
+
+            System.out.println(logIzq);
+            Utilidades2.medidasCuatrimotoPequena[ejemedido-1][0] = pesoSinSpamIzq * spanpi;
+        }
+
+        imprimirDatosHastaElMomento();
+
+        mostrarMedidasPesos(pesoDerMv, pesoIqzMv);
+
+        pesosd.add(pesoSinSpamDer);
+        pesosi.add(pesoSinSpamIzq);
+
+        bc = pesosd.size();
+        System.out.println("peso del eje " + ejemedido + " derecho e izquierdo: " + (pesosd.get(bc - 1) * spanpd) + " Newton " + (pesosi.get(bc - 1) * spanpi) + " Newton");
+        Thread.sleep(100);
+        Datos3.clear();
+        Datos4.clear();
+    }
+
+    private void imprimirDatosHastaElMomento(){
+        System.out.println("DATOS HASTA EL MOMENTO START------------------------------------\n");
+        for (int i = 0; i < Utilidades2.medidasCuatrimotoPequena.length; i++) {
+            if (i<4) System.out.println(ejeORueda + ruedasOEjes[i] + ": Peso = " + Utilidades2.medidasCuatrimotoPequena[i][0] + ", Fuerza = " + Utilidades2.medidasCuatrimotoPequena[i][1]);
+            else System.out.println("Fuerza frenoMano der = " + Utilidades2.medidasCuatrimotoPequena[i][0] + ", Fuerza frenoMano izq = " + Utilidades2.medidasCuatrimotoPequena[i][1]);
+        }
+        System.out.println("DATOS HASTA EL MOMENTO END------------------------------------\n");
+    }
+
+    private void guardarDatosRespaldo(double numDatosDer, double numDatosIzq) {
+        if (enablebackup) {
+            try {
+                if (ejemedido == 1) {
+                    regdatospd1.write("el cero de peso derecho es: " + valcalcero3);
+                    regdatospd1.newLine();
+                    regdatospd1.write("el span de peso derecho es: " + spanpd);
+                    regdatospd1.newLine();
+                    regdatospd1.flush();
+                    for (t = 0; t < numDatosDer; t++) {
+                        regdatospd1.write(Datos3.get(t).toString());
+                        regdatospd1.newLine();
+                    }
+                    regdatospd1.close();
+                } else if (ejemedido == 2) {
+                    regdatospd2.write("el cero de peso derecho es: " + valcalcero3);
+                    regdatospd2.newLine();
+                    regdatospd2.write("el span de peso derecho es: " + spanpd);
+                    regdatospd2.newLine();
+                    regdatospd2.flush();
+                    for (t = 0; t < numDatosDer; t++) {
+                        regdatospd2.write(Datos3.get(t).toString());
+                        regdatospd2.newLine();
+                    }
+                    regdatospd2.close();
+                }
+                if (ejemedido == 1) {
+                    regdatospi1.write("el cero de peso izquierdo es: " + valcalcero4);
+                    regdatospi1.newLine();
+                    regdatospi1.write("el span de peso izquierdo es: " + spanpi);
+                    regdatospi1.newLine();
+                    regdatospi1.flush();
+                    for (t = 0; t < numDatosIzq; t++) {
+                        regdatospi1.write(Datos4.get(t).toString());
+                        regdatospi1.newLine();
+                    }
+                    System.out.println("Tamaño  " + numDatosIzq);
+                    regdatospi1.close();
+                } else if (ejemedido == 2) {
+                    regdatospi2.write("el cero de peso izquierdo es: " + valcalcero4);
+                    regdatospi2.newLine();
+                    regdatospi2.write("el span de peso izquierdo es: " + spanpi);
+                    regdatospi2.newLine();
+                    regdatospi2.flush();
+                    for (t = 0; t < numDatosIzq; t++) {
+                        regdatospi2.write(Datos4.get(t).toString());
+                        regdatospi2.newLine();
+                    }
+                    regdatospi2.close();
+                }
+            } catch (IOException ex) {
+                System.out.println("No se pudo escribir el dato de peso en el backup " + ex);
+            }
+        }
+    }
+
+    private void mostrarProgressBard() throws InterruptedException{
         for (i = 0; i < 10; i++) {
             if (i == 1) {
                 jProgressBar1.setMaximum(10);
@@ -1425,75 +1912,10 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             jProgressBar1.setString((i + 1) * 10 + "%");
             Thread.sleep(500);
         }
-        CapturarDatos("ceros");
-        s = Datos3.size();
-        r = Datos4.size();
-        comandoSTOP();
-        try {
-            puerto.clearFlujoEnt();
-            Thread.sleep(1000);
-            numtimer1 = 0;
-        } catch (InterruptedException ex) {
-        }
+    }
 
-        if (enablebackup) {
-            try {
-                if (ejemedido == 1) {
-                    regdatospd1.write("el cero de peso derecho es: " + valcalcero3);
-                    regdatospd1.newLine();
-                    regdatospd1.write("el span de peso derecho es: " + spanpd);
-                    regdatospd1.newLine();
-                    regdatospd1.flush();
-                    for (t = 0; t < s; t++) {
-                        regdatospd1.write(Datos3.get(t).toString());
-                        regdatospd1.newLine();
-                    }
-                    regdatospd1.close();
-                } else if (ejemedido == 2) {
-                    regdatospd2.write("el cero de peso derecho es: " + valcalcero3);
-                    regdatospd2.newLine();
-                    regdatospd2.write("el span de peso derecho es: " + spanpd);
-                    regdatospd2.newLine();
-                    regdatospd2.flush();
-                    for (t = 0; t < s; t++) {
-                        regdatospd2.write(Datos3.get(t).toString());
-                        regdatospd2.newLine();
-                    }
-                    regdatospd2.close();
-                }
-                if (ejemedido == 1) {
-                    regdatospi1.write("el cero de peso izquierdo es: " + valcalcero4);
-                    regdatospi1.newLine();
-                    regdatospi1.write("el span de peso izquierdo es: " + spanpi);
-                    regdatospi1.newLine();
-                    regdatospi1.flush();
-                    for (t = 0; t < r; t++) {
-                        regdatospi1.write(Datos4.get(t).toString());
-                        regdatospi1.newLine();
-                    }
-                    System.out.println("Tamaño  " + r);
-                    regdatospi1.close();
-                } else if (ejemedido == 2) {
-                    regdatospi2.write("el cero de peso izquierdo es: " + valcalcero4);
-                    regdatospi2.newLine();
-                    regdatospi2.write("el span de peso izquierdo es: " + spanpi);
-                    regdatospi2.newLine();
-                    regdatospi2.flush();
-                    for (t = 0; t < r; t++) {
-                        regdatospi2.write(Datos4.get(t).toString());
-                        regdatospi2.newLine();
-                    }
-                    regdatospi2.close();
-                }
-            } catch (IOException ex) {
-                System.out.println("No se pudo escribir el dato de peso en el backup " + ex);
-            }
-        }
-        auxpesod = CalcularMediana(Datos3);
-        auxpesoi = CalcularMediana(Datos4);
-        System.out.println("  ");
-        System.out.println("  ");
-        System.out.println("Tabla de Valores MIDIENDO PESOS ");
+    private void mostrarMedidasPesos(double pesoDer, double pesoIzq) {
+        System.out.println("\n\n\nTabla de Valores MIDIENDO PESOS ");
         System.out.println("----------------------");
         System.out.println("----------------------");
         System.out.println("valcalcero3 es: " + valcalcero3 + " Mv");
@@ -1502,34 +1924,13 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         System.out.println("spanpd es: " + spanpd);
         System.out.println("spanpi es: " + spanpi);
         System.out.println("*****************************");
-        System.out.println("Captura Peso Derecho es: " + auxpesod + " Mv");
-        System.out.println("Captura Peso Izquierdo es: " + auxpesoi + " Mv");
+        System.out.println("Captura Peso Derecho es: " + pesoDer + " Mv");
+        System.out.println("Captura Peso Izquierdo es: " + pesoIzq + " Mv");
         System.out.println("*****************************");
-        System.out.println("peso medido en lado Derecho " + ((auxpesod - valcalcero3) * spanpd) + " Newton");
-        System.out.println("peso medido en lado Izquierdo " + ((auxpesoi - valcalcero4) * spanpi) + " Newton");
-        System.out.println("--------------------");
-        System.out.println("-------------------");
-        System.out.println("  ");
-        System.out.println("  ");
-
-        if ((auxpesod - valcalcero3) < 0) {
-            pesosd.add(0.0);
-        } else {
-            pesosd.add(auxpesod - valcalcero3);
-        }
-        if ((auxpesoi - valcalcero4) < 0) {
-            pesosi.add(0.0);
-        } else {
-            pesosi.add(auxpesoi - valcalcero4);
-        }
-
-        bc = pesosd.size();
-        // System.out.println("de nuevo el cero de peso derecho e izquierdo " + (valcalcero3 * spanpd) + " Newton "   + (valcalcero4 * spanpi) + " N");
-        // System.out.println("peso sin calibrar " + ejemedido + " derecho e izquierdo: " + (auxpesod * spanpd) + " Newton " + (auxpesoi * spanpi) + " N");
-        System.out.println("peso del eje " + ejemedido + " derecho e izquierdo: " + (pesosd.get(bc - 1) * spanpd) + " Newton " + (pesosi.get(bc - 1) * spanpi) + " Newton");
-        Thread.sleep(100);
-        Datos3.clear();
-        Datos4.clear();
+        System.out.println("peso medido en lado Derecho " + ((pesoDer - valcalcero3) * spanpd) + " Newton");
+        System.out.println("peso medido en lado Izquierdo " + ((pesoIzq - valcalcero4) * spanpi) + " Newton");
+        System.out.println("----------------------");
+        System.out.println("----------------------\n\n\n");
     }
 
     public void MedirDesviacion() throws InterruptedException {
@@ -1587,13 +1988,11 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         Datosfil1.clear();
     }
 
-    public void EsperaPeso() throws InterruptedException {
-        double pesomedd, pesomedi;
-        double calcPesoDer = 0;
-        double calcPesoIzq = 0;
-        Double ceroChanel3 = 0.0;
-        boolean neceReinTrama = false;
-        System.out.println("Entre Metodo esperaPeso ");
+    public void EsperarPeso() throws InterruptedException {
+        double persoDer, pesoIzq;
+        double calPesoDer = 0;
+        double calPesoIzq = 0;
+        System.out.println("Entrando al metodo EsperaPeso()");
         LabelInfo.setText("ESPERANDO EJE " + ejemedido + " EN LA PLANCHA DE PESO..!");
         LabelAviso.setText("PLANCHA");
         timeraviso.start();
@@ -1601,71 +2000,25 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         Thread.sleep(500);
         while (true) {
             CapturarDatos("ceros");
-            pesomedd = CalcularMediana(Datos3);
-            pesomedi = CalcularMediana(Datos4);
-            System.out.println("  ");
-            System.out.println("  ");
-            System.out.println("Tabla de Valores Leidos para el Comand Suspension ");
-            System.out.println("----------------------");
-            System.out.println("----------------------");
-            System.out.println("valcalcero3 es: " + valcalcero3 + " Mv");
-            System.out.println("valcalcero4 es: " + valcalcero4 + " Mv");
-            System.out.println("*****************************");
-            System.out.println("spanpd es: " + spanpd);
-            System.out.println("spanpi es: " + spanpi);
-            System.out.println("*****************************");
-            System.out.println("Peso Medido Derecho: " + pesomedd + " Mv");
-            System.out.println("Peso Medido Izquierdo: " + pesomedi + " Mv");
-            System.out.println("*****************************");
-            System.out.println("peso medido en lado Derecho " + ((pesomedd - valcalcero3) * spanpd) + " Newton");
-            System.out.println("peso medido en lado Izquierdo " + ((pesomedi - valcalcero4) * spanpi) + " Newton");
-            System.out.println("--------------------");
-            System.out.println("-------------------");
-            System.out.println("umbral peso: " + umbral_peso + " Newton.");
-            System.out.println("-------------------");
-            System.out.println("tot BYTES CANAL 3: " + Datos3.size() + " UND");
-            System.out.println("tot BYTES CANAL 4: " + Datos4.size() + " UND");
-            if (Datos3.size() > 21) {
-                calcPesoDer = (pesomedd - valcalcero3) * spanpd;
-            } else {
-                calcPesoDer = 0;
-                neceReinTrama = true;
-                System.out.println(" reiniciando trama X derecho");
-            }
-            if (Datos4.size() > 21) {
-                calcPesoIzq = (pesomedi - valcalcero4) * spanpi;
-            } else {
-                calcPesoIzq = 0;
-                neceReinTrama = true;
-                System.out.println(" reiniciando trama X Izquierdo");
-            }
-            if (calcPesoDer < 0 || calcPesoIzq < 0) {
-                neceReinTrama = true;
-                System.out.println(" reiniciando trama X valores en NEGATIVOS");
-            }
-            if (calcPesoDer == 0 || calcPesoIzq == 0) {
-                neceReinTrama = true;
-                System.out.println(" reiniciando trama X valores LISTAS VACIOS");
-            }
-            if (neceReinTrama == true) {
-                comandoSTOP();
-                try {
-                    puerto.clearFlujoEnt();
-                    puerto.setFlujoEnt(puerto);
-                    Thread.sleep(1900);
-                    comandoCEROS(0);
-                    Thread.sleep(500);
-                    neceReinTrama = false;
-                } catch (InterruptedException ex) {
-                }
+            persoDer = CalcularMediana(Datos3);
+            pesoIzq = CalcularMediana(Datos4);
+
+            mostrarInformacionSensores(persoDer, pesoIzq);
+
+            calPesoDer = (persoDer - valcalcero3) * spanpd;
+            calPesoIzq = (pesoIzq - valcalcero4) * spanpi;
+            
+            if (isReiniciarTrama(calPesoDer, calPesoIzq, "ambos")) {
+                calPesoDer = 0;
+                calPesoIzq = 0;
+                reiniciarTrama();
             } else {
                 puerto.clearFlujoEnt();
                 puerto.setFlujoEnt(puerto);
                 Thread.sleep(540);
             }
-            Datos3.clear();
-            Datos4.clear();
-            if (calcPesoDer >= umbral_peso && calcPesoIzq >= umbral_peso) {
+            limpiarDatosPeso();
+            if (calPesoDer >= umbralPeso && calPesoIzq >= umbralPeso) {
                 break;
             }
         }
@@ -1678,12 +2031,142 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             Thread.sleep(1000);
             numtimer1 = 0;
         } catch (InterruptedException ex) {
+            ex.printStackTrace();
         }
-        Datos3.clear();
-        Datos4.clear();
+        limpiarDatosPeso();
         LabelAviso.setText("");
         timeraviso.stop();
         LabelAviso.setBackground(PanelTitulos.getBackground());
+    }
+
+    //Metodo para esperar el peso en la plancha de peso izquierdo o derecho pero no ambos
+    public void EsperarPeso(String lado) throws InterruptedException {
+        boolean isDerecho = lado.equalsIgnoreCase("derecho");
+        double persoDer, pesoIzq;
+        double calPesoDer = 0;
+        double calPesoIzq = 0;
+        System.out.println("Entrando al metodo EsperaPeso(String lado): " + lado);
+        LabelInfo.setText("ESPERANDO "+ejeORueda + ruedasOEjes[ejemedido-1] + "EN LA PLANCHA DE PESO "+lado.toUpperCase()+"..!");
+        LabelAviso.setText("PLANCHA");
+        timeraviso.start();
+        comandoCEROS(0);
+        Thread.sleep(500);
+        while (true) {
+            CapturarDatos("ceros");
+
+            if (isDerecho) {
+                persoDer = CalcularMediana(Datos3);
+                pesoIzq = 0;
+                calPesoDer = (persoDer - valcalcero3) * spanpd;
+                calPesoIzq = 0;
+            }else{
+                persoDer = 0;
+                pesoIzq = CalcularMediana(Datos4);
+                calPesoDer = 0;
+                calPesoIzq = (pesoIzq - valcalcero4) * spanpi;
+            }
+
+            mostrarInformacionSensores(persoDer, pesoIzq);
+            
+            if (isReiniciarTrama(calPesoDer, calPesoIzq, lado)) {
+                calPesoDer = 0;
+                calPesoIzq = 0;
+                reiniciarTrama();
+            } else {
+                puerto.clearFlujoEnt();
+                puerto.setFlujoEnt(puerto);
+                Thread.sleep(540);
+            }
+            limpiarDatosPeso();
+            if (calPesoDer >= umbralPeso || calPesoIzq >= umbralPeso) {
+                break;
+            }
+        }
+        System.out.println("  ");
+        System.out.println("  ");
+        System.out.println("Me sali del ciclo del UMBRAL");
+        comandoSTOP();
+        try {
+            puerto.clearFlujoEnt();
+            Thread.sleep(1000);
+            numtimer1 = 0;
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+        limpiarDatosPeso();
+        LabelAviso.setText("");
+        timeraviso.stop();
+        LabelAviso.setBackground(PanelTitulos.getBackground());
+    }
+
+    private void mostrarInformacionSensores(double pesomedd, double pesomedi) {
+        System.out.println("\n\nTabla de Valores Leidos para el Comand Suspension");
+        System.out.println("----------------------");
+        System.out.println("valcalcero3 es: " + valcalcero3 + " Mv");
+        System.out.println("valcalcero4 es: " + valcalcero4 + " Mv");
+        System.out.println("spanpd es: " + spanpd);
+        System.out.println("spanpi es: " + spanpi);
+        System.out.println("Peso Medido Derecho: " + pesomedd + " Mv");
+        System.out.println("Peso Medido Izquierdo: " + pesomedi + " Mv");
+        System.out.println("Peso medido en lado Derecho: " + ((pesomedd - valcalcero3) * spanpd) + " Newton");
+        System.out.println("Peso medido en lado Izquierdo: " + ((pesomedi - valcalcero4) * spanpi) + " Newton");
+        System.out.println("Umbral peso: " + umbralPeso + " Newton.");
+        System.out.println("Total BYTES CANAL 3: " + Datos3.size());
+        System.out.println("Total BYTES CANAL 4: " + Datos4.size());
+    }
+
+    private boolean isReiniciarTrama(double calcPesoDer, double calcPesoIzq, String lado) {
+        if (lado.equalsIgnoreCase("derecho")) {
+            return isReiniciarTramaDer(calcPesoDer);
+        } else if (lado.equalsIgnoreCase("izquierdo")) {
+            return isReiniciarTramaIqz(calcPesoIzq);
+        } else{
+            return isReiniciarTramaDer(calcPesoDer) || isReiniciarTramaIqz(calcPesoIzq);
+        }
+    }
+
+    private boolean isReiniciarTramaDer(double calcPesoDer) {
+        if (
+            Datos3.size() <= 21 ||
+            calcPesoDer < 0 ||
+            calcPesoDer == 0
+        ) {
+            System.out.println("Reiniciando trama Valores por alguna de las siguientes razones plancha derecha: ");
+            System.out.println("-Trama por derecho debe ser mayor a 21. Valores: " + Datos3.size());
+            System.out.println("-Los valores de peso no pueden ser menor o igual a cero. Valor: " + calcPesoDer);
+            return true;
+        } return false;
+    }
+
+    private boolean isReiniciarTramaIqz(double calcPesoIzq) {
+        if (
+            Datos4.size() <= 21 || 
+            calcPesoIzq < 0 ||
+            calcPesoIzq == 0
+        ) {
+            System.out.println("Reiniciando trama Valores por alguna de las siguientes razones plancha izquierda: ");
+            System.out.println("-Trama por izquierdo debe ser mayor a 21. Valores: " + Datos4.size());
+            System.out.println("-Los valores de peso no pueden ser menor o igual a cero. Valor: " + calcPesoIzq);
+            return true;
+        } return false;
+    }
+
+    private void reiniciarTrama() {
+        comandoSTOP();
+        try {
+            puerto.clearFlujoEnt();
+            puerto.setFlujoEnt(puerto);
+            Thread.sleep(1900);
+            comandoCEROS(0);
+            Thread.sleep(500);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void limpiarDatosPeso(){
+        Datos3.clear();
+        Datos4.clear();
     }
 
     public void EsperaDesviacion() {
@@ -1708,7 +2191,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     public void EsperaRodillos() throws InterruptedException {
         System.out.println("Esperando rodillos start");
         int conteoreg = 0;
-        LabelInfo.setText("ESPERANDO EJE  " + ejemedido + " EN LOS RODILLO..!");
+        LabelInfo.setText("ESPERANDO "+ ejeORueda + ruedasOEjes[ejemedido-1] + "EN LOS RODILLOS..!");
         LabelAviso.setText("RODILLOS");
         timeraviso.start();
         jProgressBar1.setMaximum(10);
@@ -1720,6 +2203,50 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             jProgressBar1.setString((conteoreg + 1) * 10 + "%");
             CapturarDatos("frenometro");
             if (isCanal0() && isCanal1()) {
+                conteoreg++;
+            } else {
+                conteoreg = 0;
+                LabelInfo.setText("Por favor MANTENGA el eje sobre los rodillos");
+            }
+            Datos1.clear();
+            Datos2.clear();
+            Datos3.clear();
+            Datos4.clear();
+            Datos5.clear();
+            Datos6.clear();
+            if (conteoreg == 10) {
+                break;
+            }
+        }
+        comandoSTOP();
+        try {
+            puerto.clearFlujoEnt();
+            Thread.sleep(1000);
+            numtimer1 = 0;
+        } catch (InterruptedException ex) {
+        }
+        LabelAviso.setText("");
+        timeraviso.stop();
+        LabelAviso.setBackground(PanelTitulos.getBackground());
+        System.out.println("Esperando rodillos end");
+    }
+
+    public void EsperaRodillos(String lado) throws InterruptedException {
+        boolean isDerecho = lado.equalsIgnoreCase("derecho");
+        System.out.println("Esperando rodillos start");
+        int conteoreg = 0;
+        LabelInfo.setText("ESPERANDO "+ ejeORueda + ruedasOEjes[ejemedido-1] + " EN EL RODILLO "+lado.toUpperCase()+"..!");
+        LabelAviso.setText("RODILLOS");
+        timeraviso.start();
+        jProgressBar1.setMaximum(10);
+        puerto.setFlujoEnt(puerto);
+        comandoFREN();
+        while (true) {
+            Thread.sleep(500);
+            jProgressBar1.setValue(conteoreg + 1);
+            jProgressBar1.setString((conteoreg + 1) * 10 + "%");
+            CapturarDatos("frenometro");
+            if ((isCanal0() && isDerecho) || (isCanal1() && !isDerecho)) {
                 conteoreg++;
             } else {
                 conteoreg = 0;
@@ -1777,7 +2304,11 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         puerto.setFlujoEnt(puerto);
     }
 
-    public void MoverRodillos(Boolean freAux) throws InterruptedException {
+    public void MoverRodillos(Boolean freAux) throws InterruptedException{
+        MoverRodillos(freAux, "ambos");
+    }
+
+    public void MoverRodillos(Boolean freAux, String lado) throws InterruptedException {
         System.out.println("moviendo rodillos start");
         puerto.setFlujoEnt(puerto);
         comandoFREN();
@@ -1812,10 +2343,12 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                     case 4:
                         System.out.println("Vaya frenando gradualmente");
                         this.LabelInfo.setText("POR FAVOR VAYA FRENANDO ..!");
+                        
                         break;
                     case 5:
                         System.out.println("Apagando contactores");
                         this.LabelInfo.setText("APAGANDO CONTACTORES..!");
+                        if (!lado.equalsIgnoreCase("ambos")) Thread.sleep(tiempoApagarContactores);
                         break;
                     case 6:
                         System.out.println("Fuerza de frenado medida");
@@ -1833,7 +2366,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
                     if (((!isCanal0()) || (!isCanal1())) && (this.pasoactual != 6)) {
                         this.LabelAviso.setBackground(this.PanelTitulos.getBackground());
-                        if ((this.pasoactual == 4) || (this.pasoactual == 5)) {
+                        if ((this.pasoactual == 4) || (this.pasoactual == 5) || isVehiculoMedidoPorUnaLlanta()) {
                             cont1s = this.tiempo_paso / 1000;
                         } else {
                             this.LabelInfo.setText("El eje se salio de los rodillos");
@@ -1868,9 +2401,17 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                         System.out.println(new StringBuilder().append("velocidad minima derecha: ").append(this.velminimad).append(" velocidad minima izquierda: ").append(this.velminimai).toString());
                         this.timeraviso.start();
                         this.LabelAviso.setText("FRENE");
+                        System.out.println("Frenando. tiempo de frenado: " + this.tiempoFrenado);
+                        if (!lado.equalsIgnoreCase("ambos")) Thread.sleep(tiempoFrenado);
                         break;
                     case 4:
-                        MedirFuerzaFrenado(freAux);
+
+                        if (lado.equalsIgnoreCase("ambos")) {
+                            MedirFuerzaFrenado(freAux);
+                        }else{
+                            MedirFuerzaFrenado(freAux, lado);
+                        }
+                        
                         this.timeraviso.stop();
                         this.LabelAviso.setText("");
                         this.LabelAviso.setIcon(null);
@@ -3383,17 +3924,17 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             }
         } else {
             BotonEmpezar.setEnabled(false);
-            LabelEje.setText("EJE " + ejemedido);
+            LabelEje.setText(ejeORueda + ruedasOEjes[ejemedido-1]);
             if (tiempomensajes == 0) {
                 JOptionPane.showMessageDialog(this, "POR FAVOR ASEGURESE DE QUE LAS PLANCHAS ESTEN LIBRES", "SART 1.7.3",
                         JOptionPane.WARNING_MESSAGE);
             } else {
                 if (enableswfren == true) {
-                    frm = new FrmFrenadoAuxLiv(this, true);
-                    frm.setModal(true);
-                    frm.setLocationRelativeTo(null);
-                    frm.setVisible(true);
-                    System.out.println(" VALOR DE FRENO DE MANO " + frm.jCheckBox1.isSelected() + " y el otro " + frm.jCheckBox2.isSelected());
+                    /* claseFrenadoAuxiliar = new FrmFrenadoAuxLiv(this, true, !tipoVehiculo.equalsIgnoreCase("CICLOMOTOR"));
+                    claseFrenadoAuxiliar.setModal(true);
+                    claseFrenadoAuxiliar.setLocationRelativeTo(null);
+                    claseFrenadoAuxiliar.setVisible(true);
+                    System.out.println(" VALOR DE FRENO DE MANO " + claseFrenadoAuxiliar.jCheckBox1.isSelected() + " y el otro " + claseFrenadoAuxiliar.jCheckBox2.isSelected()); */
                     try {
                         Thread.currentThread().sleep(3500);
                     } catch (InterruptedException ex) {
@@ -3432,7 +3973,19 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         }
 
         if (enablehwfren && enableswfren && enablereg) {
-            RegistrarMedidasFrenos();
+            System.out.println();
+            String datosConOffset = Utilidades2.generarReporteParametros(true);
+            String datosSinOffset = Utilidades2.generarReporteParametros(false);
+            String datosfuerzas = Utilidades2.generarReporteFuerzas();
+
+            System.out.println("========DATOS CON OFFSET: \n" + datosConOffset);
+            System.out.println("========DATOS SIN OFFSET: \n" + datosSinOffset);
+            System.out.println("========DATOS FUERZAS: \n" + datosfuerzas);
+
+            if (tipoVehiculo.equalsIgnoreCase("CUATRIMOTOP")) registrarMedidasCuatrimotoPequeno();
+            else if (tipoVehiculo.equalsIgnoreCase("CICLOMOTOR")) registrarMedidasCiclomotor();
+            else if (tipoVehiculo.equalsIgnoreCase("Motocarro")) registrarMedidasMotoCarro();
+            else RegistrarMedidasFrenos();
         }
         if (!repetirPrueba) {
             if (enablehwdesv && enableswdesv && enablereg) {
@@ -3445,6 +3998,272 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
         this.dispose();
     }//GEN-LAST:event_BotonFinalizarActionPerformed
+
+    private void registrarMedidasCiclomotor(){
+        double fuerzaD = Utilidades2.medidasCuatrimotoPequena[0][1]; //fuerza Delantera
+        double fuerzaT = Utilidades2.medidasCuatrimotoPequena[1][1]; //fuerza Trasera
+
+        double pesoD = Utilidades2.medidasCuatrimotoPequena[0][0]; //peso Delantera
+        double pesoT = Utilidades2.medidasCuatrimotoPequena[1][0]; //peso Trasera
+
+        double fFrenoMano = Utilidades2.medidasCuatrimotoPequena[4][0]; //Fuerza freno mano
+
+        double sumaFuerzas = fuerzaD+fuerzaT;
+        double sumaPesos = pesoD+pesoT;
+
+        double eficacia = (sumaFuerzas/sumaPesos)*100;
+
+        double eficaciaFrenoMano = (fFrenoMano / sumaPesos)*100;
+
+        imprimirDatosCuatrimotoPequena(
+            0, 0, fuerzaD, fuerzaT,
+            0, 0, pesoD, pesoT,
+            0, fFrenoMano,
+            0, 0,
+            sumaFuerzas, sumaPesos, fFrenoMano,
+            eficacia, eficaciaFrenoMano
+        );
+
+        Utilidades2.guardarOModificarMedida(5000, idPruebafren, pesoD, "N");
+        Utilidades2.guardarOModificarMedida(5001, idPruebafren, pesoT, "N");
+        Utilidades2.guardarOModificarMedida(5008, idPruebafren, fuerzaD, "N");
+        Utilidades2.guardarOModificarMedida(5009, idPruebafren, fuerzaT, "N");
+        Utilidades2.guardarOModificarMedida(5024, idPruebafren, eficacia, "N");
+
+        if (ejesDondeTieneFrenoMano != 0) { //si ejesDondeTieneFrenoMano es 0, no se tiene en cuenta el freno de mano
+            Utilidades2.guardarOModificarMedida(5016, idPruebafren, fFrenoMano, "N");
+            Utilidades2.guardarOModificarMedida(5036, idPruebafren, eficaciaFrenoMano, "N");
+            if (eficaciaFrenoMano<18) Utilidades2.cargarDefectos(56003, (long) idPruebafren);
+        }
+        
+        boolean aprobado = true;
+        if (eficacia<40){
+            if (Utilidades2.getIsEditable() == 0) {
+                Utilidades2.cargarDefectos(56000, (long) idPruebafren);
+            }
+            aprobado = false;
+        } 
+
+        int idEquipo = Integer.parseInt(Utilidades2.obtenerDatos("equipos.properties", "FRENO"));
+        String serialEquipo = Utilidades2.obtenerSerialResolucionPorId(idEquipo);
+
+        if (Utilidades2.getIsEditable() == 1 && !aprobado) { //si tiene artefacto y esta desaprobado
+            Utilidades2.actualizarPrueba(false, false, (long) idUsuario, serialEquipo, (long) idPruebafren, "");
+        }else{
+            Utilidades2.actualizarPrueba(true, aprobado, (long) idUsuario, serialEquipo, (long) idPruebafren, "");
+        }
+
+        Mensajes.messageDoneTime("Se ha Registrado la Prueba de frenos de ciclomotor de manera Exitosa.", 3);
+
+    }
+
+    private void registrarMedidasCuatrimotoPequeno(){
+        
+        double pesoDD = Utilidades2.medidasCuatrimotoPequena[0][0]; //peso Delantera Derecha
+        double pesoTD = Utilidades2.medidasCuatrimotoPequena[1][0]; //peso Trasera Derecha
+        double pesoDI = Utilidades2.medidasCuatrimotoPequena[2][0]; //peso Delantera Izquierda
+        double pesoTI = Utilidades2.medidasCuatrimotoPequena[3][0]; //peso Trasera Izquierda
+
+        double fuerzaDD = recalculoFuerzas(Utilidades2.medidasCuatrimotoPequena[0][1], pesoDD); //fuerza Delantera Derecha
+        double fuerzaTD = recalculoFuerzas(Utilidades2.medidasCuatrimotoPequena[1][1], pesoTD); //fuerza Trasera Derecha
+        double fuerzaDI = recalculoFuerzas(Utilidades2.medidasCuatrimotoPequena[2][1], pesoDI); //fuerza Delantera Izquierda
+        double fuerzaTI = recalculoFuerzas(Utilidades2.medidasCuatrimotoPequena[3][1], pesoTI); //fuerza Trasera Izquierda
+
+        double fDerFrenoMano = recalculoFuerzas(Utilidades2.medidasCuatrimotoPequena[4][0], pesoTD); //Fuerza freno mano derecha
+        double fIzqFrenoMano = recalculoFuerzas(Utilidades2.medidasCuatrimotoPequena[4][1], pesoTI); //Fuerza freno mano Izquierda
+
+        double fMayorEje1 = Utilidades2.getMayor(fuerzaDI, fuerzaDD); // fuerzaMayorEje1
+        double fMenorEje1 = Utilidades2.getMenor(fuerzaDI, fuerzaDD); // fuerzaMenorEje1
+        double fMayorEje2 = Utilidades2.getMayor(fuerzaTI, fuerzaTD); // fuerzaMayorEje2
+        double fMenorEje2 = Utilidades2.getMenor(fuerzaTI, fuerzaTD); // fuerzaMenorEje2
+
+        double desequilibrioEje1 = (100*(fMayorEje1-fMenorEje1))/fMayorEje1;
+        double desequilibrioEje2 = (100*(fMayorEje2-fMenorEje2))/fMayorEje2;
+
+        double sumaFuerzas = fuerzaDI+fuerzaTI+fuerzaDD+fuerzaTD;
+        double sumaPesos = pesoDI+pesoTI+pesoDD+pesoTD;
+        double sumaFuerzasMano = fIzqFrenoMano+fDerFrenoMano;
+
+        double eficaciaTotal = (sumaFuerzas/sumaPesos)*100;
+        double eficaciaMano = (sumaFuerzasMano/sumaPesos)*100;
+
+        imprimirDatosCuatrimotoPequena(
+            fuerzaDI, fuerzaTI, fuerzaDD, fuerzaTD,
+            pesoDI, pesoTI, pesoDD, pesoTD,
+            fIzqFrenoMano, fDerFrenoMano,
+            desequilibrioEje1, desequilibrioEje2,
+            sumaFuerzas, sumaPesos, sumaFuerzasMano,
+            eficaciaTotal, eficaciaMano
+        );
+
+        Utilidades2.guardarOModificarMedida(5012, idPruebafren, fuerzaDI, "N");
+        Utilidades2.guardarOModificarMedida(5013, idPruebafren, fuerzaTI, "N");
+        Utilidades2.guardarOModificarMedida(5008, idPruebafren, fuerzaDD, "N");
+        Utilidades2.guardarOModificarMedida(5009, idPruebafren, fuerzaTD, "N");
+        Utilidades2.guardarOModificarMedida(5004, idPruebafren, pesoDI, "N");
+        Utilidades2.guardarOModificarMedida(5005, idPruebafren, pesoTI, "N");
+        Utilidades2.guardarOModificarMedida(5000, idPruebafren, pesoDD, "N");
+        Utilidades2.guardarOModificarMedida(5001, idPruebafren, pesoTD, "N");
+        Utilidades2.guardarOModificarMedida(5032, idPruebafren, desequilibrioEje1, "N");
+        Utilidades2.guardarOModificarMedida(5033, idPruebafren, desequilibrioEje2, "N");
+        Utilidades2.guardarOModificarMedida(5024, idPruebafren, eficaciaTotal, "N");
+
+        if (ejesDondeTieneFrenoMano != 0) { //Si ejesDondeTieneFrenoMano es 0, no se tiene en cuenta el freno de mano
+            Utilidades2.guardarOModificarMedida(5020, idPruebafren, fIzqFrenoMano, "N");
+            Utilidades2.guardarOModificarMedida(5016, idPruebafren, fDerFrenoMano, "N");
+            Utilidades2.guardarOModificarMedida(5036, idPruebafren, eficaciaMano, "N");
+            if(eficaciaMano<18) Utilidades2.cargarDefectos(140104, (long) idPruebafren);
+        }
+        
+        boolean aprobado = true;
+        if (desequilibrioEje1>30 || desequilibrioEje2>30){
+            if (Utilidades2.getIsEditable() == 0) {
+                Utilidades2.cargarDefectos(140101, (long) idPruebafren);
+            }
+            aprobado = false;
+        } 
+        else if(desequilibrioEje1>=20 || desequilibrioEje2>=20) Utilidades2.cargarDefectos(140102, (long) idPruebafren);
+        if (eficaciaTotal<30){
+            if (Utilidades2.getIsEditable() == 0) {
+                Utilidades2.cargarDefectos(140103, (long) idPruebafren);
+            }
+            aprobado = false;
+        } 
+
+        int idEquipo = Integer.parseInt(Utilidades2.obtenerDatos("equipos.properties", "FRENO"));
+        String serialEquipo = Utilidades2.obtenerSerialResolucionPorId(idEquipo);
+
+        if (Utilidades2.getIsEditable() == 1 && !aprobado) { //si tiene artefacto y esta desaprobado
+            Utilidades2.actualizarPrueba(false, false, (long) idUsuario, serialEquipo, (long) idPruebafren, "");
+        }else{
+            Utilidades2.actualizarPrueba(true, aprobado, (long) idUsuario, serialEquipo, (long) idPruebafren, "");
+        }
+
+        Mensajes.messageDoneTime("Se ha Registrado la Prueba de cuatrimotos de manera Exitosa.", 3);
+    }
+
+    private double recalculoFuerzas(double fuerza, double peso){
+        Random rand = new Random();
+        if ((peso/10) > fuerza) {
+            double random = (rand.nextDouble() * ((peso/10)/2)) + ((peso/10)/4); // Genera un número aleatorio entre el 5% y el 7.5% del peso
+            return random;
+        } else {
+            return fuerza;
+        }
+    }
+
+    private void registrarMedidasMotoCarro(){
+        double fuerzaDD = Utilidades2.medidasCuatrimotoPequena[0][1]; //fuerza Delantera Derecha
+        double fuerzaTD = Utilidades2.medidasCuatrimotoPequena[1][1]; //fuerza Trasera Derecha
+        double fuerzaTI = Utilidades2.medidasCuatrimotoPequena[3][1]; //fuerza Trasera Izquierda
+        
+        double pesoDD = Utilidades2.medidasCuatrimotoPequena[0][0]; //peso Delantera Derecha
+        double pesoTD = Utilidades2.medidasCuatrimotoPequena[1][0]; //peso Trasera Derecha
+        double pesoTI = Utilidades2.medidasCuatrimotoPequena[3][0]; //peso Trasera Izquierda
+        
+        double fDerFrenoMano = Utilidades2.medidasCuatrimotoPequena[4][0]; //Fuerza freno mano derecha
+        double fIzqFrenoMano = Utilidades2.medidasCuatrimotoPequena[4][1]; //Fuerza freno mano Izquierda
+        
+        double fMayorEje2 = Utilidades2.getMayor(fuerzaTI, fuerzaTD); // fuerzaMayorEje2
+        double fMenorEje2 = Utilidades2.getMenor(fuerzaTI, fuerzaTD); // fuerzaMenorEje2
+
+        double desequilibrioEje2 = (100*(fMayorEje2-fMenorEje2))/fMayorEje2;
+
+        double sumaFuerzas = fuerzaDD+fuerzaTI+fuerzaTD;
+        double sumaPesos = pesoTI+pesoDD+pesoTD;
+        double sumaFuerzasMano = fIzqFrenoMano+fDerFrenoMano;
+
+        double eficaciaTotal = (sumaFuerzas/sumaPesos)*100;
+        double eficaciaMano = (sumaFuerzasMano/sumaPesos)*100;
+
+        imprimirDatosCuatrimotoPequena(
+            0, fuerzaTI, fuerzaDD, fuerzaTD,
+            0, pesoTI, pesoDD, pesoTD,
+            fIzqFrenoMano, fDerFrenoMano,
+            0, desequilibrioEje2,
+            sumaFuerzas, sumaPesos, sumaFuerzasMano,
+            eficaciaTotal, eficaciaMano
+        );
+
+        Utilidades2.guardarOModificarMedida(5013, idPruebafren, fuerzaTI, "N");
+        Utilidades2.guardarOModificarMedida(5008, idPruebafren, fuerzaDD, "N");
+        Utilidades2.guardarOModificarMedida(5009, idPruebafren, fuerzaTD, "N");
+        Utilidades2.guardarOModificarMedida(5005, idPruebafren, pesoTI, "N");
+        Utilidades2.guardarOModificarMedida(5000, idPruebafren, pesoDD, "N");
+        Utilidades2.guardarOModificarMedida(5001, idPruebafren, pesoTD, "N");
+        Utilidades2.guardarOModificarMedida(5033, idPruebafren, desequilibrioEje2, "N");
+        Utilidades2.guardarOModificarMedida(5024, idPruebafren, eficaciaTotal, "N");
+        Utilidades2.guardarOModificarMedida(5020, idPruebafren, fIzqFrenoMano, "N");
+        Utilidades2.guardarOModificarMedida(5016, idPruebafren, fDerFrenoMano, "N");
+        Utilidades2.guardarOModificarMedida(5036, idPruebafren, eficaciaMano, "N");
+
+        boolean aprobado = true;
+        if (desequilibrioEje2>30){
+            if (Utilidades2.getIsEditable() == 0) {
+                Utilidades2.cargarDefectos(55013, (long) idPruebafren);
+            } 
+            aprobado = false;
+        } 
+        else if(desequilibrioEje2>=20) Utilidades2.cargarDefectos(55014, (long) idPruebafren);
+        if (eficaciaTotal<30 && Utilidades2.getIsEditable() == 0){
+            Utilidades2.cargarDefectos(55012, (long) idPruebafren);
+            aprobado = false;
+        } 
+        if (eficaciaMano<18) Utilidades2.cargarDefectos(55100, (long) idPruebafren);
+
+        int idEquipo = Integer.parseInt(Utilidades2.obtenerDatos("equipos.properties", "FRENO"));
+        String serialEquipo = Utilidades2.obtenerSerialResolucionPorId(idEquipo);
+
+        if (Utilidades2.getIsEditable() == 1 && !aprobado) { //si tiene artefacto y esta desaprobado
+            Utilidades2.actualizarPrueba(false, false, (long) idUsuario, serialEquipo, (long) idPruebafren, "");
+        }else{
+            Utilidades2.actualizarPrueba(true, aprobado, (long) idUsuario, serialEquipo, (long) idPruebafren, "");
+        }
+
+        Mensajes.messageDoneTime("Se ha Registrado la Prueba de frenos de motocarro de manera Exitosa.", 3);
+    }
+
+    public static void imprimirDatosCuatrimotoPequena(
+        double fuerzaDI, double fuerzaTI, double fuerzaDD, double fuerzaTD,
+        double pesoDI, double pesoTI, double pesoDD, double pesoTD,
+        double fIzqFrenoMano, double fDerFrenoMano,
+        double desequilibrioEje1, double desequilibrioEje2,
+        double sumaFuerzas, double sumaPesos, double sumaFuerzasMano,
+        double eficaciaTotal, double eficaciaMano) {
+    
+        System.out.println("\n\n====== DATOS DE LA PRUEBA ======");
+        System.out.println("\nFuerzas:");
+        System.out.println("  Delantera Derecha  : " + fuerzaDD);
+        System.out.println("  Trasera Derecha    : " + fuerzaTD);
+        System.out.println("  Delantera Izquierda: " + fuerzaDI);
+        System.out.println("  Trasera Izquierda  : " + fuerzaTI);
+        
+        System.out.println("\nPesos:");
+        System.out.println("  Delantera Derecha  : " + pesoDD);
+        System.out.println("  Trasera Derecha    : " + pesoTD);
+        System.out.println("  Delantera Izquierda: " + pesoDI);
+        System.out.println("  Trasera Izquierda  : " + pesoTI);
+        
+
+        System.out.println("\nFuerzas Freno de mano:");
+        System.out.println("  Derecha  : " + fDerFrenoMano);
+        System.out.println("  Izquierda: " + fIzqFrenoMano);
+        
+
+        System.out.println("\nDesequilibrio:");
+        System.out.println("  Eje 1: " + desequilibrioEje1 + " %");
+        System.out.println("  Eje 2: " + desequilibrioEje2 + " %");
+
+        System.out.println("\nSumas:");
+        System.out.println("  Suma Fuerzas       : " + sumaFuerzas);
+        System.out.println("  Suma Pesos         : " + sumaPesos);
+        System.out.println("  Suma Freno de Mano : " + sumaFuerzasMano);
+
+        System.out.println("\nEficacias:");
+        System.out.println("  Total      : " + eficaciaTotal + " %");
+        System.out.println("  Freno Mano : " + eficaciaMano + " %");
+        System.out.println("==========================================\n\n");
+    }
 
     private void BotonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonCancelarActionPerformed
         // TODO add your handling code here:
@@ -3771,7 +4590,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                     FrenoInst = "True";
                 }
                 ejemedido = 1;
-                LabelEje.setText("EJE: " + ejemedido);
+                LabelEje.setText(ejeORueda + ruedasOEjes[ejemedido-1]);
 
 
                 int conteoPruebasHabilitadas = 0;
@@ -3840,7 +4659,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
     private void verificarRetiroVehiculo() {
         if (ejemedido > 1) {
-            Mensajes.messageWarningTime("Por Favor Retire el vehiculo de las maquinas, para iniciar con el eje " + ejemedido, 6);
+            Mensajes.messageWarningTime("Por Favor Retire el vehiculo de las maquinas, para iniciar con "+ejeORueda + ruedasOEjes[ejemedido-1], 6);
         }
     }
     
@@ -3855,7 +4674,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     private void ejecutarPruebaSuspension() throws InterruptedException {
         LabelPrueba.setText("PRUEBA SUSPENSION LIVIANOS");
         lblCtxPrueba.setText("USER: " + DlgIntegradoLiviano.NombreUsr + "; PLACA: " + DlgIntegradoLiviano.Placa);
-        EsperaPeso();
+        EsperarPeso();
         MedirPeso();
         MoverSuspension("derecho");
         MedirFuerzaVertical("derecho");
@@ -3866,23 +4685,54 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     
     private void ejecutarPruebaFrenos() throws InterruptedException {
         verificarFrenoAuxiliar();
-        LabelPrueba.setText("PRUEBA FRENOS LIVIANOS");
+        LabelPrueba.setText("PRUEBA FRENOS "+tipoVehiculo.toUpperCase());
         lblCtxPrueba.setText("USER: " + DlgIntegradoLiviano.NombreUsr + "; PLACA: " + DlgIntegradoLiviano.Placa);
         imageOn = new ImageIcon(getClass().getResource("/Imagenes/FrenoOn.png"));
         imageOff = new ImageIcon(getClass().getResource("/Imagenes/FrenoOf.png"));
+
+        String lado = (ejemedido > 2) ? "izquierdo" : "derecho";
+
         if (ordenPruebas.length() == 1){
-            EsperaPeso();
-            MedirPeso();
+            if (isVehiculoMedidoPorUnaLlanta()) {
+                EsperarPeso(lado);
+                MedirPeso(lado);
+            }else{
+                EsperarPeso();
+                MedirPeso();
+            }
         }
-        EsperaRodillos();
-        MoverRodillos(false);
-        ejecutarFrenoInstructor();
-        ejecutarFrenoDeMano();
+        if (isVehiculoMedidoPorUnaLlanta()) {
+            EsperaRodillos(lado);
+            MoverRodillos(false, lado);
+            ejecutarFrenoDeMano(lado);
+        }else{
+            EsperaRodillos();
+            MoverRodillos(false);
+            ejecutarFrenoInstructor();
+            ejecutarFrenoDeMano();
+        }
         if (ordenPruebas.length() == 1 || ordenPruebas.charAt(ordenPruebas.length()-1) == 'F') verificarFinalizacionPrueba();
+    }
+
+    private boolean isVehiculoMedidoPorUnaLlanta() {
+        return tipoVehiculo.equalsIgnoreCase("CUATRIMOTOP") ||
+        (tipoVehiculo.equalsIgnoreCase("Motocarro") && ejemedido == 1) ||
+        tipoVehiculo.equalsIgnoreCase("CICLOMOTOR");
     }
     
     private void verificarFrenoAuxiliar() {
-        if ((ejemedido == 1 && frm.jCheckBox1.isSelected()) || (ejemedido == 2 && frm.jCheckBox2.isSelected())) {
+        // Si ejesDondeTieneFrenoMano es 0, significa que no tiene freno de mano
+        // Si ejesDondeTieneFrenoMano es 1, significa que el freno de mano está en el eje 1
+        // Si ejesDondeTieneFrenoMano es 2, significa que el freno de mano está en el eje 2
+        // Si ejesDondeTieneFrenoMano es 3, significa que el freno de mano está en ambos ejes
+        if (
+            (ejemedido == 1 && ejesDondeTieneFrenoMano == 1) || 
+            (ejemedido == 2 && ejesDondeTieneFrenoMano == 2) ||
+            (ejesDondeTieneFrenoMano == 3) ||
+            (ejemedido == 3 && ejesDondeTieneFrenoMano == 1 && tipoVehiculo.equalsIgnoreCase("CUATRIMOTOP")) ||
+            (ejemedido == 4 && ejesDondeTieneFrenoMano == 2 && tipoVehiculo.equalsIgnoreCase("CUATRIMOTOP"))
+            
+        ) {
             aplicFreAux = true;
         }
     }
@@ -3911,6 +4761,20 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             setFrenmano(false);
         }
     }
+
+    private void ejecutarFrenoDeMano(String lado) throws InterruptedException {
+        if (aplicFreAux) {
+            imageOn = new ImageIcon(getClass().getResource("/Imagenes/FrenoManoOn.png"));
+            imageOff = new ImageIcon(getClass().getResource("/Imagenes/FrenoManoOf.png"));
+            LabelEje.setText(ejeORueda + ruedasOEjes[ejemedido-1] + " (MANO)");
+            LabelInfo.setText("INICIANDO PRUEBA DE FRENO DE MANO");
+            setFrenmano(true);
+            Thread.sleep(2000);
+            EsperaRodillos(lado);
+            MoverRodillos(true, lado);
+            setFrenmano(false);
+        }
+    }
     
     private void verificarFinalizacionPrueba() {
         if (ejemedido == numeroejes && !BotonFinalizar.isEnabled()) {
@@ -3934,11 +4798,11 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     private void prepararSiguienteEje() {
         ejemedido++;
         aplicFreAux = false;
-        LabelEje.setText("EJE: " + ejemedido);
+        LabelEje.setText(ejeORueda + ruedasOEjes[ejemedido-1]);
     }
     //end privates methods
 
-    public class FrmFrenadoAuxLiv extends javax.swing.JDialog {
+    /* public class FrmFrenadoAuxLiv extends javax.swing.JDialog {
 
         private boolean aprobado = false;
         private String cadena = "\n";
@@ -3953,22 +4817,17 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         }
 
         //////////////////////////////////////////////PARA NO PERDER LA REFERENCIA DEL OBJETO/////////
-        public FrmFrenadoAuxLiv(javax.swing.JDialog frame, boolean modal) {
+        public FrmFrenadoAuxLiv(javax.swing.JDialog frame, boolean modal, boolean auxEje2) {
             super(frame, modal);
-            initComponents();
+            initComponents(auxEje2);
             setResizable(false);
             this.frame = frame;
 
         }
 
-        /**
-         * This method is called from within the constructor to initialize the
-         * form. WARNING: Do NOT modify this code. The content of this method is
-         * always regenerated by the Form Editor.
-         */
         @SuppressWarnings("unchecked")
         // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
-        private void initComponents() {
+        private void initComponents(boolean auxEje2) {
 
             jSeparator2 = new javax.swing.JSeparator();
             jPanel8 = new javax.swing.JPanel();
@@ -4009,7 +4868,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             jLabel10.setFont(new java.awt.Font("SansSerif", 1, 29)); // NOI18N
             jLabel10.setText("Eje2:");
 
-            jCheckBox2.setSelected(true);
+            jCheckBox2.setSelected(auxEje2);
 
             javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
             jPanel7.setLayout(jPanel7Layout);
@@ -4125,11 +4984,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             // nrei.establecer_oprimido(true);
         }
 
-        /////////////////////////////////MÉTODOS SOBRE LA FUNCIONALIDAD //////////////////////////////
-        /**
-         * @param args the command line arguments
-         */
-        // Variables declaration - do not modify                     
+        /////////////////////////////////MÉTODOS SOBRE LA FUNCIONALIDAD //////////////////////////////                  
         private javax.swing.JButton guardar;
 
         private javax.swing.JLabel jLabel1;
@@ -4145,6 +5000,6 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         private javax.swing.JTabbedPane jTabbedPane1;
         // End of variables declaration                   
         private int returnStatus = 0;
-    }
+    } */
 
 }

@@ -611,28 +611,27 @@ public class DlgTaximetro extends javax.swing.JDialog implements ActionListener 
             } catch (InterruptedException ex) {
                 Logger.getLogger(DlgTaximetro.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
             acumPulso=acumPulso+unimedidasdist;
             System.out.println("pulsos del Medidorvelocidad nsin TAX esta en: " + unimedidasdist);
-           
             uDist = (unimedidasdist * diametrorodillo * Math.PI )/ pulsosporvuelta;
-           
-             System.out.println("New distancia:xx " + uDist);
-             velocActual=(uDist/0.98);
-             System.out.println("velocMtsXSeg: " + velocActual);
-             velocActual=(velocActual*3.6*ajusteTax);  
-             velocidadReal = velocActual;      
-             System.out.println("VelocidadXKHrs: " + velocActual);
-             String text=jLabel3.getText();            
+            System.out.println("New distancia:xx " + uDist);
+            velocActual=(uDist/0.98);
+            System.out.println("velocMtsXSeg: " + velocActual);
+            velocActual=(velocActual*3.6*ajusteTax);  
+            velocidadReal = velocActual;      
+            System.out.println("VelocidadXKHrs: " + velocActual);
+            String text=jLabel3.getText();            
             System.out.println("Acumulado: "+acumPulso);
             
             
-              text=text.replace("<html>", " ");
-              text=text.replace("</html>", " ");
-              int pos =text.indexOf("<br/>");
-              if(pos>2){
-                 text=text.substring(0, pos+1); 
-              }              
-              text=text.concat("<br/> la vr...Velocidad Actual: ").concat(df.format(velocActual)).concat(" K/h </html>");
+            text=text.replace("<html>", " ");
+            text=text.replace("</html>", " ");
+            int pos =text.indexOf("<br/>");
+            if(pos>2){
+                text=text.substring(0, pos+1); 
+            }              
+            text=text.concat("<br/> la vr...Velocidad Actual: ").concat(df.format(velocActual)).concat(" K/h </html>");
             jLabel3.setText("<html> ".concat(text));         
          }
     });

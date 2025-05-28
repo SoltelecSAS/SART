@@ -384,9 +384,11 @@ public class WorkerCruceroRalenti extends SwingWorker<Void, Void> {
             return null;
         } catch (Exception exc) {
             WorkerCruceroRalenti.escrTrans = "";
-            JOptionPane.showMessageDialog(panel, "Se desconecto el KIT de RPM");
+            JOptionPane.showMessageDialog(panel, "Se desconecto el KIT de RPM 1");
             exc.printStackTrace(System.err);
-            panel.cerrar();
+            if (simulacion == false) {
+                panel.cerrar();
+            } 
             Logger.getRootLogger().error("Error WorkerCruceroRalenti", exc);
         }
         System.out.println("va hacia el metodo de liberar recursos RELOAD  ");

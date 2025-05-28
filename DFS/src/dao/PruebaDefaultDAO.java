@@ -46,7 +46,7 @@ public class PruebaDefaultDAO {
        
         System.out.println("VOY A GUARDAR MEDIDAS ..");
         repetirPrueba = medidasDAO.guardarMedidas(prueba, idPrueba, lugarTomaDatos);
-         System.out.println("YA DEBI  GUARDAR MEDIDAS para la placa:  "+placa+"  ..!");
+         System.out.println("YA DEBI  GUARDAR MEDIDAS para la placa:  "+placa+"  ..! CON el idPrueba: "+idPrueba);
          List<Integer> lstDef = prueba.getDefectos(placa);
         boolean escTran = true;
         if (aplicTrans == 1 && prueba.getAprobada().equalsIgnoreCase("N")) 
@@ -89,15 +89,6 @@ public class PruebaDefaultDAO {
         }
 
         System.out.println("Tipo de vehiculo: "+tipoVehiculo);
-
-        if (tipoVehiculo.equalsIgnoreCase("Motocarro")) {
-
-            System.out.println("Entrando a eliminar medidas innecesarias de motocarro");
-
-            Utilidades2.eliminarMedida(idPrueba, 5012);
-            Utilidades2.eliminarMedida(idPrueba, 5004);
-            Utilidades2.eliminarMedida(idPrueba, 5032);
-        }
 
         
         Mensajes.messageDoneTime("Se ha Registrado la Prueba de " + tipoPrueba + " de una manera Exitosa ..¡", 3);

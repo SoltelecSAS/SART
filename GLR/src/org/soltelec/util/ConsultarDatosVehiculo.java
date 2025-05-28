@@ -187,7 +187,7 @@ public class ConsultarDatosVehiculo {
                         pefAnalizador+"-"+serialAnalizador : pefAnalizador+"-"+serialAnalizador+"-"+serialBanco;
                 
                 String serialKitCompleto = "";
-                if (Utilidades.getMetodoMedicionRpm() == null && tipoVehiculo == 4) {
+                if (Utilidades.getMetodoMedicionRpm() == null && (tipoVehiculo == 4 || tipoVehiculo == 5)) {
                     serialKitCompleto = serialRpm+"/"+serialTemperatura+"/"+serialVibracion;
                 }else{
                     serialKitCompleto = 

@@ -158,7 +158,7 @@ public class WorkerInicioPruebaGases extends SwingWorker<Void, Void> {
             if (exc.getCause() instanceof InterruptedException) {
                 System.out.println("InterruptedException");
             } else {
-                JOptionPane.showMessageDialog(panel, "Se desconecto el KIT de RPM");
+                JOptionPane.showMessageDialog(panel, "Se desconecto el KIT de RPM 2");
                 exc.printStackTrace(System.err);
             }
         } catch (DilucionException dexc) {

@@ -321,14 +321,15 @@ public class FrenoMotoCarro implements PruebaDefault {
     @Override
     public void verificarDefectos(String tipoVehiculo) 
     {
+
         aprobada = "Y";
         
         if (tipoVehiculo.equalsIgnoreCase("TRICIMOTO")) {
             defectos = getDefectosTricimoto();
-        } else if(tipoVehiculo.equalsIgnoreCase("Motocarro")){
-            defectos = getDefectosMotoCarro();
-        } else{
+        } else if(tipoVehiculo.equalsIgnoreCase("CICLOMOTOR")){
             defectos = getDefectosCicloMotor();
+        } else{
+            defectos = getDefectosMotoCarro();
         }
     }
 
@@ -340,20 +341,20 @@ public class FrenoMotoCarro implements PruebaDefault {
         }
 
         if (eficaciaVariable < EFICACIA_FRENADO_A) {
-            defects.add(54010);//cambiar permisible = 54010
+            defects.add(55012);//cambiar permisible = 54010
             aprobada = "N";
         } else if (!fuerzaDerechaEnseñanza.isEmpty() && eficaciaEnseñanza < EFICACIA_FRENADO_A) {
-            defects.add(54010);//54010
+            defects.add(55012);//54010
             aprobada = "N";
         }
 
         if (eficaciaFrenoMano < EFICACIA_ESTACIONAMIENTO_B) {
-            defects.add(50029);
+            defects.add(55100);
         }
 
         for (Double desequilibrio1 : desequilibrio) {
             if (desequilibrio1 > DESEQUILIBRIO_A) {
-                defects.add(50026);
+                defects.add(55013);
                 aprobada = "N";
                 break;
             }
@@ -361,7 +362,7 @@ public class FrenoMotoCarro implements PruebaDefault {
 
         for (Double desequilibrio1 : desequilibrio) {
             if (desequilibrio1 >= DESEQUILIBRIO_B && desequilibrio1 <= DESEQUILIBRIO_A) {
-                defects.add(50027);
+                defects.add(55014);
                 break;
             }
         }

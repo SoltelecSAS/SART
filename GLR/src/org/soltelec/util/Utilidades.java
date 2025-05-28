@@ -240,7 +240,7 @@ public class Utilidades {
     }
 
     public static int getIsEditable(){
-        String consulta = "SELECT cont_test FROM cda WHERE id_cda = 1";
+        String consulta = "SELECT artf FROM cda WHERE id_cda = 1";
         Conexion.setConexionFromFile();
         try (Connection con = DriverManager.getConnection(
             Conexion.getUrl(), 
@@ -252,7 +252,7 @@ public class Utilidades {
             //rc representa el resultado de la consulta
             try (ResultSet rc = consultaDagma.executeQuery()) {
                 while (rc.next()) {
-                    return rc.getInt("cont_test");
+                    return rc.getInt("artf");
                 }
             }
             return 0;

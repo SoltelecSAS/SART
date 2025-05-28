@@ -27,7 +27,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import com.soltelec.modulopuc.configuracion.modelo.Conexion;
+import com.soltelec.util.Utilidades2;
+
 import org.soltelec.util.ConsultarDatosVehiculo;
+import org.soltelec.util.UtilPropiedades;
+import org.soltelec.util.Utilidades;
+
 import java.awt.GridLayout;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -58,6 +63,13 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
         {2052, 2051, 2050,      2053, 2054, 2055}  //exploradoras
     };
 
+    Integer[][] codigoMedidasMotos = {
+        /*Derechas                    Izquierdas*/
+        {2042, 2022, 2013,      2044, 2045, 2046}, //deviaciones bajas
+        {2026, 2000, 2014,      2031, 2030, 2029}, //bajas
+        {2038, 2061, 2057,      2036, 2033, 2034}  //altas
+    };
+
     boolean[][] simultaneasSeleccionadas = {
         /*Derechas                    Izquierdas*/
         {false, false, false,      false, false, false}, //bajas
@@ -74,6 +86,9 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
 
     //Codigos defectos          IntBaja     suma        desviacion 
     Integer[] codigosDefectos ={20000,      20001,      20002};
+
+    //Codigos defectos             IntBaja     suma     desviacion 
+    Integer[] codigosDefectosMotos ={20003,     0,      24006};
     
     String tipoLuxometro;
     private String placa;
@@ -82,12 +97,13 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
     private boolean mostrarMedidas = false;
     private int idPrueba;
     private int idUsuario;
-    private boolean fueAprobada = true;
     private double sumaTotal = 0;
     private double valorMaximo = 0;
     private boolean esLujan = false;
+    private boolean esMoto = false;
     
     public FrmLuxometroCapelec(String tipoLuxometro, String placa, int idHojaPrueba, int idPrueba, int idUsuario, String location, boolean ver) throws IOException {
+        this.esMoto = tipoLuxometro.equalsIgnoreCase("MOONMOTOS");
         this.placa = placa;
         this.tipoLuxometro = tipoLuxometro;
         this.location= location;
@@ -103,11 +119,47 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
             leerDatos.setEnabled(true);
             esLujan = true;
         }else{
-            altaDerecha1.setEnabled(true);
+            
             altaIzquierda1.setEnabled(true);
+            altaDerecha1.setEnabled(true);
             exploDerecha1.setEnabled(true);
             exploIzquierda1.setEnabled(true);
             leerDatos.setVisible(false);
+            intExploDerecha1.setVisible(false);
+            intExploDerecha2.setVisible(false);
+            intExploDerecha3.setVisible(false);
+            intExploIzquierda1.setVisible(false);
+            intExploIzquierda2.setVisible(false);
+            intExploIzquierda3.setVisible(false);
+            ED3.setSelected(false);
+            ED3.setVisible(false);
+            ED2.setSelected(false);
+            ED2.setVisible(false);
+            ED1.setSelected(false);
+            ED1.setVisible(false);
+            EI3.setSelected(false);
+            EI3.setVisible(false);
+            EI2.setSelected(false);
+            EI2.setVisible(false);
+            EI1.setSelected(false);
+            EI1.setVisible(false);
+            jLabel5.setVisible(false);
+            if(esMoto){
+                altaIzquierda1.setEnabled(false);
+                exploIzquierda1.setVisible(false);
+                exploIzquierda2.setVisible(false);
+                exploIzquierda3.setVisible(false);
+                exploDerecha1.setVisible(false);
+                exploDerecha2.setVisible(false);
+                exploDerecha3.setVisible(false);
+                altaDerecha1.setEnabled(false);
+                bajaIzquierda1.setEnabled(false);
+                jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/moto-roja.jpg")));
+                cambiarCodigosAMotos(codigoMedidas, codigoMedidasMotos);
+                codigosDefectos[0] = codigosDefectosMotos[0]; //20003
+                codigosDefectos[1] = codigosDefectosMotos[1]; //0
+                codigosDefectos[2] = codigosDefectosMotos[2]; //24006
+            }
         }
 
         desviIzqui1.setVisible(false);
@@ -117,13 +169,25 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
         desviIzqui3.setVisible(false);
         desvidere3.setVisible(false);
     }
+
+    public static void cambiarCodigosAMotos(Integer[][] original, Integer[][] nuevosValores) {
+        for (int i = 0; i < nuevosValores.length; i++) {
+            if (original[i].length != nuevosValores[i].length) {
+                throw new IllegalArgumentException("Las filas " + i + " no tienen la misma longitud");
+            }
+
+            for (int j = 0; j < nuevosValores[i].length; j++) {
+                original[i][j] = nuevosValores[i][j];
+            }
+        }
+    }
     
-    private void tomarLasMedidas(int luzDerecha) throws IOException, FileNotFoundException, InterruptedException {
+    private void tomarLasMedidas(int luzDerecha, boolean esDerecho) throws IOException, FileNotFoundException, InterruptedException {
         if(tipoLuxometro.equalsIgnoreCase("CAPELEC")){
             JOptionPane.showMessageDialog(null, "Luxometro listo y preparado para realizar la prueba.");
             JOptionPane.showMessageDialog(null, "Apenas finalice la prueba dele clic al boton leer datos y por ultimo al boton finalizar una vez comprobado");
         }else{
-            cargarParametrosMoon(luzDerecha);
+            cargarParametrosMoon(luzDerecha, esDerecho);
         }
     }
 
@@ -146,13 +210,13 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
         bajaDerecha3 = new javax.swing.JButton();
         bajaDerecha2 = new javax.swing.JButton();
         bajaIzquierda1 = new javax.swing.JButton();
-        altaIzquierda3 = new javax.swing.JButton();
-        altaIzquierda2 = new javax.swing.JButton();
-        altaIzquierda1 = new javax.swing.JButton();
-        altaDerecha2 = new javax.swing.JButton();
         altaDerecha3 = new javax.swing.JButton();
-        exploDerecha1 = new javax.swing.JButton();
+        altaDerecha2 = new javax.swing.JButton();
         altaDerecha1 = new javax.swing.JButton();
+        altaIzquierda2 = new javax.swing.JButton();
+        altaIzquierda3 = new javax.swing.JButton();
+        exploDerecha1 = new javax.swing.JButton();
+        altaIzquierda1 = new javax.swing.JButton();
         exploDerecha3 = new javax.swing.JButton();
         exploIzquierda1 = new javax.swing.JButton();
         exploIzquierda2 = new javax.swing.JButton();
@@ -257,28 +321,11 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
             }
         });
 
-        altaIzquierda3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-not.png"))); // NOI18N
-        altaIzquierda3.setEnabled(false);
-        altaIzquierda3.addActionListener(new java.awt.event.ActionListener() {
+        altaDerecha3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-not.png"))); // NOI18N
+        altaDerecha3.setEnabled(false);
+        altaDerecha3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                altaIzquierda3ActionPerformed(evt);
-            }
-        });
-
-        altaIzquierda2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-not.png"))); // NOI18N
-        altaIzquierda2.setEnabled(false);
-        altaIzquierda2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                altaIzquierda2ActionPerformed(evt);
-            }
-        });
-
-        altaIzquierda1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-not.png"))); // NOI18N
-        altaIzquierda1.setEnabled(false);
-        altaIzquierda1.setFocusable(false);
-        altaIzquierda1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                altaIzquierda1ActionPerformed(evt);
+                altaDerecha3ActionPerformed(evt);
             }
         });
 
@@ -290,11 +337,28 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
             }
         });
 
-        altaDerecha3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-not.png"))); // NOI18N
-        altaDerecha3.setEnabled(false);
-        altaDerecha3.addActionListener(new java.awt.event.ActionListener() {
+        altaDerecha1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-not.png"))); // NOI18N
+        altaDerecha1.setEnabled(false);
+        altaDerecha1.setFocusable(false);
+        altaDerecha1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                altaDerecha3ActionPerformed(evt);
+                altaDerecha1ActionPerformed(evt);
+            }
+        });
+
+        altaIzquierda2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-not.png"))); // NOI18N
+        altaIzquierda2.setEnabled(false);
+        altaIzquierda2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                altaIzquierda2ActionPerformed(evt);
+            }
+        });
+
+        altaIzquierda3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-not.png"))); // NOI18N
+        altaIzquierda3.setEnabled(false);
+        altaIzquierda3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                altaIzquierda3ActionPerformed(evt);
             }
         });
 
@@ -306,12 +370,12 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
             }
         });
 
-        altaDerecha1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-not.png"))); // NOI18N
-        altaDerecha1.setEnabled(false);
-        altaDerecha1.setFocusable(false);
-        altaDerecha1.addActionListener(new java.awt.event.ActionListener() {
+        altaIzquierda1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-not.png"))); // NOI18N
+        altaIzquierda1.setEnabled(false);
+        altaIzquierda1.setFocusable(false);
+        altaIzquierda1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                altaDerecha1ActionPerformed(evt);
+                altaIzquierda1ActionPerformed(evt);
             }
         });
 
@@ -623,7 +687,7 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(altaIzquierda3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(altaDerecha3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(exploDerecha3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(intAltaDerecha3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -641,7 +705,7 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                                 .addComponent(ED2))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(altaIzquierda2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(altaDerecha2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(intAltaDerecha2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -653,7 +717,7 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(18, 18, 18)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(altaIzquierda1)
+                                            .addComponent(altaDerecha1)
                                             .addComponent(intAltaDerecha1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                                 .addGroup(layout.createSequentialGroup()
@@ -684,7 +748,7 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(bajaIzquierda1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(altaDerecha1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(altaIzquierda1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(exploIzquierda1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(desviIzqui1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
@@ -719,14 +783,14 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                                 .addComponent(intBajaIzquierda3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(altaDerecha2)
+                            .addComponent(altaIzquierda2)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(AI2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(intAltaIzquierda2, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(18, 18, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(altaDerecha3, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(altaIzquierda3, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(AI3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -786,9 +850,8 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(intBajaDerecha1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(BD1)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(intBajaDerecha2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(BD2))
+                    .addComponent(BD2)
+                    .addComponent(intBajaDerecha2)
                     .addComponent(intBajaDerecha3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(BD3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(intBajaIzquierda2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -801,24 +864,22 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(28, 28, 28)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(altaIzquierda2)
-                            .addComponent(altaIzquierda3)
-                            .addComponent(altaIzquierda1)
-                            .addComponent(altaDerecha1)
                             .addComponent(altaDerecha2)
-                            .addComponent(altaDerecha3))
+                            .addComponent(altaDerecha3)
+                            .addComponent(altaDerecha1)
+                            .addComponent(altaIzquierda1)
+                            .addComponent(altaIzquierda2)
+                            .addComponent(altaIzquierda3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(AD2)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(intAltaDerecha3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(intAltaDerecha2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(intAltaDerecha1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(intAltaDerecha3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(intAltaDerecha2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(intAltaDerecha1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(AD3)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(intAltaIzquierda1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                .addComponent(AD1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(AI1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(intAltaIzquierda1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(AD1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(AI1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(AI2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(intAltaIzquierda2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(intAltaIzquierda3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -888,6 +949,7 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
 
     private void finalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finalizarActionPerformed
         
+
         //Esta matriz hace referencia a cuales luces se tendran en el fur, dado que no todas las luces medidas se pueden tener en cuenta si se trata del moon
         boolean[][] lucesTenidasEnCuenta = {
             /*Derechas                    Izquierdas*/
@@ -896,12 +958,14 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
             {ED3.isSelected(), ED2.isSelected(), ED1.isSelected(),      EI1.isSelected(), EI2.isSelected(), EI3.isSelected()}  //exploradoras
         };
 
+        boolean esAprobada = true;
+
         // Definir opciones del JComboBox
         String[] opciones = {"1", "2", "3", "4", "5", "6"};
         JComboBox<String> comboBox = new JComboBox<>(opciones);
-        
+
         // Mostrar el JOptionPane
-        int seleccion = JOptionPane.showConfirmDialog(null, comboBox, "# de casos luces simultaneas", JOptionPane.OK_CANCEL_OPTION);
+        int seleccion = esMoto ? JOptionPane.NO_OPTION : JOptionPane.showConfirmDialog(null, comboBox, "# de casos luces simultaneas", JOptionPane.OK_CANCEL_OPTION);
         
         // Si el usuario hace clic en OK, proceder
         if (seleccion == JOptionPane.OK_OPTION) {
@@ -928,7 +992,6 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                         count++;
                     }
                 }
-
 
                 int result = JOptionPane.showConfirmDialog(null, panel, "Seleccione cuales luces se puede encender simultaneamente caso "+(n+1), JOptionPane.OK_CANCEL_OPTION);
                 
@@ -959,11 +1022,12 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
 
             if (valorMaximo > 225 && codigosDefectos[1] != null) {
                 try {
-                    cargarDefecto(codigosDefectos[1]);
+                    if(Utilidades.getIsEditable() == 0) cargarDefecto(codigosDefectos[1]);
                     codigosDefectos[1] = null;
                 } catch (SQLException ex) {
                     Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                esAprobada = false;
             }
 
             try {
@@ -971,50 +1035,56 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
             } catch (SQLException ex) {
                 Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
+        }
 
-            for (int i = 0; i < codigoMedidas.length; i++) {
-                // Bucle para recorrer las columnas del arreglo
-                for (int j = 0; j < codigoMedidas[i].length; j++) {
-                    if (medidas[i][j] == null) continue;
-                    if (i == 0 && !lucesTenidasEnCuenta[i][j]) continue; // Pregunta que angulos de las bajas no se tienen en cuenta
-                    if (i > 0 && !lucesTenidasEnCuenta[i-1][j]) continue; // Pregunta que intensidades de todas no las luces se tienen en cuenta
-                    //si entra dentro del if en continue omite todo lo de abajo y continua con la siguiente luz
-                    try {
-                        //System.out.println("codigoMedidas[" + i + "][" + j + "] = " + codigoMedidas[i][j]);
+        
 
-                        String simultanea = "'N'";
-                        if (i!=0 && simultaneasSeleccionadas[i-1][j] ) {
-                            simultanea = "'Y'";
-                        }
+        for (int i = 0; i < codigoMedidas.length; i++) {
+            // Bucle para recorrer las columnas del arreglo
+            for (int j = 0; j < codigoMedidas[i].length; j++) {
+                if (medidas[i][j] == null) continue;
+                if (i == 0 && !lucesTenidasEnCuenta[i][j]) continue; // Pregunta que angulos de las bajas no se tienen en cuenta
+                if (i > 0 && !lucesTenidasEnCuenta[i-1][j]) continue; // Pregunta que intensidades de todas no las luces se tienen en cuenta
+                //si entra dentro del if en continue omite todo lo de abajo y continua con la siguiente luz
+                try {
+                    //System.out.println("codigoMedidas[" + i + "][" + j + "] = " + codigoMedidas[i][j]);
 
-                        cargarMedida(codigoMedidas[i][j], medidas[i][j], simultanea);
-                        if (i==0 && codigosDefectos[2] != null && (medidas[i][j] > 3.5 || medidas[i][j] < 0.5)) {
-                            cargarDefecto(codigosDefectos[2]);
-                            codigosDefectos[2] = null;
-                        }
-
-                        if (i==1 && codigosDefectos[0] != null && medidas[i][j] < 2.5 ) {
-                            cargarDefecto(codigosDefectos[0]);
-                            codigosDefectos[0] = null;
-                        }
-
-                    } catch (SQLException ex) {
-                        Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
+                    String simultanea = "'N'";
+                    if (i!=0 && simultaneasSeleccionadas[i-1][j] ) {
+                        simultanea = "'Y'";
                     }
+
+                    cargarMedida(codigoMedidas[i][j], medidas[i][j], simultanea);
+                    if (i==0 && codigosDefectos[2] != null && (medidas[i][j] > 3.5 || medidas[i][j] < 0.5)) {
+                        if(Utilidades.getIsEditable() == 0) cargarDefecto(codigosDefectos[2]);
+                        codigosDefectos[2] = null;
+                        esAprobada = false;
+                    }
+
+                    if (i==1 && codigosDefectos[0] != null && medidas[i][j] < 2.5) {
+                        if(Utilidades.getIsEditable() == 0) cargarDefecto(codigosDefectos[0]);
+                        codigosDefectos[0] = null;
+                        esAprobada = false;
+                    }
+
+                } catch (SQLException ex) {
+                    Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-
-            try {
-                updatePruebaMethod();
-            } catch (SQLException | ClassNotFoundException | IOException ex) {
-                Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
+
+        try {
+            updatePruebaMethod(esAprobada);
+        } catch (IOException ex) {
+            Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }//GEN-LAST:event_finalizarActionPerformed
 
     private void bajaDerecha1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bajaDerecha1ActionPerformed
         try {
-            tomarLasMedidas(2);
+            tomarLasMedidas(2, true);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1022,23 +1092,23 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
 
     private void bajaIzquierda1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bajaIzquierda1ActionPerformed
         try {
-            tomarLasMedidas(2);
+            tomarLasMedidas(2, false);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_bajaIzquierda1ActionPerformed
 
-    private void altaIzquierda1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_altaIzquierda1ActionPerformed
+    private void altaDerecha1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_altaDerecha1ActionPerformed
         try {
-            tomarLasMedidas(2);
+            tomarLasMedidas(2, false);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_altaIzquierda1ActionPerformed
+    }//GEN-LAST:event_altaDerecha1ActionPerformed
 
     private void exploDerecha1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exploDerecha1ActionPerformed
         try {
-            tomarLasMedidas(2);
+            tomarLasMedidas(2, true);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1046,39 +1116,39 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
 
     private void exploIzquierda1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exploIzquierda1ActionPerformed
         try {
-            tomarLasMedidas(2);
+            tomarLasMedidas(2, false);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_exploIzquierda1ActionPerformed
 
-    private void altaDerecha1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_altaDerecha1ActionPerformed
+    private void altaIzquierda1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_altaIzquierda1ActionPerformed
         try {
-            tomarLasMedidas(2);
+            tomarLasMedidas(2, true);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_altaDerecha1ActionPerformed
+    }//GEN-LAST:event_altaIzquierda1ActionPerformed
 
     private void bajaIzquierda2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bajaIzquierda2ActionPerformed
         try {
-            tomarLasMedidas(1);
+            tomarLasMedidas(1, false);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_bajaIzquierda2ActionPerformed
 
-    private void altaIzquierda2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_altaIzquierda2ActionPerformed
+    private void altaDerecha2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_altaDerecha2ActionPerformed
         try {
-            tomarLasMedidas(1);
+            tomarLasMedidas(1, false);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_altaIzquierda2ActionPerformed
+    }//GEN-LAST:event_altaDerecha2ActionPerformed
 
     private void exploDerecha2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exploDerecha2ActionPerformed
         try {
-            tomarLasMedidas(1);
+            tomarLasMedidas(1, true);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1086,23 +1156,23 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
 
     private void bajaDerecha2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bajaDerecha2ActionPerformed
         try {
-            tomarLasMedidas(1);
+            tomarLasMedidas(1, true);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_bajaDerecha2ActionPerformed
 
-    private void altaDerecha2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_altaDerecha2ActionPerformed
+    private void altaIzquierda2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_altaIzquierda2ActionPerformed
         try {
-            tomarLasMedidas(1);
+            tomarLasMedidas(1, true);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_altaDerecha2ActionPerformed
+    }//GEN-LAST:event_altaIzquierda2ActionPerformed
 
     private void exploIzquierda2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exploIzquierda2ActionPerformed
         try {
-            tomarLasMedidas(1);
+            tomarLasMedidas(1, false);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1110,23 +1180,23 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
 
     private void bajaIzquierda3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bajaIzquierda3ActionPerformed
         try {
-            tomarLasMedidas(0);
+            tomarLasMedidas(0, false);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_bajaIzquierda3ActionPerformed
 
-    private void altaIzquierda3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_altaIzquierda3ActionPerformed
+    private void altaDerecha3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_altaDerecha3ActionPerformed
         try {
-            tomarLasMedidas(0);
+            tomarLasMedidas(0, false);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_altaIzquierda3ActionPerformed
+    }//GEN-LAST:event_altaDerecha3ActionPerformed
 
     private void exploDerecha3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exploDerecha3ActionPerformed
         try {
-            tomarLasMedidas(0);
+            tomarLasMedidas(0, true);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1134,23 +1204,23 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
 
     private void bajaDerecha3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bajaDerecha3ActionPerformed
         try {
-            tomarLasMedidas(0);
+            tomarLasMedidas(0, true);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_bajaDerecha3ActionPerformed
 
-    private void altaDerecha3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_altaDerecha3ActionPerformed
+    private void altaIzquierda3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_altaIzquierda3ActionPerformed
         try {
-            tomarLasMedidas(0);
+            tomarLasMedidas(0, true);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_altaDerecha3ActionPerformed
+    }//GEN-LAST:event_altaIzquierda3ActionPerformed
 
     private void exploIzquierda3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exploIzquierda3ActionPerformed
         try {
-            tomarLasMedidas(0);
+            tomarLasMedidas(0, false);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1284,27 +1354,7 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
         }
     }//end of method cargarUrl
 
-    private boolean cargarPlacaMoon() throws FileNotFoundException, IOException {        
-        //try retrieve data from file
-        JOptionPane.showMessageDialog(null, "localizacion CG: "+location);
-        File archivo = new File(location+"/moon/ENTRADA.DAT");
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivo))) {
-            bw.write(placa);
-            bw.newLine();
-            bw.write("M1");
-            bw.flush();
-        } catch (FileNotFoundException ex) {
-            JOptionPane.showMessageDialog(null, "No existe el archivo ENTRADA.DAT");
-            return true;
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Imposible cargar archivo propiedades");
-            return true;
-        }
-        
-        return false;
-    }//end of method cargarUrl
-
-    private void cargarParametrosMoon(int posicionDere) throws FileNotFoundException, IOException, InterruptedException {
+    private void cargarParametrosMoon(int posicionDere, boolean esDerecho) throws FileNotFoundException, IOException, InterruptedException {
         int posicionIzq = -1;
         if (posicionDere == 2) posicionIzq = 3;
         if (posicionDere == 1) posicionIzq = 4;
@@ -1314,6 +1364,15 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
         /*lineas medidas:     inclinacionD  int.bajaD   int.altaD   int.exploradoraD    inclinacionI    int.bajaI   int.altaI   int.exploradoraI*/
         int[] lineaMedidas = {17,           16,         26,         36,                 22,             21,         31,         41};
         crearPlacaFile();
+
+        if (esMoto && esDerecho) {
+            lineaMedidas[0] = 22;
+            lineaMedidas[1] = 21;
+            lineaMedidas[2] = 31;
+            lineaMedidas[4] = 17;
+            lineaMedidas[5] = 16;
+            lineaMedidas[6] = 26;
+        }
 
         String cmdLocation = location.equals(".") ? System.getProperty("user.dir") : location;
         System.out.println("posicion luz derecha: "+posicionDere);
@@ -1337,7 +1396,7 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                     contadorLineas++;
 
                     linea = config.readLine();
-                    System.out.println("info Linea: "+linea);
+                    System.out.println("info Linea "+contadorLineas+": "+linea);
 
 
                     if (contadorLineas == lineaMedidas[7]+1) break;
@@ -1346,7 +1405,7 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
 
                     if (contadorLineas == lineaMedidas[0]){
                         System.out.println("info Linea inclinacion derecha: "+linea);
-                        medidas[0][posicionDere] = Double.parseDouble(linea.split(",")[1]) * -1;
+                        medidas[0][posicionDere] = Math.abs(Double.parseDouble(linea.split(",")[1]));
                         if (posicionDere == 2 && mostrarMedidas){
                             desvidere1.setText(String.valueOf(medidas[0][posicionDere])+ "%");
                             desvidere1.setVisible(true);
@@ -1364,7 +1423,7 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                     if (contadorLineas == lineaMedidas[1]){
                         medidas[1][posicionDere] = Double.parseDouble(linea.split(",")[1]) / 1000;
                         if (posicionDere == 2){
-                            bajaIzquierda1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/baja-izquierda-ok.png")));
+                            bajaDerecha1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/baja-izquierda-ok.png")));
                             if(mostrarMedidas) intBajaDerecha1.setText(String.valueOf(medidas[1][posicionDere]) + " Klux" );
                         }
                         if (posicionDere == 1){
@@ -1418,7 +1477,7 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                     }
 
                     if (contadorLineas == lineaMedidas[4]){
-                        medidas[0][posicionIzq] = Double.parseDouble(linea.split(",")[1]) * -1;
+                        medidas[0][posicionIzq] = Math.abs(Double.parseDouble(linea.split(",")[1]));
                         if (posicionIzq == 3 && mostrarMedidas){
                             desviIzqui1.setText(String.valueOf(medidas[0][3])+ "%");
                             desviIzqui1.setVisible(true);
@@ -1453,18 +1512,18 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                         medidas[2][posicionIzq] = Double.parseDouble(linea.split(",")[1]) / 1000;
 
                         if (posicionIzq == 3){
-                            altaIzquierda1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
-                            altaIzquierda1.setEnabled(true);
+                            altaDerecha1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
+                            altaDerecha1.setEnabled(true);
                             if(mostrarMedidas) intAltaIzquierda1.setText(String.valueOf(medidas[2][posicionIzq]) + " Klux" );
                         }
                         if (posicionIzq == 4){
-                            altaIzquierda2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
-                            altaIzquierda2.setEnabled(true);
+                            altaDerecha2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
+                            altaDerecha2.setEnabled(true);
                             if(mostrarMedidas) intAltaIzquierda2.setText(String.valueOf(medidas[2][posicionIzq]) + " Klux" );
                         }
                         if (posicionIzq == 5){
-                            altaIzquierda3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
-                            altaIzquierda3.setEnabled(true);
+                            altaDerecha3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
+                            altaDerecha3.setEnabled(true);
                             if(mostrarMedidas) intAltaIzquierda3.setText(String.valueOf(medidas[2][posicionIzq]) + " Klux" );
                         }
 
@@ -1495,23 +1554,27 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                 if (posicionDere == 2) {
                     desvidere2.setEnabled(true);
                     bajaDerecha2.setEnabled(true);
-                    altaDerecha2.setEnabled(true);
+                    altaIzquierda2.setEnabled(true);
                     exploDerecha2.setEnabled(true);
                     desviIzqui2.setEnabled(true);
                     bajaIzquierda2.setEnabled(true);
-                    altaIzquierda2.setEnabled(true);
+                    altaDerecha2.setEnabled(true);
                     exploIzquierda2.setEnabled(true);
+                    if (esMoto) {
+                        bajaIzquierda1.setEnabled(true);
+                        altaDerecha1.setEnabled(true);
+                    }
                 }
 
 
                 if (posicionDere == 1) {
                     desvidere3.setEnabled(true);
                     bajaDerecha3.setEnabled(true);
-                    altaDerecha3.setEnabled(true);
+                    altaIzquierda3.setEnabled(true);
                     exploDerecha3.setEnabled(true);
                     desviIzqui3.setEnabled(true);
                     bajaIzquierda3.setEnabled(true);
-                    altaIzquierda3.setEnabled(true);
+                    altaDerecha3.setEnabled(true);
                     exploIzquierda3.setEnabled(true);
                 }
 
@@ -1556,11 +1619,39 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                 file.createNewFile();
             }
 
+            
+
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
+
+
+            String tipo = "M1";
+            String tieneLuzAlta = "";
+
+            if (esMoto) {
+                tipo = "L3e";
+                tieneLuzAlta = Utilidades2.dialogo2Opciones(
+                    "Si",
+                    "No", 
+                    "Tiene altas", 
+                    "¿El vehiculo tiene luces altas?") ? "Y" : "N";
+            }
+
+            System.out.println("Tiene luces altas: " + tieneLuzAlta);
+
             bw.write(placa);
             bw.newLine();
-            bw.write("M1");
+            bw.write(tipo);
+            bw.newLine();
+            bw.write("");
+            bw.newLine();
+            bw.write("");
+            bw.newLine();
+            bw.write("");
+            bw.newLine();
+            bw.write("");
+            bw.newLine();
+            bw.write(tieneLuzAlta);
             bw.close();
             System.out.println("Se logro crear el archivo-placa ENTRADA.DAT");
             File file2 = new File(location + "/moon/SALIDA.DAT");
@@ -1658,38 +1749,38 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
 
                 if (line.startsWith("7724")){
                     medidas[2][2] = Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length()));
-                    altaIzquierda1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
-                    altaIzquierda1.setEnabled(true);
+                    altaDerecha1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
+                    altaDerecha1.setEnabled(true);
                     if(mostrarMedidas) intAltaIzquierda1.setText(line.substring(line.indexOf("=") + 1, line.length()) + " Klux" );
                 }
                 if (line.startsWith("7729")){
                     medidas[2][3] = Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length()));
-                    altaDerecha1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
-                    altaDerecha1.setEnabled(true);
+                    altaIzquierda1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
+                    altaIzquierda1.setEnabled(true);
                     if(mostrarMedidas) intAltaDerecha1.setText(line.substring(line.indexOf("=") + 1, line.length()) + " Klux" );
                 }
                 if (line.startsWith("7785")){
                     medidas[2][1] = Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length()));
-                    altaIzquierda2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
-                    altaIzquierda2.setEnabled(true);
+                    altaDerecha2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
+                    altaDerecha2.setEnabled(true);
                     if(mostrarMedidas) intAltaIzquierda2.setText(line.substring(line.indexOf("=") + 1, line.length()) + " Klux" );
                 }
                 if (line.startsWith("7790")){
                     medidas[2][4] = Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length()));
-                    altaDerecha2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
-                    altaDerecha2.setEnabled(true);
+                    altaIzquierda2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
+                    altaIzquierda2.setEnabled(true);
                     if(mostrarMedidas) intAltaDerecha2.setText(line.substring(line.indexOf("=") + 1, line.length()) + " Klux" );
                 }
                 if (line.startsWith("7799")){
                     medidas[2][0] = Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length()));
-                    altaIzquierda3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
-                    altaIzquierda3.setEnabled(true);
+                    altaDerecha3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
+                    altaDerecha3.setEnabled(true);
                     if(mostrarMedidas) intAltaIzquierda3.setText(line.substring(line.indexOf("=") + 1, line.length()) + " Klux" );
                 }
                 if (line.startsWith("7804")){
                     medidas[2][5] = Double.parseDouble(line.substring(line.indexOf("=") + 1, line.length()));
-                    altaDerecha3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
-                    altaDerecha3.setEnabled(true);
+                    altaIzquierda3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
+                    altaIzquierda3.setEnabled(true);
                     if(mostrarMedidas) intAltaDerecha3.setText(line.substring(line.indexOf("=") + 1, line.length()) + " Klux" );
                 }
 
@@ -1731,12 +1822,9 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                     if(mostrarMedidas) intExploDerecha3.setText(line.substring(line.indexOf("=") + 1, line.length()) + " Klux" );
                 }
 
-
                 if(line.startsWith("[CRC]")){
                     break;
                 }
-
-                
 
             }
 
@@ -1780,8 +1868,6 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
     private void cargarDefecto(int codigoDefecto) throws SQLException{
         try (Connection conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContraseña());
                 Statement stmt = conexion.createStatement()) {
-
-            fueAprobada = false;
             
             String addDefecto = "INSERT INTO defxprueba (id_defecto, id_prueba) "+
             "VALUES("+codigoDefecto+","+idPrueba+");";
@@ -1793,23 +1879,22 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
         }
     }
 
-    public void updatePruebaMethod() throws SQLException, ClassNotFoundException, IOException{
-        try (Connection conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContraseña());
-                Statement stmt = conexion.createStatement()) {
+    public void updatePruebaMethod(boolean esAprobada) throws IOException{
 
-            String aprobada = fueAprobada ? "'Y'" : "'N'";
+        String comentario = Utilidades.obtenerComentario();
 
-            String updatePrueba = "UPDATE pruebas\n"+
-            "SET Finalizada = 'Y', Aprobada = "+aprobada+", usuario_for ="+idUsuario +", serialEquipo="+ConsultarDatosVehiculo.buscarSerialEquipo(idPrueba)+"\n"+
-            "WHERE Id_Pruebas="+idPrueba+";";
+        String serialEquipo = UtilPropiedades.cargarPropiedad("serialLux", "seriales.properties");
 
-            stmt.executeUpdate(updatePrueba);
-
-            finalizar.setEnabled(false);
-            finalizar.setText("Prueba finalizada");
-
-            JOptionPane.showMessageDialog(null, "Prueba terminada con exito");
+        if (esAprobada || (Utilidades.getIsEditable() == 0 && !esAprobada)) {
+            Utilidades.actualizarPrueba(true, esAprobada, (long) idUsuario, serialEquipo, (long)idPrueba, comentario);
+        } else {
+            Utilidades.actualizarPrueba(false, false, (long) idUsuario, serialEquipo, (long) idPrueba, comentario);
         }
+
+        finalizar.setEnabled(false);
+        finalizar.setText("Prueba finalizada");
+
+        JOptionPane.showMessageDialog(null, "Prueba terminada con exito");
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

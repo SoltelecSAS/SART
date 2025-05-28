@@ -57,6 +57,7 @@ public class Conexion implements Serializable {
     private static final String EXTENSION = ".soltelec";
     private static final String NOMBRE_ARCHIVO = "Conexion";
     private static boolean licencia = false;
+    private static boolean tieneInternet = false;
     private static String nitCda;
 
     public static String getNitCda(){
@@ -113,10 +114,10 @@ public class Conexion implements Serializable {
                 password = datos.get(4);
             }
             
-            
-            
-            boolean tieneInternet = verificarConexionInternet();
-            System.out.println(tieneInternet ? "Tiene internet" : "No tiene internet");
+            if (!licencia) {
+                tieneInternet = verificarConexionInternet();
+                System.out.println(tieneInternet ? "Tiene internet" : "No tiene internet");
+            }
             
             if (!licencia && !tieneInternet) {
                 String consulta = "SELECT licence FROM cda WHERE id_cda = 1";

@@ -331,7 +331,7 @@ public class Menu extends javax.swing.JFrame {
         
         switch (tipoVehiculo) {
             case LIVIANO:
-                new DlgIntegradoLiviano(this, 0, 0, 1, 0, 0,false,0,"","Liviano","","").setVisible(true);
+                new DlgIntegradoLiviano(this, 0, 0, 1, 0, 0,false,0,"","Liviano","","", 0).setVisible(true);
                 break;
             case PESADO:
                 new DlgIntegradoPesado(this, 0, 1, 0, 0,2,false,0,"","Pesado","","").setVisible(true);
@@ -357,7 +357,7 @@ public class Menu extends javax.swing.JFrame {
         
         switch (tipoVehiculo) {
             case LIVIANO:
-                new DlgIntegradoLiviano(this, 0, 1, 0, 0, 0,false,0,"","Liviano","","").setVisible(true);
+                new DlgIntegradoLiviano(this, 0, 1, 0, 0, 0,false,0,"","Liviano","","", 0).setVisible(true);
                 break;
             case V4X4:
                 new DlgIntegrado4x4(this, 0, 1, 0, 0, 0,0,"","Liviano","","").setVisible(true);
@@ -377,7 +377,7 @@ public class Menu extends javax.swing.JFrame {
         
         switch (tipoVehiculo) {
             case LIVIANO:
-                new DlgIntegradoLiviano(this, 1, 0, 0, 0, 0,false,0,"","Liviano","","").setVisible(true);
+                new DlgIntegradoLiviano(this, 1, 0, 0, 0, 0,false,0,"","Liviano","","", 0).setVisible(true);
                 break;
             case PESADO:
                 new DlgIntegradoPesado(this, 1, 0, 0, 0,2,false,0,"","Pesado","","").setVisible(true);
@@ -400,7 +400,7 @@ public class Menu extends javax.swing.JFrame {
         
         switch (tipoVehiculo) {
             case LIVIANO:
-                new DlgIntegradoLiviano(this, 1, 1, 1, 0, 0,false,0,"","Liviano","","").setVisible(true);
+                new DlgIntegradoLiviano(this, 1, 1, 1, 0, 0,false,0,"","Liviano","","", 0).setVisible(true);
                 break;
             case PESADO:
                 new DlgIntegradoPesado(this, 1, 1, 0, 0,2,false,0,"","Pesado","","").setVisible(true);

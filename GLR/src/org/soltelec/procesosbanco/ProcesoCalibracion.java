@@ -176,39 +176,39 @@ public class ProcesoCalibracion implements Runnable {
                 }
                 
                 
-                  System.out.println("obt pef"+banco.obtenerPEF());
-                    System.out.println("obt pef"+String.valueOf(banco.obtenerPEF()));
+                System.out.println("obt pef"+banco.obtenerPEF());
+                System.out.println("obt pef"+String.valueOf(banco.obtenerPEF()));
                 double pef = ((Double.parseDouble(banco.obtenerPEF())) / 1000);               
-                double valoTolMin = (ptoCalibracion.getValorHC() ) - valExHC;
-                double valoTolMax = (ptoCalibracion.getValorHC() ) +valExHC;
-               boolean validacionHc ;
-                JOptionPane.showMessageDialog(null, "Valores tolerancia de hc  ("+valoTolMin+" y "+valoTolMax+" ) valor Recogido del canal de Hc div Pef: "+medicionGases.getValorHC()/pef);
+                double valoTolMinHc = (ptoCalibracion.getValorHC() ) - valExHC;
+                double valoTolMaxHc = (ptoCalibracion.getValorHC() ) +valExHC;
+                boolean validacionHc ;
+
+                
+
+                //JOptionPane.showMessageDialog(null, "Valores tolerancia de hc  ("+valoTolMinHc+" y "+valoTolMaxHc+" ) valor Recogido del canal de Hc div Pef: "+medicionGases.getValorHC()/pef);
                 //double valorTolerancia = 0.99;               
                 System.out.println("\nPEF: " + pef);
-               
-                if(valoTolMin <=(medicionGases.getValorHC()/pef )  &&  valoTolMax >= (medicionGases.getValorHC()/pef)){                   
-                     validacionHc=true;
-                }else{
-                     validacionHc=false;                     
-                }
-                valoTolMin = (ptoCalibracion.getValorCO() * 0.01) - valExCo;
-                valoTolMax = (ptoCalibracion.getValorCO() * 0.01) + valExCo;
-                //JOptionPane.showMessageDialog(null, "Valores tolerancia de CO ("+valoTolMin+" y "+valoTolMax+") Valor Recogido del canal de CO: "+medicionGases.getValorCO()* 0.01);
-                boolean validacionCo;                
-                if(valoTolMin <= (medicionGases.getValorCO()* 0.01 ) &&  valoTolMax >= (medicionGases.getValorCO() * 0.01) ){
-                    validacionCo=true;                    
-                }else{
-                    validacionCo=false;                    
-                }              
+                
+                validacionHc = valoTolMinHc <=(medicionGases.getValorHC()/pef )  &&  valoTolMaxHc >= (medicionGases.getValorHC()/pef);
+
+                double valoTolMinCo = (ptoCalibracion.getValorCO() * 0.01) - valExCo;
+                double valoTolMaxCo = (ptoCalibracion.getValorCO() * 0.01) + valExCo;
+                boolean validacionCo;    
+                
+                validacionCo = valoTolMinCo <= (medicionGases.getValorCO()* 0.01 ) &&  valoTolMaxCo >= (medicionGases.getValorCO() * 0.01);
+                            
                 boolean validacionCo2;
-                valoTolMin = (ptoCalibracion.getValorCO2()*0.1) - valExCo2;
-                valoTolMax = (ptoCalibracion.getValorCO2()*0.1) + valExCo2;
-               // JOptionPane.showMessageDialog(null, "Valores tolerancia de CO2 ( "+valoTolMin+" y "+valoTolMax+") Valor Recogido del canal de CO2:  "+medicionGases.getValorCO2()*0.1);                
-                if(valoTolMin <= (medicionGases.getValorCO2()*0.1 ) &&  valoTolMax >= (medicionGases.getValorCO2()*0.1) ){
-                    validacionCo2=true;                    
-                }else{
-                    validacionCo2=false;                    
-                }
+                double valoTolMinCo2 = (ptoCalibracion.getValorCO2()*0.1) - valExCo2;
+                double valoTolMaxCo2 = (ptoCalibracion.getValorCO2()*0.1) + valExCo2;
+                
+                validacionCo2 = valoTolMinCo2 <= (medicionGases.getValorCO2()*0.1 ) &&  valoTolMaxCo2 >= (medicionGases.getValorCO2()*0.1);
+
+                JOptionPane.showMessageDialog(null, 
+                    "Valores tolerancia de hc  ("+valoTolMinHc+" y "+valoTolMaxHc+" ) valor Recogido del canal de Hc div Pef: "+medicionGases.getValorHC()/pef+"\n"+
+                    "Valores tolerancia de CO ("+valoTolMinCo+" y "+valoTolMaxCo+") Valor Recogido del canal de CO: "+medicionGases.getValorCO()* 0.01+"\n"+
+                    "Valores tolerancia de CO2 ( "+valoTolMinCo2+" y "+valoTolMaxCo2+") Valor Recogido del canal de CO2:  "+medicionGases.getValorCO2()*0.1+"\n"+
+                    "Valores de referencia = Hc: "+ptoCalibracion.getValorHC()+" --- CO*0.01: "+ptoCalibracion.getValorCO()*0.01+" --- CO2*0.1: "+ptoCalibracion.getValorCO2()*0.1+" ---- PEF: "+pef);
+
                 //Calibracion calibracion = new Calibracion().getIdEquipo();
                 //int usuario = calibracion.getUsuario();
                 //else {
@@ -346,7 +346,7 @@ public class ProcesoCalibracion implements Runnable {
                     banco.getPuertoSerial().close();
                     return;
                 }
-                panelProgreso.getLabelMensaje().setText("Epere Por Favor. Validando Tolerancia de Gases");
+                panelProgreso.getLabelMensaje().setText("Espere Por Favor. Validando Tolerancia de Gases");
                 Thread.sleep(1000);
                 MedicionGases medicionGases = banco.obtenerDatos();
                 double valorTolerancia = 0.09;
@@ -590,7 +590,7 @@ public class ProcesoCalibracion implements Runnable {
 
             }
               if (validacionHc== false || validacionCo==false || validacionCo2==false) {
-                   this.procesoBajaExitoso = false;
+                    this.procesoBajaExitoso = false;
                     this.procesoAltaExitoso = false;
             }else {
               this.procesoBajaExitoso = true;

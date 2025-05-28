@@ -1,7 +1,9 @@
 package Utilidades;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
@@ -200,6 +202,18 @@ public class Utilidades2 {
         }
     }
 
+    public static void writeListToFile2(List<Double> numbers, String fileName) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            for (Double number : numbers) {
+                writer.write(number.toString());
+                writer.newLine(); // Salto de línea entre cada número
+            }
+            System.out.println("Datos escritos correctamente en " + fileName);
+        } catch (IOException e) {
+            System.err.println("Error al escribir en el archivo: " + e.getMessage());
+        }
+    }
+
     public static boolean eliminarMedida(int test, int measureType) {
         Conexion.setConexionFromFile();
         String eliminacion = "DELETE FROM medidas WHERE TEST = ? AND MEASURETYPE = ?";
@@ -348,15 +362,160 @@ public class Utilidades2 {
         return null; // Retorna null si no se encuentra o si ocurre un error
     }
 
+    public static Double leerDoubleDesdeArchivo(String fileName, String key) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith(key + "=")) {
+                    String[] parts = line.split("=", 2);
+                    if (parts.length == 2) {
+                        try {
+                            System.out.println("===Leyendo el valor de la clave: " + key + " valor: " + parts[1]);
+                            return Double.parseDouble(parts[1].trim());
+                        } catch (NumberFormatException e) {
+                            System.err.println("Valor inválido para la clave '" + key + "': " + parts[1]);
+                            return 0.0;
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo: "+fileName+" error:"+  e.getMessage());
+        }
+        System.out.println("===Datos no encontrados en el archivo: " + fileName + " para la clave: " + key);
+        return 0.0;
+    }
+
+    public static Long leerLongDesdeArchivo(String fileName, String key) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith(key + "=")) {
+                    String[] parts = line.split("=", 2);
+                    if (parts.length == 2) {
+                        try {
+                            System.out.println("===Leyendo el valor de la clave: " + key + " valor: " + parts[1]);
+                            return Long.parseLong(parts[1].trim());
+                        } catch (NumberFormatException e) {
+                            System.err.println("Valor inválido para la clave '" + key + "': " + parts[1]);
+                            return 0L;
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo: "+fileName+" error:"+  e.getMessage());
+        }
+        System.out.println("===Datos no encontrados en el archivo: " + fileName + " para la clave: " + key);
+        return 0L;
+    }
+
+    public static double getMayor(double num1, double num2){
+        if (num1>num2) return num1;
+        return num2;
+    }
+
+    public static double getMenor(double num1, double num2){
+        if (num1<num2) return num1;
+        return num2;
+    }
+
     public static double[][] medidasCuatrimotoPequena = {
         /*Pesos                            Fuerzas*/
-        {0                   ,                   0}, //llanta 1 DI 
-        {0                   ,                   0}, //llanta 2 TI
-        {0                   ,                   0}, //llanta 3 DD
-        {0                   ,                   0}, //llanta 4 TD
+        {0                   ,                   0}, //llanta 1 DDer 
+        {0                   ,                   0}, //llanta 2 TDer
+        {0                   ,                   0}, //llanta 3 DIzq
+        {0                   ,                   0}, //llanta 4 TIzq
         //-----------------------------------------------------------------------------
         {0                   ,                   0}, //fuerzas de estacionamiento I , D
-        /*esIzq                              esDer*/
+        /*esDer                              esIzq*/
     };
-  
- }
+
+    public static double[][] parametros = {
+        /*Valor 0 mV, Valor fuerza mV, Valor offset mV, span */
+        { 0         , 0              , 0              , 0}, //llanta 1 DDer 
+        { 0         , 0              , 0              , 0}, //llanta 2 TDer
+        { 0         , 0              , 0              , 0}, //llanta 3 DIzq
+        { 0         , 0              , 0              , 0}, //llanta 4 TIzq
+        //----------------------------------------------------------------------------
+        { 0         , 0              , 0              , 0}, //fuerzas de estacionamiento Der , D
+        { 0         , 0              , 0              , 0} //fuerzas de estacionamiento Izq , I
+    };
+
+    public static String generarReporteParametros(boolean aplicarOffset) {
+        String[] etiquetas = {
+            "Llanta 1 Delantera Derecha",
+            "Llanta 2 Trasera Derecha",
+            "Llanta 3 Delantera Izquierda",
+            "Llanta 4 Trasera Izquierda",
+            "Estacionamiento Derecho",
+            "Estacionamiento Izquierdo"
+        };
+    
+        String reporte = "";
+    
+        for (int i = 0; i < parametros.length; i++) {
+            int indexFuerza = aplicarOffset ? 1 : 0;
+            double valorCero = parametros[i][0];
+            double valorFuerza = parametros[i][1];
+            double valorOffset = parametros[i][2];
+            double span = parametros[i][3];
+    
+            double ceroConOffset = aplicarOffset ? (valorCero + valorOffset) : valorCero;
+            double fuerzaConCeroSinSpan = valorFuerza - ceroConOffset;
+            double fuerzaTotal = fuerzaConCeroSinSpan * span;
+
+            fuerzas[i][indexFuerza] = fuerzaTotal;
+
+            String offset = aplicarOffset ? "con offset" : "sin offset";
+    
+            reporte += "[" + etiquetas[i] + " " +offset+"]\n";
+            reporte += "  Valor 0 mV: " + valorCero + "\n";
+            reporte += "  Valor fuerza mV: " + valorFuerza + "\n";
+            reporte += "  Valor offset mV: " + valorOffset + "\n";
+            reporte += "  Span: " + span + "\n";
+            reporte += "  Cero " + (aplicarOffset ? "con offset" : "sin offset") + ": " + ceroConOffset + "\n";
+            reporte += "  Fuerza con cero sin span: " + fuerzaConCeroSinSpan + "\n";
+            reporte += "  Fuerza total: " + fuerzaTotal + "\n";
+            reporte += "---------------------------------------------\n";
+        }
+    
+        return reporte;
+    }
+    
+    public static double[][] fuerzas = {
+        /*Sin offset                    Con offset*/
+        {0                   ,                   0}, //llanta 1 DDer  
+        {0                   ,                   0}, //llanta 2 TDer
+        {0                   ,                   0}, //llanta 3 DIzq
+        {0                   ,                   0}, //llanta 4 TIzq
+        //-----------------------------------------------------------------------------
+        {0                   ,                   0}, //fuerzas de estacionamiento Der
+        {0                   ,                   0}, //fuerzas de estacionamiento Izq
+    };
+
+    public static String generarReporteFuerzas() {
+        String[] etiquetas = {
+            "Llanta 1 Delantera Derecha",
+            "Llanta 2 Trasera Derecha",
+            "Llanta 3 Delantera Izquierda",
+            "Llanta 4 Trasera Izquierda",
+            "Estacionamiento Derecho",
+            "Estacionamiento Izquierdo"
+        };
+    
+        String reporte = "";
+    
+        for (int i = 0; i < fuerzas.length; i++) {
+            double fuerzaSinOffset = fuerzas[i][0];
+            double fuerzaConOffset = fuerzas[i][1];
+    
+            reporte += "[" + etiquetas[i] + "]\n";
+            reporte += "  Fuerza sin offset: " + fuerzaSinOffset + "\n";
+            reporte += "  Fuerza con offset: " + fuerzaConOffset + "\n";
+            reporte += "---------------------------------------------\n";
+        }
+    
+        return reporte;
+    }
+}
