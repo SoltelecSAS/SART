@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class UtilOpacimetroBrianBee
+public class UtilOpacimetroBrianBeeV1
 {                                                                                              
   private static final byte[] INICIO_COMANDO = {2, 79, 80, 65, 23, 49, 23 };
 
@@ -111,7 +111,7 @@ public class UtilOpacimetroBrianBee
           listaEncontrados.add(new String(buffer, "US-ASCII"));
           temporal.clear();
         } catch (UnsupportedEncodingException ex) {
-          Logger.getLogger(UtilOpacimetroBrianBee.class.getName()).log(Level.SEVERE, null, ex);
+          Logger.getLogger(UtilOpacimetroBrianBeeV1.class.getName()).log(Level.SEVERE, null, ex);
         }
       else if (contadorOcurrencias != 0) {
         temporal.add(Byte.valueOf(trama[i]));
@@ -126,7 +126,7 @@ public class UtilOpacimetroBrianBee
           listaEncontrados.add(new String(buffer, "US-ASCII"));
           temporal.clear();
         } catch (UnsupportedEncodingException ex) {
-          Logger.getLogger(UtilOpacimetroBrianBee.class.getName()).log(Level.SEVERE, null, ex);
+          Logger.getLogger(UtilOpacimetroBrianBeeV1.class.getName()).log(Level.SEVERE, null, ex);
         }
       }
 

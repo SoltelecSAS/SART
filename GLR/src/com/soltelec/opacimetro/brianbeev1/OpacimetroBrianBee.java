@@ -23,11 +23,11 @@ public class OpacimetroBrianBee
   public void standBy()
   {
     MensajeOpacimetroBrianBee mensaje = new MensajeOpacimetroBrianBee("SB");
-    byte[] trama = UtilOpacimetroBrianBee.armarTramaOpacimetroBrianBee(mensaje);
+    byte[] trama = UtilOpacimetroBrianBeeV1.armarTramaOpacimetroBrianBee(mensaje);
 
     byte[] respuesta = enviarRecibirTrama(trama);
 
-    mensaje = UtilOpacimetroBrianBee.armarMensajeOpacimetroBrianBee(respuesta);
+    mensaje = UtilOpacimetroBrianBeeV1.armarMensajeOpacimetroBrianBee(respuesta);
   }
 
   public void armarLCS() {
@@ -36,7 +36,7 @@ public class OpacimetroBrianBee
 
   public void calibrar() {
     MensajeOpacimetroBrianBee mensaje = new MensajeOpacimetroBrianBee("AZ");
-    byte[] trama = UtilOpacimetroBrianBee.armarTramaOpacimetroBrianBee(mensaje);
+    byte[] trama = UtilOpacimetroBrianBeeV1.armarTramaOpacimetroBrianBee(mensaje);
     byte[] respuesta = enviarRecibirTrama(trama);
   }
 
@@ -64,9 +64,9 @@ public class OpacimetroBrianBee
     throw new UnsupportedOperationException("Not supported yet."); } 
   public MedicionOpacidad obtenerDatos() { 
       MensajeOpacimetroBrianBee mensaje = new MensajeOpacimetroBrianBee("VA");
-    byte[] tramaComando = UtilOpacimetroBrianBee.armarTramaOpacimetroBrianBee(mensaje);
+    byte[] tramaComando = UtilOpacimetroBrianBeeV1.armarTramaOpacimetroBrianBee(mensaje);
     byte[] tramaRespuesta = enviarRecibirTrama(tramaComando);
-    MensajeOpacimetroBrianBee mensajeRespuesta = UtilOpacimetroBrianBee.armarMensajeOpacimetroBrianBee(tramaRespuesta);
+    MensajeOpacimetroBrianBee mensajeRespuesta = UtilOpacimetroBrianBeeV1.armarMensajeOpacimetroBrianBee(tramaRespuesta);
     MedicionOpacidad medicion = new MedicionOpacidad();
     double transmitancia = 0.0D;
     Iterator i =null;
@@ -88,7 +88,7 @@ public class OpacimetroBrianBee
 
     mensaje = null;
     mensaje = new MensajeOpacimetroBrianBee("ST");
-    tramaComando = UtilOpacimetroBrianBee.armarTramaOpacimetroBrianBee(mensaje);
+    tramaComando = UtilOpacimetroBrianBeeV1.armarTramaOpacimetroBrianBee(mensaje);
     tramaRespuesta = enviarRecibirTrama(tramaComando);
 
     byte status = tramaRespuesta[11];
@@ -100,7 +100,7 @@ public class OpacimetroBrianBee
     medicion.setTempTuboFueraTolerancia(flags[0]);
 
     mensajeRespuesta = null;
-    mensajeRespuesta = UtilOpacimetroBrianBee.armarMensajeOpacimetroBrianBee(tramaRespuesta);
+    mensajeRespuesta = UtilOpacimetroBrianBeeV1.armarMensajeOpacimetroBrianBee(tramaRespuesta);
 
     return medicion; }
 
@@ -134,24 +134,24 @@ public class OpacimetroBrianBee
 
   public long obtenerSerial() {
     MensajeOpacimetroBrianBee mensaje = new MensajeOpacimetroBrianBee("ID");
-    byte[] trama = UtilOpacimetroBrianBee.armarTramaOpacimetroBrianBee(mensaje);
+    byte[] trama = UtilOpacimetroBrianBeeV1.armarTramaOpacimetroBrianBee(mensaje);
     byte[] respuesta = enviarRecibirTrama(trama);
     imprimirRespuesta(respuesta);
-    mensaje = UtilOpacimetroBrianBee.armarMensajeOpacimetroBrianBee(respuesta);
+    mensaje = UtilOpacimetroBrianBeeV1.armarMensajeOpacimetroBrianBee(respuesta);
     return Long.parseLong((String)mensaje.getDatos().get(3));
   }
 
   public void resetearValoresPico() {
     MensajeOpacimetroBrianBee mensaje = new MensajeOpacimetroBrianBee("AP");
-    byte[] trama = UtilOpacimetroBrianBee.armarTramaOpacimetroBrianBee(mensaje);
+    byte[] trama = UtilOpacimetroBrianBeeV1.armarTramaOpacimetroBrianBee(mensaje);
     byte[] respuesta = enviarRecibirTrama(trama);
   }
 
   public MedicionOpacidad obtenerOpacidad() {
     MensajeOpacimetroBrianBee mensaje = new MensajeOpacimetroBrianBee("VA");
-    byte[] tramaComando = UtilOpacimetroBrianBee.armarTramaOpacimetroBrianBee(mensaje);
+    byte[] tramaComando = UtilOpacimetroBrianBeeV1.armarTramaOpacimetroBrianBee(mensaje);
     byte[] tramaRespuesta = enviarRecibirTrama(tramaComando);
-    MensajeOpacimetroBrianBee mensajeRespuesta = UtilOpacimetroBrianBee.armarMensajeOpacimetroBrianBee(tramaRespuesta);
+    MensajeOpacimetroBrianBee mensajeRespuesta = UtilOpacimetroBrianBeeV1.armarMensajeOpacimetroBrianBee(tramaRespuesta);
     MedicionOpacidad medicion = new MedicionOpacidad();
     double transmitancia = Double.parseDouble((String)mensajeRespuesta.getDatos().get(0));
     System.out.println("transmitancia: " + transmitancia);

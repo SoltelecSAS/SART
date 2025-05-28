@@ -17,7 +17,7 @@ package com.soltelec.opacimetro.brianbeeold;
  
  
  
-  public class UtilOpacimetroBrianBee  {
+  public class UtilOpacimetroBrianBeeOld  {
 
     /*  20 */ private static final byte[] INICIO_COMANDO = {2, 79, 80, 65, 23, 51, 49, 23};
 ///*  20 */ private static final byte[] INICIO_COMANDO = {2, 79, 80, 65, 23, 48, 23};
@@ -131,7 +131,7 @@ package com.soltelec.opacimetro.brianbeeold;
                     /* 120 */ listaEncontrados.add(new String(buffer, "US-ASCII"));
                     /* 121 */ temporal.clear();
                                     } catch (UnsupportedEncodingException ex) {
-                    /* 123 */ Logger.getLogger(UtilOpacimetroBrianBee.class.getName()).log(Level.SEVERE, null, ex);
+                    /* 123 */ Logger.getLogger(UtilOpacimetroBrianBeeOld.class.getName()).log(Level.SEVERE, null, ex);
                     ex.printStackTrace();
                                     }
                 /* 125 */            } else if (contadorOcurrencias != 0) {
@@ -148,7 +148,7 @@ package com.soltelec.opacimetro.brianbeeold;
                     /* 136 */ temporal.clear();
                                     } catch (UnsupportedEncodingException ex) {
                                         ex.printStackTrace();
-                    /* 138 */ Logger.getLogger(UtilOpacimetroBrianBee.class.getName()).log(Level.SEVERE, null, ex);
+                    /* 138 */ Logger.getLogger(UtilOpacimetroBrianBeeOld.class.getName()).log(Level.SEVERE, null, ex);
                                     }
                             }
                     }
