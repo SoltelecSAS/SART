@@ -10,14 +10,23 @@ import java.util.logging.Logger;
 
 public class UtilOpacimetroBrianBeeV1
 {                                                                                              
-  private static final byte[] INICIO_COMANDO = {2, 79, 80, 65, 23, 49, 23 };
+  //private static final byte[] INICIO_COMANDO = {2, 79, 80, 65, 23, 49, 23 };
+
+  private static final byte[] INICIO_COMANDO = {
+    /*start*/0x02, 0x4F, 0x50, 0x41, 0x17, 0x31, 0x17,/*start*/ 
+    /*comando*/0x53, 0x54 /*comando*/, 
+    /*checksum*/0x45, 0x36,/*checksum*/ 
+    0x03 /*end*/
+  }; // end
+
+  
 
   public static byte[] armarTramaOpacimetroBrianBee(MensajeOpacimetroBrianBee mensaje)
   {
-    List listaTrama = copiarEncabezadoTrama();
-    byte[] bytesComando = convertirABytes(mensaje.getComando());
-
-    listaTrama = aniadirBytes(listaTrama, bytesComando);
+    List<Byte> listaTrama = copiarEncabezadoTrama();
+    byte[] bytesComando = convertirABytes(mensaje.getComando()); // por ejemplo si fuera "SB" quedaría {83, 66}
+    
+    listaTrama = addBytes(listaTrama, bytesComando);
 
     List listaDatos = mensaje.getDatos();
     if (!listaDatos.isEmpty()) {
@@ -27,7 +36,7 @@ public class UtilOpacimetroBrianBeeV1
     String checksum = calcularCheckSum(listaTrama);
 
     byte[] bytesChecksum = convertirABytes(checksum);
-    listaTrama = aniadirBytes(listaTrama, bytesChecksum);
+    listaTrama = addBytes(listaTrama, bytesChecksum);
     Byte etx = new Byte((byte)3);
     listaTrama.add(etx);
     byte[] tramaDeBytes = new byte[listaTrama.size()];
@@ -47,21 +56,48 @@ public class UtilOpacimetroBrianBeeV1
       ex.printStackTrace(System.err);
     }
     return trama;
+
+    //por ejemplo si fuera "VA" quedaría {86, 65}
+    //por ejemplo si fuera "SB" quedaría {83, 66}
   }
 
-  private static List<Byte> copiarEncabezadoTrama()
+  /* private static List<Byte> copiarEncabezadoTrama()
   {
     List lista = new ArrayList();
-    byte[] arr$ = INICIO_COMANDO; int len$ = arr$.length; for (int i$ = 0; i$ < len$; i$++) { Byte b = Byte.valueOf(arr$[i$]);
+    byte[] arr$ = INICIO_COMANDO; 
+    int len$ = arr$.length; 
+    for (int i$ = 0; i$ < len$; i$++) { 
+      Byte b = arr$[i$];
       lista.add(b);
+    }
+    return lista;
+  } */
+
+  private static List<Byte> copiarEncabezadoTrama() {
+    List<Byte> lista = new ArrayList<>();
+    for (byte b : INICIO_COMANDO) {
+        lista.add(b);
     }
     return lista;
   }
 
-  private static List<Byte> aniadirBytes(List<Byte> lista, byte[] trama)
+  /* private static List<Byte> addBytes(List<Byte> lista, byte[] trama)
   {
-    byte[] arr$ = trama; int len$ = arr$.length; for (int i$ = 0; i$ < len$; i$++) { Byte b = Byte.valueOf(arr$[i$]);
+    // byte[] trama = {83, 66} si fuera SB
+    byte[] arr$ = trama; 
+    int len$ = arr$.length; 
+
+    for (int i$ = 0; i$ < len$; i$++) { 
+      Byte b = arr$[i$];
       lista.add(b);
+    }
+
+    return lista;
+  } */
+
+  private static List<Byte> addBytes(List<Byte> lista, byte[] trama) {
+    for (byte b : trama) {
+        lista.add(b); // autounboxing automático
     }
     return lista;
   }
@@ -144,7 +180,8 @@ public class UtilOpacimetroBrianBeeV1
     int suma = 0;
     for (int i = 1; i < listaTrama.size(); i++)
     {
-      suma += ((Byte)listaTrama.get(i)).byteValue();
+      suma += (listaTrama.get(i)); // Esta suma representa el numero de bytes
+      //SUMA = SUMA + trama[i];
     }
     suma &= 255;
     String chkSum = Integer.toHexString(suma).toUpperCase();

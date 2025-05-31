@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 public class UtilOpacimetroBrianBee             // 2, 79, 80, 65, 23, 51, 49, 23 asumimos que es para comunicvar cali
 {                                              //  2, 79, 80, 65, 23, 48, 23 para comunicar buena ventura adrees 0
                                            
-  private static final byte[] INICIO_COMANDO = {0x02, 0x4F, 0x50, 0x41, 0x17, 0x31, 0x17, 0x53, 0x42, 0x44, 0x31, 0x03}; // STX, OPA, ETB, 1, ETB
+  private static final byte[] INICIO_COMANDO = {0x02, 0x4F, 0x50, 0x41, 0x17, 0x31, 0x17}; // STX, OPA, ETB, 1, ETB
 
   public static byte[] armarTramaOpacimetroBrianBee(MensajeOpacimetroBrianBee mensaje) {
       List<Byte> listaTrama = copiarEncabezadoTrama();
@@ -207,7 +207,7 @@ public class UtilOpacimetroBrianBee             // 2, 79, 80, 65, 23, 51, 49, 23
   } */
 
   public static void main(String[] args) {
-    MensajeOpacimetroBrianBee mensaje = new MensajeOpacimetroBrianBee("VA");
+    MensajeOpacimetroBrianBee mensaje = new MensajeOpacimetroBrianBee("ID");
     byte[] trama = armarTramaOpacimetroBrianBee(mensaje);
     for (byte b : trama) {
       System.out.print(Integer.toHexString(b).toUpperCase() + " ");

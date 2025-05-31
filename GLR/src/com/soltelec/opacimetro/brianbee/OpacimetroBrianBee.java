@@ -25,8 +25,9 @@ public class OpacimetroBrianBee
   {
     MensajeOpacimetroBrianBee mensaje = new MensajeOpacimetroBrianBee("SB");
     byte[] trama = UtilOpacimetroBrianBee.armarTramaOpacimetroBrianBee(mensaje);
+byte[] standbyRequest =   {0x02, 0x4F, 0x50, 0x41, 0x17, 0x31,  0x17, 0x53, 0x42, 0x44, 0x34, 0x03};
 
-    byte[] respuesta = enviarRecibirTrama(trama);
+    byte[] respuesta = enviarRecibirTrama(standbyRequest);
 
     CMensajes.mensajeCorrecto("La respuesta del opacimetro es: "+respuesta);
 
@@ -40,7 +41,9 @@ public class OpacimetroBrianBee
   public void calibrar() {
     MensajeOpacimetroBrianBee mensaje = new MensajeOpacimetroBrianBee("AZ");
     byte[] trama = UtilOpacimetroBrianBee.armarTramaOpacimetroBrianBee(mensaje);
-    byte[] respuesta = enviarRecibirTrama(trama);
+    byte[] autoZeroRequest =  {0x02, 0x4F, 0x50, 0x41, 0x17, 0x31,  0x17, 0x41, 0x5A, 0x44, 0x41, 0x03};
+
+    byte[] respuesta = enviarRecibirTrama(autoZeroRequest);
   }
 
   public byte[] datosRTTrigger(int indiceInicial, int indiceFinal) {
@@ -70,7 +73,8 @@ public class OpacimetroBrianBee
   public MedicionOpacidad obtenerDatos() {
     MensajeOpacimetroBrianBee mensaje = new MensajeOpacimetroBrianBee("VA");
     byte[] tramaComando = UtilOpacimetroBrianBee.armarTramaOpacimetroBrianBee(mensaje);
-    byte[] tramaRespuesta = enviarRecibirTrama(tramaComando);
+    byte[] readDataRequest = {0x02, 0x4F, 0x50, 0x41, 0x17, 0x31,  0x17, 0x56, 0x41, 0x44, 0x36, 0x03};
+    byte[] tramaRespuesta = enviarRecibirTrama(readDataRequest);
     MensajeOpacimetroBrianBee mensajeRespuesta = UtilOpacimetroBrianBee.armarMensajeOpacimetroBrianBee(tramaRespuesta);
     MedicionOpacidad medicion = new MedicionOpacidad();
     System.out.println("Listado de Datos Obtenidos Metodos obtenerDatos: " );
@@ -93,7 +97,9 @@ public class OpacimetroBrianBee
     mensaje = null;
     mensaje = new MensajeOpacimetroBrianBee("ST");
     tramaComando = UtilOpacimetroBrianBee.armarTramaOpacimetroBrianBee(mensaje);
-    tramaRespuesta = enviarRecibirTrama(tramaComando);
+    byte[] statusRequest =    {0x02, 0x4F, 0x50, 0x41, 0x17, 0x31,  0x17, 0x53, 0x54, 0x45, 0x36, 0x03};
+
+    tramaRespuesta = enviarRecibirTrama(statusRequest);
 
     byte status = tramaRespuesta[11];
 
@@ -155,7 +161,9 @@ public class OpacimetroBrianBee
   public long obtenerSerial() {
     MensajeOpacimetroBrianBee mensaje = new MensajeOpacimetroBrianBee("ID");
     byte[] trama = UtilOpacimetroBrianBee.armarTramaOpacimetroBrianBee(mensaje);
-    byte[] respuesta = enviarRecibirTrama(trama);
+    byte[] identifiRequest =  {0x02, 0x4F, 0x50, 0x41, 0x17, 0x31,  0x17, 0x49, 0x44, 0x43, 0x43, 0x03};
+
+    byte[] respuesta = enviarRecibirTrama(identifiRequest);
     imprimirRespuesta(respuesta);
     mensaje = UtilOpacimetroBrianBee.armarMensajeOpacimetroBrianBee(respuesta);
     return Long.parseLong((String)mensaje.getDatos().get(3));
@@ -163,14 +171,18 @@ public class OpacimetroBrianBee
 
   public void resetearValoresPico() {
     MensajeOpacimetroBrianBee mensaje = new MensajeOpacimetroBrianBee("AP");
+    
     byte[] trama = UtilOpacimetroBrianBee.armarTramaOpacimetroBrianBee(mensaje);
-    byte[] respuesta = enviarRecibirTrama(trama);
+    byte[] resetpeakRequest = {0x02, 0x4F, 0x50, 0x41, 0x17, 0x31,  0x17, 0x41, 0x50, 0x44, 0x30, 0x03};
+    byte[] respuesta = enviarRecibirTrama(resetpeakRequest);
   }
 
   public MedicionOpacidad obtenerOpacidad() {
     MensajeOpacimetroBrianBee mensaje = new MensajeOpacimetroBrianBee("VA");
     byte[] tramaComando = UtilOpacimetroBrianBee.armarTramaOpacimetroBrianBee(mensaje);
-    byte[] tramaRespuesta = enviarRecibirTrama(tramaComando);
+    byte[] readDataRequest =  {0x02, 0x4F, 0x50, 0x41, 0x17, 0x31,  0x17, 0x56, 0x41, 0x44, 0x36, 0x03};
+
+    byte[] tramaRespuesta = enviarRecibirTrama(readDataRequest);
     MensajeOpacimetroBrianBee mensajeRespuesta = UtilOpacimetroBrianBee.armarMensajeOpacimetroBrianBee(tramaRespuesta);
     MedicionOpacidad medicion = new MedicionOpacidad();
      System.out.println("Listado de Datos Obtenidos Metodo ObtenerOpacidad: " );
