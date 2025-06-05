@@ -7,6 +7,8 @@ package org.soltelec.pruebasgases.diesel;
 import com.soltelec.modulopuc.utilidades.Mensajes;
 import com.soltelec.opacimetro.brianbee.HiloTomaDatosDieselBrianBee;
 import com.soltelec.opacimetro.brianbee.OpacimetroBrianBee;
+import com.soltelec.servidor.utils.CMensajes;
+
 import eu.hansolo.steelseries.tools.BackgroundColor;
 import eu.hansolo.steelseries.tools.LcdColor;
 import java.awt.Component;
@@ -1639,6 +1641,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
     }
 
     private boolean ajustarValorMaximo() {
+        CMensajes.mensajeCorrecto("Presione Aceptar para continuar con el ajuste del valor maximo de la escala");
         System.out.println("------------------------------------------");
         System.out.println("----   AJUSTANDO VALOR MAXIMO     --------");
         System.out.println("------------------------------------------");

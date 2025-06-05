@@ -6,6 +6,8 @@ package org.soltelec.pruebasgases.diesel;
 
 import com.soltelec.loginadministrador.ConsultasLogin;
 import com.soltelec.opacimetro.brianbee.OpacimetroBrianBee;
+import com.soltelec.servidor.utils.CMensajes;
+
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -228,6 +230,7 @@ public class CallableInicioDiesel implements Callable<Void> {
     }
 
     private boolean ajustarValorMaximo() {
+        CMensajes.mensajeCorrecto("Presione Aceptar para continuar con el ajuste del valor maximo de la escala");
         System.out.println("------------------------------------------");
         System.out.println("----   AJUSTANDO VALOR MAXIMO     --------");
         System.out.println("------------------------------------------");
