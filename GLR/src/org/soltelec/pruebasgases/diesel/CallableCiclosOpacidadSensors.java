@@ -1471,13 +1471,10 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                 }
                 panel.getRadialTacometro().setValue(rpm);
 
-                if(
-                    contadorTemporizacion < 5 && 
-                    (rpm < velocidadCrucero - 100)
-                ) {
-                    cumple = true;
-                }
-                if (rpm> velocidadCrucero + 100) {
+                
+                cumple = contadorTemporizacion < 5 && (rpm > (velocidadCrucero - 100));
+        
+                if (rpm > velocidadCrucero + 100 && !simulacion) {
                     cumple = false;
                     panel.getMensaje().setText("Aceleracion fallida por diferencia de gobernada mayor a 100");
                     break;

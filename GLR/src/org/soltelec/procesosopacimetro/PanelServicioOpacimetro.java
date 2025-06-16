@@ -103,7 +103,6 @@ public class PanelServicioOpacimetro extends JPanel {
 
         } catch (IOException ex) {
         }
-        marcaOpacimetro = "BrianBee";
 
         if (marcaOpacimetro == null || marcaOpacimetro.equals("Sensors")) {
             opacimetro = new OpacimetroSensors();
