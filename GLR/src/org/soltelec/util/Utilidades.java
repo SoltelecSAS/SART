@@ -57,7 +57,7 @@ public class Utilidades {
          
      }
 
-    private static String metodoRpm = null;
+    private static String metodoRpm = "NA";
     public static void setMetodoMedicionRpm(String metodo){
         Utilidades.metodoRpm = metodo;
     }

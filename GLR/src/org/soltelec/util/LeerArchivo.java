@@ -76,11 +76,13 @@ public class LeerArchivo {
             serialBanco.equals("")  ? 
                 pefAnalizador+"-"+serialAnalizador : pefAnalizador+"-"+serialAnalizador+"-"+serialBanco;
         
+        if (Utilidades.getMetodoMedicionRpm().equalsIgnoreCase("NA")) serialVibracion = " ? "; //CUANDO NO SELECCIONA METODO DE MEDICION DEJARA UN SERIAL CON SIGNO ? EN EL SERIAL DE LA SONDA
+        
         String serialKitCompleto = 
             Utilidades.getMetodoMedicionRpm().equalsIgnoreCase("Bateria") ?
                 serialRpm+"/"+serialTemperatura+"/"+serialBateria:
                 serialRpm+"/"+serialTemperatura+"/"+serialVibracion;
-
+        
         //if (formaTemp.equalsIgnoreCase("C") || diseno.equalsIgnoreCase("Scooter")) {
         //    serialKitCompleto = serialKitCompleto.replace("/"+serialTemperatura, "");
         //}

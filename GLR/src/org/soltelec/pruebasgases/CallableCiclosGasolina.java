@@ -81,6 +81,7 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
     private String placas;
     List<MedicionGases> lista50Datos = null;
     List<MedicionGases> lista10Datos = null;
+    private String comentarioDilucion = "";
 
     private SimuladorRpm simuladorRpm;//clase para simular las revoluciones
     boolean simulacion = false;
@@ -1032,7 +1033,8 @@ public class CallableCiclosGasolina implements Callable<List<List<MedicionGases>
                 /* panel.getMensaje().setText("SE HA DETECTADO DILUCION EN LA MUESTRA ");
                 Thread.sleep(1000);
                 panel.getFuncion().setText("DILUCION DE MUESTRA"); */
-            }
+                comentarioDilucion = "DILUCION EN LA MUESTRA";
+            }else comentarioDilucion = "";
             if (intentosVariable >= INTENTOS) {
                 if (isSalidaPrueba()) {
                     return null;

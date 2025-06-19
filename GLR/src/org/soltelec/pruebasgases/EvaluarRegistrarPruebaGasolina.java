@@ -276,6 +276,9 @@ public class EvaluarRegistrarPruebaGasolina {
             if (dilucionVariable) {
                 pruebaAprobada = false;
                 observ = "Vehiculo rechazado debido a dilucion en la muestra";
+                System.out.println("Vehiculo rechazado debido a dilucion en la muestra");
+            }else{
+                System.out.println("Vehiculo aceptado debido a que no se detecto dilucion en la muestra");
             }
             System.out.println("ESTA DENTRO DEL METODO EVALUARrEGISTRARpRUEBA");
             System.out.println(" ");
