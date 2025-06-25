@@ -2005,8 +2005,11 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
             mostrarInformacionSensores(persoDer, pesoIzq);
 
-            calPesoDer = (persoDer - valcalcero3) * spanpd;
-            calPesoIzq = (pesoIzq - valcalcero4) * spanpi;
+            double valorCeroDer = valcalcero3 + offsetCeroPesoDer;
+            double valorCeroIzq = valcalcero4 + offsetCeroPesoIzq;
+
+            calPesoDer = (persoDer - valorCeroDer) * spanpd;
+            calPesoIzq = (pesoIzq - valorCeroIzq) * spanpi;
             
             if (isReiniciarTrama(calPesoDer, calPesoIzq, "ambos")) {
                 calPesoDer = 0;
@@ -2018,7 +2021,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                 Thread.sleep(540);
             }
             limpiarDatosPeso();
-            if (calPesoDer >= umbralPeso && calPesoIzq >= umbralPeso) {
+            if ((calPesoDer >= umbralPeso && calPesoIzq >= umbralPeso)) {
                 break;
             }
         }
@@ -2106,10 +2109,16 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         System.out.println("valcalcero4 es: " + valcalcero4 + " Mv");
         System.out.println("spanpd es: " + spanpd);
         System.out.println("spanpi es: " + spanpi);
-        System.out.println("Peso Medido Derecho: " + pesomedd + " Mv");
-        System.out.println("Peso Medido Izquierdo: " + pesomedi + " Mv");
-        System.out.println("Peso medido en lado Derecho: " + ((pesomedd - valcalcero3) * spanpd) + " Newton");
-        System.out.println("Peso medido en lado Izquierdo: " + ((pesomedi - valcalcero4) * spanpi) + " Newton");
+        System.out.println("Peso Medido Derecho sin cero: " + pesomedd + " Mv");
+        System.out.println("Peso Medido Izquierdo sin cero: " + pesomedi + " Mv");
+        double pesoConOffsetDer = valcalcero3+offsetCeroPesoDer;
+        double pesoConOffsetIzq = valcalcero4+offsetCeroPesoIzq;
+        System.out.println("Cero con offset (ValorCero:"+valcalcero3+"+offset:"+offsetCeroPesoDer+"): " + (pesoConOffsetDer) + " Mv"); 
+        System.out.println("Cero con offset (ValorCero:"+valcalcero4+"+offset:"+offsetCeroPesoIzq+"): " + (pesoConOffsetIzq) + " Mv");
+        System.out.println("Peso Medido Derecho con cero: " + (pesomedd - pesoConOffsetDer) + " Mv");
+        System.out.println("Peso Medido Izquierdo con cero: " + (pesomedi - pesoConOffsetIzq) + " Mv");
+        System.out.println("Peso medido en lado Derecho con span: " + ((pesomedd - pesoConOffsetDer) * spanpd) + " Newton");
+        System.out.println("Peso medido en lado Izquierdo con span: " + ((pesomedi - pesoConOffsetIzq) * spanpi) + " Newton");
         System.out.println("Umbral peso: " + umbralPeso + " Newton.");
         System.out.println("Total BYTES CANAL 3: " + Datos3.size());
         System.out.println("Total BYTES CANAL 4: " + Datos4.size());
