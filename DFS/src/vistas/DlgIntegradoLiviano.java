@@ -2060,16 +2060,20 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             if (isDerecho) {
                 persoDer = CalcularMediana(Datos3);
                 pesoIzq = 0;
-                calPesoDer = (persoDer - valcalcero3) * spanpd;
+                calPesoDer = (persoDer - (valcalcero3+offsetCeroPesoDer)) * spanpd;
                 calPesoIzq = 0;
             }else{
                 persoDer = 0;
                 pesoIzq = CalcularMediana(Datos4);
                 calPesoDer = 0;
-                calPesoIzq = (pesoIzq - valcalcero4) * spanpi;
+                calPesoIzq = (pesoIzq - (valcalcero4+offsetCeroPesoDer)) * spanpi;
             }
 
             mostrarInformacionSensores(persoDer, pesoIzq);
+
+            System.out.println("lado medido: " + lado);
+            System.out.println("calPesoDer: " + calPesoDer);
+            System.out.println("calPesoIzq: " + calPesoIzq);
             
             if (isReiniciarTrama(calPesoDer, calPesoIzq, lado)) {
                 calPesoDer = 0;
@@ -2081,6 +2085,8 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                 Thread.sleep(540);
             }
             limpiarDatosPeso();
+            System.out.println("umbralPeso: " + umbralPeso);
+            
             if (calPesoDer >= umbralPeso || calPesoIzq >= umbralPeso) {
                 break;
             }
