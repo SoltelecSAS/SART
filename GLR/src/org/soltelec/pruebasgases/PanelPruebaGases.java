@@ -196,7 +196,7 @@ public class PanelPruebaGases extends JPanel implements ActionListener {
             }
             //putttttt
             String tipoVehiculo = Utilidades.getTipoVehiculo();
-            Utilidades.cargarDefectos(tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? 140100 : 84018 , Utilidades.getIdPrueba());
+            Utilidades.cargarDefectos(tipoVehiculo != null && tipoVehiculo.equalsIgnoreCase("CUATRIMOTO") ? 140100 : 84018 , Utilidades.getIdPrueba());
             Utilidades.guardarOModificarMedida(8031, (int)Utilidades.getIdPrueba(), Utilidades.getTempAmbiente(), "N");
             Utilidades.guardarOModificarMedida(8032, (int)Utilidades.getIdPrueba(), Utilidades.getHumedadAmbiente(), "N");
             Utilidades.actualizarPrueba(true, false, Utilidades.getIdUsuarioMotos(), serial, Utilidades.getIdPrueba(), "4.1.1.1.5 Revoluciones fuera de rango.");

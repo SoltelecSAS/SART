@@ -10,6 +10,7 @@
  */
 package vistas;
 
+import Utilidades.CMensajes;
 import Utilidades.UtilPropiedades;
 import Utilidades.Utilidades2;
 
@@ -176,6 +177,8 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     private String ejeORueda = "EJE "; 
     private long tiempoFrenado = 0L;
     private long tiempoApagarContactores = 0L;
+    private boolean activarPresencia = false; // Indica si se debe activar la presencia desde el software
+    private boolean activarUmbralPeso = false; // Indica si se debe activar el umbral de peso desde el software
 
     private DlgIntegradoLiviano(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -230,6 +233,10 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         offsetCeroFuerzaIzq = Utilidades2.leerDoubleDesdeArchivo("calibracion.properties", "offsetceroizq");
         offsetCeroPesoDer = Utilidades2.leerDoubleDesdeArchivo("calibracion.properties", "offsetCeroPesoDer");
         offsetCeroPesoIzq = Utilidades2.leerDoubleDesdeArchivo("calibracion.properties", "offsetCeroPesoIzq");
+
+        activarPresencia = Utilidades2.leerBooleanDesdeArchivo("calibracion.properties", "activarPresenciaDesdeSoftware");
+        activarUmbralPeso = Utilidades2.leerBooleanDesdeArchivo("calibracion.properties", "activarUmbralPesoDesdeSoftware");
+
         
         //solo funciona para cuatrimotos pequeñas, motocarros y ciclomotores lo siguiente
         tiempoFrenado =  Utilidades2.leerLongDesdeArchivo("calibracion.properties", "tiempoFrenado"); 
@@ -2021,7 +2028,12 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                 Thread.sleep(540);
             }
             limpiarDatosPeso();
-            if ((calPesoDer >= umbralPeso && calPesoIzq >= umbralPeso)) {
+            if ((calPesoDer >= umbralPeso && calPesoIzq >= umbralPeso) || activarUmbralPeso) {
+                if (activarUmbralPeso) {
+                    CMensajes.mensajeAdvertencia("Si esta es una prueba real, por favor aborte la prueba y contacte al soporte Soltelec.\n"+
+                    "Propiedad 'activarUmbralPesoDesdeSoftware' de peso activada. Desactivarla desde el archivo de calibracion.properties poniendola en false\n"+
+                    "Esto solo se usa para pruebas de calibración en cero.\n");
+                }
                 break;
             }
         }
@@ -2087,7 +2099,12 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             limpiarDatosPeso();
             System.out.println("umbralPeso: " + umbralPeso);
             
-            if (calPesoDer >= umbralPeso || calPesoIzq >= umbralPeso) {
+            if (calPesoDer >= umbralPeso || calPesoIzq >= umbralPeso || activarUmbralPeso) {
+                if (activarUmbralPeso) {
+                    CMensajes.mensajeAdvertencia("Si esta es una prueba real, por favor aborte la prueba y contacte al soporte Soltelec.\n"+
+                    "Propiedad 'activarUmbralPesoDesdeSoftware' de peso activada. Desactivarla desde el archivo de calibracion.properties poniendola en false\n"+
+                    "Esto solo se usa para pruebas de calibración en cero.\n");
+                }
                 break;
             }
         }
@@ -2109,25 +2126,29 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     }
 
     private void mostrarInformacionSensores(double pesomedd, double pesomedi) {
+        String pesoDerEnMv = pesomedd == 0 ? "No se esta midiendo" : String.valueOf(pesomedd) + " mV"; // mV o Mv representa milivoltios
+        String pesoIzqEnMv = pesomedi == 0 ? "No se esta midiendo" : String.valueOf(pesomedi) + " mV";// mV o Mv representa milivoltios
         System.out.println("\n\nTabla de Valores Leidos para el Comand Suspension");
         System.out.println("----------------------");
-        System.out.println("valcalcero3 es: " + valcalcero3 + " Mv");
-        System.out.println("valcalcero4 es: " + valcalcero4 + " Mv");
+        System.out.println("valcalcero3 es: " + valcalcero3 + " mV");// mV o Mv representa milivoltios
+        System.out.println("valcalcero4 es: " + valcalcero4 + " mV");// mV o Mv representa milivoltios
         System.out.println("spanpd es: " + spanpd);
         System.out.println("spanpi es: " + spanpi);
-        System.out.println("Peso Medido Derecho sin cero: " + pesomedd + " Mv");
-        System.out.println("Peso Medido Izquierdo sin cero: " + pesomedi + " Mv");
+        System.out.println("Peso Medido Derecho sin cero: " + pesoDerEnMv);
+        System.out.println("Peso Medido Izquierdo sin cero: " + pesoIzqEnMv);
         double pesoConOffsetDer = valcalcero3+offsetCeroPesoDer;
         double pesoConOffsetIzq = valcalcero4+offsetCeroPesoIzq;
-        System.out.println("Cero con offset (ValorCero:"+valcalcero3+"+offset:"+offsetCeroPesoDer+"): " + (pesoConOffsetDer) + " Mv"); 
-        System.out.println("Cero con offset (ValorCero:"+valcalcero4+"+offset:"+offsetCeroPesoIzq+"): " + (pesoConOffsetIzq) + " Mv");
-        System.out.println("Peso Medido Derecho con cero: " + (pesomedd - pesoConOffsetDer) + " Mv");
-        System.out.println("Peso Medido Izquierdo con cero: " + (pesomedi - pesoConOffsetIzq) + " Mv");
+        System.out.println("Cero con offset (ValorCero:"+valcalcero3+"+offset:"+offsetCeroPesoDer+"): " + (pesoConOffsetDer) + " mV"); 
+        System.out.println("Cero con offset (ValorCero:"+valcalcero4+"+offset:"+offsetCeroPesoIzq+"): " + (pesoConOffsetIzq) + " mV");
+        System.out.println("Peso Medido Derecho con cero: " + (pesomedd - pesoConOffsetDer) + " mV");
+        System.out.println("Peso Medido Izquierdo con cero: " + (pesomedi - pesoConOffsetIzq) + " mV");
         System.out.println("Peso medido en lado Derecho con span: " + ((pesomedd - pesoConOffsetDer) * spanpd) + " Newton");
         System.out.println("Peso medido en lado Izquierdo con span: " + ((pesomedi - pesoConOffsetIzq) * spanpi) + " Newton");
         System.out.println("Umbral peso: " + umbralPeso + " Newton.");
+        
         System.out.println("Total BYTES CANAL 3: " + Datos3.size());
         System.out.println("Total BYTES CANAL 4: " + Datos4.size());
+
     }
 
     private boolean isReiniciarTrama(double calcPesoDer, double calcPesoIzq, String lado) {
@@ -2217,7 +2238,12 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             jProgressBar1.setValue(conteoreg + 1);
             jProgressBar1.setString((conteoreg + 1) * 10 + "%");
             CapturarDatos("frenometro");
-            if (isCanal0() && isCanal1()) {
+            if ((isCanal0() && isCanal1()) || activarPresencia) {
+                if (activarPresencia) {
+                    CMensajes.mensajeAdvertencia("Si esta es una prueba real, por favor aborte la prueba y contacte al soporte Soltelec.\n"+
+                    "Propiedad 'activarPresenciaDesdeSoftware' de peso activada. Desactivarla desde el archivo de calibracion.properties poniendola en false\n"+
+                    "Esto solo se usa para activar las presencias automaticas en pruebas de calibración en cero.\n");
+                }
                 conteoreg++;
             } else {
                 conteoreg = 0;
@@ -2261,7 +2287,12 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             jProgressBar1.setValue(conteoreg + 1);
             jProgressBar1.setString((conteoreg + 1) * 10 + "%");
             CapturarDatos("frenometro");
-            if ((isCanal0() && isDerecho) || (isCanal1() && !isDerecho)) {
+            if ((isCanal0() && isDerecho) || (isCanal1() && !isDerecho) || activarPresencia) {
+                if (activarPresencia) {
+                    CMensajes.mensajeAdvertencia("Si esta es una prueba real, por favor aborte la prueba y contacte al soporte Soltelec.\n"+
+                    "Propiedad 'activarPresenciaDesdeSoftware' de peso activada. Desactivarla desde el archivo de calibracion.properties poniendola en false\n"+
+                    "Esto solo se usa para activar las presencias automaticas en pruebas de calibración en cero.\n");
+                }
                 conteoreg++;
             } else {
                 conteoreg = 0;

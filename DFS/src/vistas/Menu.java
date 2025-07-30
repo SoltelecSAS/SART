@@ -340,7 +340,7 @@ public class Menu extends javax.swing.JFrame {
                 new DlgFrenoMoto(this, true, 0, 0, 0,0,"MOTO","","").setVisible(true);
                 break;
             case V4X4:
-                new DlgIntegrado4x4(this, 0, 0, 1, 0, 0,0,"","Liviano","","").setVisible(true);
+                new DlgIntegrado4x4(this, 0, 0, 1, 0, 0,0,"","Liviano","","", 0).setVisible(true);
                 break;
             default:                
                 break;
@@ -360,7 +360,7 @@ public class Menu extends javax.swing.JFrame {
                 new DlgIntegradoLiviano(this, 0, 1, 0, 0, 0,false,0,"","Liviano","","", 0).setVisible(true);
                 break;
             case V4X4:
-                new DlgIntegrado4x4(this, 0, 1, 0, 0, 0,0,"","Liviano","","").setVisible(true);
+                new DlgIntegrado4x4(this, 0, 1, 0, 0, 0,0,"","Liviano","","", 0).setVisible(true);
                 break;
             default:                
                 break;
@@ -383,7 +383,7 @@ public class Menu extends javax.swing.JFrame {
                 new DlgIntegradoPesado(this, 1, 0, 0, 0,2,false,0,"","Pesado","","").setVisible(true);
                 break;
             case V4X4:
-                new DlgIntegrado4x4(this, 1, 0, 0, 0, 0,0,"","Liviano","","").setVisible(true);
+                new DlgIntegrado4x4(this, 1, 0, 0, 0, 0,0,"","Liviano","","", 0).setVisible(true);
                 break;
             default:                
                 break;
@@ -406,7 +406,7 @@ public class Menu extends javax.swing.JFrame {
                 new DlgIntegradoPesado(this, 1, 1, 0, 0,2,false,0,"","Pesado","","").setVisible(true);
                 break;
             case V4X4:
-                new DlgIntegrado4x4(this, 1, 1, 1, 0, 0,0,"","Liviano","","").setVisible(true);
+                new DlgIntegrado4x4(this, 1, 1, 1, 0, 0,0,"","Liviano","","", 0).setVisible(true);
                 break;
             default:                
                 break;

@@ -94,13 +94,13 @@ public class ConsultarDatosVehiculo {
             "INNER JOIN \n"+
             "    hoja_pruebas hp \n"+
             "    ON p.hoja_pruebas_for = hp.TESTSHEET\n"+
-            "INNER JOIN \n"+
+            "LEFT JOIN \n"+
             "    vehiculos v \n"+
             "    ON hp.Vehiculo_for = v.CAR\n"+
-            "INNER JOIN \n"+
+            "LEFT JOIN \n"+
             "    tipo_prueba tp \n"+
             "    ON p.Tipo_prueba_for = tp.TESTTYPE\n"+
-            "INNER JOIN \n"+
+            "LEFT JOIN \n"+
             "    tipos_gasolina tg \n"+
             "    ON v.FUELTYPE = tg.FUELTYPE\n"+
             "WHERE \n"+
@@ -120,7 +120,10 @@ public class ConsultarDatosVehiculo {
             catalizador = data.getString(9);
             formaTemp = data.getString(10);
         }
- 
+        
+        System.out.println("Id hoja prueba: " + idHojaPrueba);
+        System.out.println("Id prueba: " + idPrueba);
+        System.out.println("Id tipo prueba: " + idTipoPrueba);
         if (idTipoPrueba == 8) {
             if (nombreCombustible.equals("DIESEL")) {
 

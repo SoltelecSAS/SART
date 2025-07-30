@@ -369,7 +369,7 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
                     Mensajes.mostrarExcepcion(exc);
                 }
             } else {
-                Logger.getRootLogger().error(ejex);
+                //Logger.getRootLogger().error(ejex);
                 ejex.printStackTrace();
                 JOptionPane.showMessageDialog(panel, 
                     "Excepcion durante la prueba.\n "+

@@ -66,6 +66,7 @@ public class WorkerInicioPruebaGases extends SwingWorker<Void, Void> {
         em = eManager;
         this.termoHigrometroArtisan = termoHigrometroArtisan;
         Utilidades.setIdUsuarioMotos(idUsuario);
+        Utilidades.setIdPrueba(idPrueba);
     }
 
     @Override

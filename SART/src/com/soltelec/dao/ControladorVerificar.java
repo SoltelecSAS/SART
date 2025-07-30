@@ -177,6 +177,10 @@ public class ControladorVerificar {
                     System.out.println("voy a entrar a GETINFOPIN");
                     com.soltelec.indra.RespuestaDTO pinRespuesta = indra.getInfoPin(hp.getVehiculos().getCarplate(), String.valueOf(ctxCDA.getIdRunt()));
                     System.out.println("SALI DE GETINFOPIN");
+                    if (pinRespuesta == null) {
+                        System.out.println("NO SE RECIBIO RESPUESTA DE INDRA");
+                        return -10;
+                    }
                     return Integer.parseInt(pinRespuesta.getCodigoRespuesta());
                 }
                 System.out.println("NO ES INDRA");

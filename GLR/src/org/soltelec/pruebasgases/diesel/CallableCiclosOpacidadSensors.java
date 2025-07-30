@@ -1471,10 +1471,14 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                 }
                 panel.getRadialTacometro().setValue(rpm);
 
-                
-                cumple = contadorTemporizacion < 5 && (rpm > (velocidadCrucero - 100));
-        
-                if (rpm > velocidadCrucero + 100 && !simulacion) {
+                double rpmMinima = velocidadCrucero - 100;
+                double rpmMaxima = velocidadCrucero + 100;
+
+                System.out.println("RPM: " + rpm + " Minima: " + rpmMinima + " Maxima: " + rpmMaxima);
+
+                cumple = (rpm > rpmMinima);
+
+                if (rpm > rpmMaxima && !simulacion) {
                     cumple = false;
                     panel.getMensaje().setText("Aceleracion fallida por diferencia de gobernada mayor a 100");
                     break;
@@ -1486,7 +1490,7 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
             if (cumple || simulacion) {
                 aceleracionGobernadas5sValida = true;
             } else {
-                panel.getMensaje().setText("ACELERACION FALLIDA: intentos restantes " + (2 - intentosAceleracionGobernada));
+                panel.getMensaje().setText("ACELERACION FALLIDA("+rpm+"): intentos restantes " + (2 - intentosAceleracionGobernada));
                 Thread.sleep(2000);
                 intentosAceleracionGobernada++;
             }

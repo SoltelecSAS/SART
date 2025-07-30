@@ -114,6 +114,9 @@ public class Utilidades {
     public static long getIdPrueba() {
         return idPrueba;
     }
+    public static void setIdPrueba(long idPrueba) {
+        Utilidades.idPrueba = idPrueba;
+    }
 
     private static String tipoVehiculo;
 
@@ -125,9 +128,7 @@ public class Utilidades {
         Utilidades.tipoVehiculo = tipoVehiculo;
     }
 
-    public static void setIdPrueba(long idPrueba) {
-        Utilidades.idPrueba = idPrueba;
-    }
+    
 
     public static void setIntentos(int intentos) {
         Utilidades.intentos = intentos;

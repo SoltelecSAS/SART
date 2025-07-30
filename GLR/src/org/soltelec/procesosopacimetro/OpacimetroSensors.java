@@ -466,10 +466,23 @@ public int obtenerFrecuenciaMuestreo(){
 
     @Override
     public MedicionOpacidad obtenerDatos(){
-        MensajeOpacimetro msjOpacimetro = new MensajeOpacimetro();
-        msjOpacimetro.setByteDelComando((byte)117);
-        byte[] tramaRespuesta = enviarRecibirTrama(UtilGasesModelo.armarTramaOpacimetro(msjOpacimetro));
-        MensajeOpacimetro respuesta = UtilGasesModelo.armarMensajeOpacimetro(tramaRespuesta);
+
+        MensajeOpacimetro respuesta = null;
+        int count = 0;
+        while (true) {
+            count++;
+            MensajeOpacimetro msjOpacimetro = new MensajeOpacimetro();
+            msjOpacimetro.setByteDelComando((byte)117);
+            byte[] tramaRespuesta = enviarRecibirTrama(UtilGasesModelo.armarTramaOpacimetro(msjOpacimetro));
+            respuesta = UtilGasesModelo.armarMensajeOpacimetro(tramaRespuesta);
+            System.out.println("/====================================================================");
+            System.out.println("/=========Respuesta recibida desde el opacimetro en el intento " + count + ":\n" + respuesta.toString());
+            System.out.println("/====================================================================");
+            if (respuesta.getDatos() != null && respuesta.getDatos().length > 0) {
+                break;
+            }
+        }
+        
         MedicionOpacidad medicion = new MedicionOpacidad(respuesta.getDatos());
         System.out.println(medicion.toString());
         return armarBytesEstado(medicion);

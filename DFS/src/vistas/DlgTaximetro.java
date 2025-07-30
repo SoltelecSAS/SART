@@ -10,6 +10,7 @@
  */
 package vistas;
 
+import com.soltelec.modulopuc.configuracion.modelo.Conexion;
 import com.soltelec.modulopuc.persistencia.conexion.DBUtil;
 import com.soltelec.modulopuc.utilidades.Mensajes;
 import dao.PruebasDAO;
@@ -23,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -261,8 +263,9 @@ public class DlgTaximetro extends javax.swing.JDialog implements ActionListener 
         //Cargar clase de controlador de base de datos
         Boolean escTrans = true;
         Class.forName("com.mysql.jdbc.Driver");
-        try (Connection conexion = DBUtil.getConnection()) {
-            System.out.println("Conectandose con:" + "jdbc:mysql://" + URLServidor + ":3306/db_cda");
+        Conexion.getInstance();
+        try (Connection conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContraseña());) {
+            System.out.println("Conectandose con:jdbc:mysql://" + Conexion.getUrl());
             conexion.setAutoCommit(false);
             //Crear objeto preparedStatement para realizar la consulta con la base de datos
             //String statementBorrar = ("DELETE  FROM db_cda.medidas WHERE TEST = ?");

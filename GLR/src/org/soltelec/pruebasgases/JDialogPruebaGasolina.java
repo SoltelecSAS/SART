@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import org.soltelec.models.controllers.Conexion;
 import org.soltelec.procesosbanco.RegVefCalibraciones;
 import org.soltelec.util.UtilFugas;
+import org.soltelec.util.Utilidades;
 import org.soltelec.util.Mensajes;
 import termohigrometro.TermoHigrometroArtisan;
 
@@ -50,6 +51,8 @@ public class JDialogPruebaGasolina extends JDialog {
             frm_Placas.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
             return;
         }
+        Utilidades.setIdUsuarioMotos(idUsuario);
+        Utilidades.setIdPrueba(idPrueba);
     }
     /*Añadido 31 ago*/
      public JDialogPruebaGasolina(Frame owner, boolean modal, int a) throws SQLException, ClassNotFoundException, IOException {

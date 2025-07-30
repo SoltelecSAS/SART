@@ -71,17 +71,6 @@ public class MedicionOpacidad {
             System.out.println("----Estoy en MedicionOpacidad-------" + " " + e.getMessage());
             e.printStackTrace();
         }
-//        estado = UtilGasesModelo.shortToFlags(shortEstado);
-//        
-//        tempAmbFueraTolerancia = estado[0];
-//        tempDetectFueraTolerancia = estado[1];
-//        tempTuboFueraTolerancia = estado[2];
-//        voltLineaFueraTolerancia = estado[3];
-//        calibracionProgreso = estado[8];
-//        limpiarVentanas = estado[9];
-//        armadoRecoleccion = estado[10];
-//        recoleccionDisparada = estado[11];
-
     }//end of constructor
 
     public int getTiempoRecogidaDatos() {

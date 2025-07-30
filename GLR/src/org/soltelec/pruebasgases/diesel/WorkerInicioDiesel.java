@@ -26,6 +26,7 @@ import org.soltelec.pruebasgases.PanelPruebaGases;
 import org.soltelec.util.Mensajes;
 import org.soltelec.util.PortSerialUtil;
 import org.soltelec.util.UtilPropiedades;
+import org.soltelec.util.Utilidades;
 import org.soltelec.util.capelec.OpacimetroCapelec;
 import termohigrometro.MedicionTermoHigrometro;
 import termohigrometro.TermoHigrometro;
@@ -51,6 +52,7 @@ public class WorkerInicioDiesel extends SwingWorker<Void, Void> {
         this.idHojaPrueba = idHojaPrueba;
         this.idPrueba = idPrueba;
         this.idUsuario = idUsuario;
+        Utilidades.setIdPrueba(idPrueba);
     }
 
     @Override

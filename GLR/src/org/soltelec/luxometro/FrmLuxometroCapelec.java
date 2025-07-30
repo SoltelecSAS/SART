@@ -125,24 +125,14 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
             exploDerecha1.setEnabled(true);
             exploIzquierda1.setEnabled(true);
             leerDatos.setVisible(false);
-            intExploDerecha1.setVisible(false);
-            intExploDerecha2.setVisible(false);
-            intExploDerecha3.setVisible(false);
-            intExploIzquierda1.setVisible(false);
-            intExploIzquierda2.setVisible(false);
-            intExploIzquierda3.setVisible(false);
+            
             ED3.setSelected(false);
-            ED3.setVisible(false);
             ED2.setSelected(false);
-            ED2.setVisible(false);
             ED1.setSelected(false);
-            ED1.setVisible(false);
             EI3.setSelected(false);
-            EI3.setVisible(false);
             EI2.setSelected(false);
-            EI2.setVisible(false);
             EI1.setSelected(false);
-            EI1.setVisible(false);
+            
             jLabel5.setVisible(false);
             if(esMoto){
                 altaIzquierda1.setEnabled(false);
@@ -154,6 +144,18 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                 exploDerecha3.setVisible(false);
                 altaDerecha1.setEnabled(false);
                 bajaIzquierda1.setEnabled(false);
+                ED3.setVisible(false);
+                ED2.setVisible(false);
+                ED1.setVisible(false);
+                EI3.setVisible(false);
+                EI2.setVisible(false);
+                EI1.setVisible(false);
+                intExploDerecha1.setVisible(false);
+                intExploDerecha2.setVisible(false);
+                intExploDerecha3.setVisible(false);
+                intExploIzquierda1.setVisible(false);
+                intExploIzquierda2.setVisible(false);
+                intExploIzquierda3.setVisible(false);
                 jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/moto-roja.jpg")));
                 cambiarCodigosAMotos(codigoMedidas, codigoMedidasMotos);
                 codigosDefectos[0] = codigosDefectosMotos[0]; //20003

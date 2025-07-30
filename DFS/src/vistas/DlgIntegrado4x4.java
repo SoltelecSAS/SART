@@ -70,7 +70,7 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
     private double permisiblepruebafren4;  //Valor permisible para el desequilibrio tipo B
     private String URLServidor;
     private boolean frenmano = false;
-    private FrmFrenadoAuxLiv frm;
+    //private FrmFrenadoAuxLiv frm;
     private PuertoRS232 puerto;
     private String puertotarjeta;
     private boolean enablereg = false; //Habilitación de registro de medidas en el servidor
@@ -159,6 +159,7 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
     public static String escrTrans = "";
     private String ipEquipo;
     private int teporizadorInercia;
+    private int ejesDondeTieneFrenoMano = 0; // 0=Ninguno 1=Eje1, 2=Eje2, 3=Ambos ejes
 
     private DlgIntegrado4x4(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -174,7 +175,7 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
         }
     }
 
-    public DlgIntegrado4x4(java.awt.Frame parent, int idPruebadesv, int idPruebasusp, int idPruebafren, int idUsuario, int idHojaPrueba, int aplicTrans, String ipEquipo,String tipoVehiculo,String Placa,String NombreUsr) {
+    public DlgIntegrado4x4(java.awt.Frame parent, int idPruebadesv, int idPruebasusp, int idPruebafren, int idUsuario, int idHojaPrueba, int aplicTrans, String ipEquipo,String tipoVehiculo,String Placa,String NombreUsr, int frenoMano) {
         this(parent, true);
         this.idPruebadesv = idPruebadesv;
         this.idPruebasusp = idPruebasusp;
@@ -188,6 +189,12 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
          this.tipoVehiculo=tipoVehiculo;
         this.Placa=Placa;
         this.NombreUsr =NombreUsr;
+
+        // Si ejesDondeTieneFrenoMano es 0, significa que no tiene freno de mano
+        // Si ejesDondeTieneFrenoMano es 1, significa que el freno de mano está en el eje 1
+        // Si ejesDondeTieneFrenoMano es 2, significa que el freno de mano está en el eje 2
+        // Si ejesDondeTieneFrenoMano es 3, significa que el freno de mano está en ambos ejes
+        ejesDondeTieneFrenoMano = frenoMano; // 0=Ninguno 1=Eje1, 2=Eje2, 3=Ambos ejes
     }
 
     private void configuracion() {
@@ -2613,11 +2620,11 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
                         JOptionPane.WARNING_MESSAGE);
             } else {
                 if (enableswfren == true) {
-                    frm = new FrmFrenadoAuxLiv(this, true);
-                    frm.setModal(true);
-                    frm.setLocationRelativeTo(null);
-                    frm.setVisible(true);
-                    System.out.println(" VALOR DE FRENO DE MANO " + frm.jCheckBox1.isSelected() + " y el otro " + frm.jCheckBox2.isSelected());
+                    //frm = new FrmFrenadoAuxLiv(this, true);
+                    //frm.setModal(true);
+                    //frm.setLocationRelativeTo(null);
+                    //frm.setVisible(true);
+                    //System.out.println(" VALOR DE FRENO DE MANO " + frm.jCheckBox1.isSelected() + " y el otro " + frm.jCheckBox2.isSelected());
                     try {
                         Thread.currentThread().sleep(3500);
                     } catch (InterruptedException ex) {
@@ -3111,6 +3118,7 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
                 ejemedido=1;
                 LabelEje.setText("EJE: " + ejemedido);
                 while (true) {
+                    System.out.println(">>> EJEMEDIDO: " + ejemedido);
                     if (ejemedido > 1) {
                         Mensajes.messageWarningTime("POR FAVOR RETIRE EL VEHICULO DE LAS MAQUINAS, PARA INICIAR CON EL EJE" + ejemedido, 6);
                     }
@@ -3121,6 +3129,9 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
                         EsperaDesviacion();
                         MedirDesviacion();
                     } 
+
+
+                    System.out.println("enablehwfren: " + enablehwfren + " enableswfren: " + enableswfren);
                     if ((enablehwsusp && enableswsusp) || (enablehwfren && enableswfren)) {
                         if (enablehwsusp && enableswsusp) {
                             LabelPrueba.setText("PRUEBA DE SUSPENSION PARA 4x4");
@@ -3138,16 +3149,19 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
                             MoverSuspension("izquierdo");
                             MedirFuerzaVertical("izquierdo");
                         }
+
+                        System.out.println(">>> EJEMEDIDO: " + ejemedido+"antes de entrar a frenos");
                         if (enablehwfren && enableswfren) {
-                            if (ejemedido == 1) {
-                                if (frm.jCheckBox1.isSelected()) {
+                            System.out.println("entre a frenos");
+                            if (ejemedido == 1 && ejesDondeTieneFrenoMano == 1) {
+                                //if (frm.jCheckBox1.isSelected()) {
                                     aplicFreAux = true;
-                                }
+                                //}
                             }
-                            if (ejemedido == 2) {
-                                if (frm.jCheckBox2.isSelected()) {
+                            if (ejemedido == 2 && ejesDondeTieneFrenoMano == 2) {
+                                //if (frm.jCheckBox2.isSelected()) {
                                     aplicFreAux = true;
-                                }
+                                //}
                             }
                             LabelPrueba.setText("PRUEBA DE FRENOS PARA 4x4");
                             lblCtxPrueba.setText("USER: "+ DlgIntegrado4x4.NombreUsr+ "; PLACA: "+ DlgIntegrado4x4.Placa );
@@ -3214,7 +3228,7 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
     public void setFrenmano(boolean frenmano) {
         this.frenmano = frenmano;
     }
-    public class FrmFrenadoAuxLiv extends javax.swing.JDialog {
+    /* public class FrmFrenadoAuxLiv extends javax.swing.JDialog {
 
         private boolean aprobado = false;
         private String cadena = "\n";
@@ -3237,11 +3251,7 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
 
         }
 
-        /**
-         * This method is called from within the constructor to initialize the
-         * form. WARNING: Do NOT modify this code. The content of this method is
-         * always regenerated by the Form Editor.
-         */
+        
         @SuppressWarnings("unchecked")
         // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
         private void initComponents() {
@@ -3401,9 +3411,7 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
         }
 
         /////////////////////////////////MÉTODOS SOBRE LA FUNCIONALIDAD //////////////////////////////
-        /**
-         * @param args the command line arguments
-         */
+        
         // Variables declaration - do not modify                     
         private javax.swing.JButton guardar;
 
@@ -3420,5 +3428,5 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
         private javax.swing.JTabbedPane jTabbedPane1;
         // End of variables declaration                   
         private int returnStatus = 0;
-    }
+    } */
 }

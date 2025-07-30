@@ -173,9 +173,10 @@ public class ClienteIndra
             return new RespuestaDTO(String.valueOf(pinRespuesta.getPinRespuesta().getPruebaActiva()), pinRespuesta.getMsjRespuesta());
         } catch (ServiceException | RemoteException e)
         {
+            e.printStackTrace();
             System.out.println("ERROR EN GETINFOPIN");
             logger.error("Error en el metodo : setEvento()"+e.getMessage());
-            throw new SartComunicadorException(500, e.getMessage());
+            return null;
         }
     }
   

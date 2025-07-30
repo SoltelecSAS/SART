@@ -336,7 +336,7 @@ public class RegVefCalibraciones {
             fechaCalibracion.setTime(calibracion.getFecha());
             fechaActual = Calendar.getInstance();
         } catch (Exception e) {
-            System.out.println("----------serial no encontrado-------");
+            System.out.println("Serial banco " + serialBanco);
             e.printStackTrace();
             return true;
         }
