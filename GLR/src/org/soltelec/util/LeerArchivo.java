@@ -30,6 +30,15 @@ public class LeerArchivo {
         return null;
     }
 
+    public static int getTiempoCeroBrianBee() {
+        String archivo = "propiedades.properties"; // Nombre del archivo
+        String buscarTexto = "tiempoCeroBrianBee=";
+        
+        String resultado = LeerArchivo.leerDatoDesdeArchivo(archivo, buscarTexto);
+        if (resultado != null) return Integer.parseInt(resultado);
+        return 0;
+    }
+
     public static double getFactorOpacidad() {
         String archivo = "propiedades.properties"; // Nombre del archivo
         String buscarTexto = "factorOpacimetro=";

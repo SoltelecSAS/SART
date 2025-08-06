@@ -4,6 +4,7 @@
  */
 package org.soltelec.pruebasgases;
 
+import com.soltelec.servidor.utils.CMensajes;
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.PortInUseException;
@@ -34,6 +35,7 @@ import org.soltelec.util.LeerArchivo;
 import org.soltelec.util.MedicionOpacidad;
 import org.soltelec.util.Mensajes;
 import org.soltelec.util.PortSerialUtil;
+
 
 /**
  * Clase para implementar la prueba de linealidad del opacimetro
@@ -118,6 +120,10 @@ public class PruebaLinealidad implements Runnable, ActionListener {
             med = opacimetro.obtenerDatosEstatusBruto();
             dormir(100);
         }
+
+        int segundosEspera = LeerArchivo.getTiempoCeroBrianBee();
+        CMensajes.mensajeTemporal("El equipo esta realizando la calibracion a cero, espere..", segundosEspera);
+
         dormir(1200);
         panel.getPanelMensaje().setVisible(true);
         panel.getPanelMensaje().setText("Introduzca el Filtro # 1");
