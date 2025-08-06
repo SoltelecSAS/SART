@@ -74,6 +74,7 @@ import myplayer.CapturarFoto;
 import org.soltelec.pruebasgases.DialogoVehiculo;
 import com.soltelec.util.MensajesOut;
 import com.soltelec.util.Utilidades2;
+import java.util.Date;
 
 import org.apache.axis.wsdl.symbolTable.Utils;
 import org.apache.commons.lang.StringUtils;
@@ -542,7 +543,7 @@ public class Frm_Placas extends javax.swing.JDialog {
             }
             //************************************************************            
             em.getTransaction().begin();
-            if (normal == true) {
+            /* if (normal == true) {
 
                 try {
                     System.out.println("Estoy Ejecutando el stored Procedure ");
@@ -561,9 +562,11 @@ public class Frm_Placas extends javax.swing.JDialog {
 
                 
 
-            }
+            } */
             //************************************************************
             test.setFechaaborto(ipEquipo.concat(";").concat(String.valueOf(idAud)));
+            Date fechaActual = new Date();
+            test.setFechaFinal(fechaActual);
             em.merge(test);
             em.getTransaction().commit();
             if (cda.getProveedorSicov().equalsIgnoreCase("INDRA")) 

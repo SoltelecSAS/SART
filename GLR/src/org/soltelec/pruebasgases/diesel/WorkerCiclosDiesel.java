@@ -1,6 +1,8 @@
 package org.soltelec.pruebasgases.diesel;
 
 import com.soltelec.loginadministrador.LoginServiceCDA;
+import com.soltelec.servidor.utils.CMensajes;
+
 import gnu.io.SerialPort;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -319,6 +321,7 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
                 try {
                     listaMedidas = future.get();
                 } catch (CancellationException ce) {
+
                     System.out.println("Prueba de Gases canceladaKitCentralAuto");
                     System.out.println("VoyCloseKit");
                     panel.cerrar();
@@ -328,7 +331,8 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
                     System.out.println("VoyCloseOpacimetro");
                     opacimetro.getPort().close();
                     System.out.println("VoyClosePanel");
-                    
+                    CMensajes.mensajeError("Hubo un error en Lista medidas. detalles:\n"+ce.getMessage());
+                    ce.printStackTrace();
                     return null;
                 } finally {
                     System.out.println("VoyCloseKit");

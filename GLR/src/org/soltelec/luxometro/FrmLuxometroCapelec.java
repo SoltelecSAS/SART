@@ -133,8 +133,9 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
             EI2.setSelected(false);
             EI1.setSelected(false);
             
-            jLabel5.setVisible(false);
+            
             if(esMoto){
+                jLabel5.setVisible(false);
                 altaIzquierda1.setEnabled(false);
                 exploIzquierda1.setVisible(false);
                 exploIzquierda2.setVisible(false);
@@ -1079,7 +1080,7 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
         try {
             updatePruebaMethod(esAprobada);
         } catch (IOException ex) {
-            Logger.getLogger(FrmLuxometroCapelec.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
 
     }//GEN-LAST:event_finalizarActionPerformed
@@ -1406,7 +1407,6 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                     if (linea.equals("") || linea == null || linea.equals(",")) continue;
 
                     if (contadorLineas == lineaMedidas[0]){
-                        System.out.println("info Linea inclinacion derecha: "+linea);
                         medidas[0][posicionDere] = Math.abs(Double.parseDouble(linea.split(",")[1]));
                         if (posicionDere == 2 && mostrarMedidas){
                             desvidere1.setText(String.valueOf(medidas[0][posicionDere])+ "%");
@@ -1423,7 +1423,9 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                     }
 
                     if (contadorLineas == lineaMedidas[1]){
-                        medidas[1][posicionDere] = Double.parseDouble(linea.split(",")[1]) / 1000;
+                        System.out.println("info Linea :"+contadorLineas+" posicionDere: "+posicionDere);
+                        if (linea.split(",").length < 2) medidas[1][posicionDere] = Double.parseDouble(linea);
+                        else medidas[1][posicionDere] = Double.parseDouble(linea.split(",")[1]) / 1000;
                         if (posicionDere == 2){
                             bajaDerecha1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/baja-izquierda-ok.png")));
                             if(mostrarMedidas) intBajaDerecha1.setText(String.valueOf(medidas[1][posicionDere]) + " Klux" );
@@ -1884,6 +1886,7 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
     public void updatePruebaMethod(boolean esAprobada) throws IOException{
 
         String comentario = Utilidades.obtenerComentario();
+        System.out.println("Comentario: " + comentario);
 
         String serialEquipo = UtilPropiedades.cargarPropiedad("serialLux", "seriales.properties");
 

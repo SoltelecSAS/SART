@@ -14,7 +14,6 @@ import Utilidades.CMensajes;
 import Utilidades.UtilPropiedades;
 import Utilidades.Utilidades2;
 
-import com.mysql.jdbc.Util;
 import com.soltelec.loginadministrador.UtilLogin;
 import com.soltelec.modulopuc.utilidades.Mensajes;
 import dao.PruebaDefaultDAO;
@@ -40,15 +39,14 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.Timer;
 import modelo.Desviacion;
 import modelo.Frenos;
@@ -157,7 +155,6 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     private boolean repetirPrueba;
     ImageIcon imageOn = null;
     ImageIcon imageOff = null;
-    //private FrmFrenadoAuxLiv claseFrenadoAuxiliar;
     boolean aplicFreAux = false;
     private final List<Double> fuerzasfdAux = new ArrayList<>(); //Valores de las fuerzas de frenado aux derechas de cada eje
     private final List<Double> fuerzasfiAux = new ArrayList<>(); //Valores de las fuerzas de frenado aux  izquierdas de cada 
@@ -724,7 +721,6 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             Logger.getLogger(DlgFrenoMoto.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Se perdio de lineas");
         }
-        //System.out.println("sa "+salidaalta+" sb "+salidabaja+" tiempo paso "+tiempo_paso);
     }
 
     public void comandoFREN() {
@@ -876,12 +872,12 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         }
         Datos2.clear();
         if (c) {
-            valcalcero3 = CalcularMediana(Datos3);
+            valcalcero3 = CalcularMedia(Datos3);
             System.out.println("cero peso derecho: " + (valcalcero3 * spanpd) + " N");
         }
         Datos3.clear();
         if (d) {
-            valcalcero4 = CalcularMediana(Datos4);
+            valcalcero4 = CalcularMedia(Datos4);
             System.out.println("cero peso izquierdoen MV..: " + (valcalcero4) + " mv");
             System.out.println("cero peso izquierdo: " + (valcalcero4 * spanpi) + " N");
         }
@@ -1733,8 +1729,8 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
         guardarDatosRespaldo(NumDatosDer, NumDatosIzq);
 
-        pesoDerMv = CalcularMediana(Datos3);
-        pesoIqzMv = CalcularMediana(Datos4);
+        pesoDerMv = CalcularMedia(Datos3);
+        pesoIqzMv = CalcularMedia(Datos4);
 
         mostrarMedidasPesos(pesoDerMv, pesoIqzMv);
 
@@ -1997,30 +1993,84 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
     public void EsperarPeso() throws InterruptedException {
         double persoDer, pesoIzq;
-        double calPesoDer = 0;
-        double calPesoIzq = 0;
+        double calPesoDerConSpan = 0;
+        double calPesoIzqConSpan = 0;
         System.out.println("Entrando al metodo EsperaPeso()");
-        LabelInfo.setText("ESPERANDO EJE " + ejemedido + " EN LA PLANCHA DE PESO..!");
-        LabelAviso.setText("PLANCHA");
+        //LabelInfo.setText("ESPERANDO EJE " + ejemedido + " EN LA PLANCHA DE PESO..!");
+        //LabelAviso.setText("PLANCHA");
         timeraviso.start();
         comandoCEROS(0);
         Thread.sleep(500);
+        int count = 0;
+        int count2 = 0;
+
+        double persoDerRef = 0;
+        double pesoIzqRef = 0;
+        boolean recalculoCero = false;
+
         while (true) {
             CapturarDatos("ceros");
-            persoDer = CalcularMediana(Datos3);
-            pesoIzq = CalcularMediana(Datos4);
-
-            mostrarInformacionSensores(persoDer, pesoIzq);
+            persoDer = CalcularMedia(Datos3);
+            pesoIzq = CalcularMedia(Datos4);
 
             double valorCeroDer = valcalcero3 + offsetCeroPesoDer;
             double valorCeroIzq = valcalcero4 + offsetCeroPesoIzq;
 
-            calPesoDer = (persoDer - valorCeroDer) * spanpd;
-            calPesoIzq = (pesoIzq - valorCeroIzq) * spanpi;
+            double calPesoDerSinSpan = persoDer - valorCeroDer;
+            double calPesoIzqSinSpan = pesoIzq - valorCeroIzq;
+
+
+            if (((calPesoDerSinSpan) < 0 && (calPesoIzqSinSpan) < 0 && (calPesoDerSinSpan) > -20 && (calPesoIzqSinSpan) > -20 && count == 0) || recalculoCero) { //valores entre 15 y -15 para comprobar que los valores de peso en cero son correctos
+                System.out.println("Esperando eje " + ejemedido + " en la plancha de peso..!");
+                if (count2 == 0) {
+                    LabelInfo.setText("ESPERANDO EJE " + ejemedido + " EN LA PLANCHA DE PESO..!");
+                    LabelAviso.setText("PLANCHA");
+                }else {
+                    LabelInfo.setText("DETECTANDO PESO..!");
+                    LabelAviso.setText(count2 * 20 + "% persoDerRef en "+ Math.abs(persoDerRef-persoDer) + " pesoIzqRef en " + Math.abs(pesoIzqRef-pesoIzq) + "(0 a 20) ");
+                }
+                recalculoCero = true;
+                count = 0;
+            } else {
+                System.out.println("Valores de peso en la plancha fuera de rango, reiniciando referencias de peso");
+                LabelInfo.setText("RECALCULANDO CERO, NO COLOQUE PESO ");
+                LabelAviso.setText(count * 20 + "%");
+                if(count == 0) count++;
+            }
+
+            if (persoDer + 20 > persoDerRef && pesoIzq + 20 > pesoIzqRef && persoDer - 20 < persoDerRef && pesoIzq - 20 < pesoIzqRef && count != 0) { //valores entre 10 y -10
+                count++;
+            } else if (count != 0) {
+                System.out.println("Reiniciando contador a 1. Peso persoDerRef: " + persoDerRef + ", Peso pesoIzqRef: " + pesoIzqRef + ", Peso persoDer: " + persoDer + ", Peso pesoIzq: " + pesoIzq);
+                persoDerRef = persoDer;
+                pesoIzqRef = pesoIzq;
+                count = 1;
+            }
+
+            System.out.println("Valor de count: " + count);
+
+            if (count > 4) {
+                System.out.println("Reiniciando referencias de peso porque se detecto un cambio brusco en los valores de cero del peso");
+                valcalcero3 = persoDerRef + 20;
+                valcalcero4 = pesoIzqRef + 20;
+                count = 0;
+                LabelInfo.setText("CERO CAMBIADO CON ÉXITO");
+                LabelAviso.setText("PLANCHA");
+                recalculoCero = true;
+            }
+
+
+
+            mostrarInformacionSensores(persoDer, pesoIzq);
+
             
-            if (isReiniciarTrama(calPesoDer, calPesoIzq, "ambos")) {
-                calPesoDer = 0;
-                calPesoIzq = 0;
+
+            calPesoDerConSpan = (calPesoDerSinSpan) * spanpd;
+            calPesoIzqConSpan = (calPesoIzqSinSpan) * spanpi;
+
+            if (isReiniciarTrama(calPesoDerConSpan, calPesoIzqConSpan, "ambos")) {
+                calPesoDerConSpan = 0;
+                calPesoIzqConSpan = 0;
                 reiniciarTrama();
             } else {
                 puerto.clearFlujoEnt();
@@ -2028,12 +2078,25 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                 Thread.sleep(540);
             }
             limpiarDatosPeso();
-            if ((calPesoDer >= umbralPeso && calPesoIzq >= umbralPeso) || activarUmbralPeso) {
+            System.out.println("umbralPeso: " + umbralPeso);
+            System.out.println("activarUmbralPeso: " + activarUmbralPeso);
+            if (activarUmbralPeso || (calPesoDerConSpan >= umbralPeso && calPesoIzqConSpan >= umbralPeso && recalculoCero)) {
                 if (activarUmbralPeso) {
                     CMensajes.mensajeAdvertencia("Si esta es una prueba real, por favor aborte la prueba y contacte al soporte Soltelec.\n"+
                     "Propiedad 'activarUmbralPesoDesdeSoftware' de peso activada. Desactivarla desde el archivo de calibracion.properties poniendola en false\n"+
                     "Esto solo se usa para pruebas de calibración en cero.\n");
                 }
+                LabelInfo.setText("DETECTANDO PESO..!");
+                LabelAviso.setText("PLANCHA");
+                count2++;
+                System.out.println("Peso detectado en la plancha, count2: " + count2);
+            }else {
+                count2 = 0;
+                System.out.println("Peso no detectado en la plancha, count2 reiniciado a 0");
+            }
+
+            if (count2 >= 4) {
+                System.out.println("Calibracion en cero terminada, se ha detectado peso en la plancha");
                 break;
             }
         }
@@ -2098,8 +2161,9 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             }
             limpiarDatosPeso();
             System.out.println("umbralPeso: " + umbralPeso);
+            System.out.println("activarUmbralPeso: " + activarUmbralPeso);
             
-            if (calPesoDer >= umbralPeso || calPesoIzq >= umbralPeso || activarUmbralPeso) {
+            if (activarUmbralPeso || calPesoDer >= umbralPeso || calPesoIzq >= umbralPeso ) {
                 if (activarUmbralPeso) {
                     CMensajes.mensajeAdvertencia("Si esta es una prueba real, por favor aborte la prueba y contacte al soporte Soltelec.\n"+
                     "Propiedad 'activarUmbralPesoDesdeSoftware' de peso activada. Desactivarla desde el archivo de calibracion.properties poniendola en false\n"+
@@ -2151,38 +2215,40 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
     }
 
-    private boolean isReiniciarTrama(double calcPesoDer, double calcPesoIzq, String lado) {
+    private boolean isReiniciarTrama(double pesoDerEnMv, double pesoIzqEnMv, String lado) {
         if (lado.equalsIgnoreCase("derecho")) {
-            return isReiniciarTramaDer(calcPesoDer);
+            return isReiniciarTramaDer(pesoDerEnMv);
         } else if (lado.equalsIgnoreCase("izquierdo")) {
-            return isReiniciarTramaIqz(calcPesoIzq);
+            return isReiniciarTramaIqz(pesoIzqEnMv);
         } else{
-            return isReiniciarTramaDer(calcPesoDer) || isReiniciarTramaIqz(calcPesoIzq);
+            return isReiniciarTramaDer(pesoDerEnMv) || isReiniciarTramaIqz(pesoIzqEnMv);
         }
     }
 
-    private boolean isReiniciarTramaDer(double calcPesoDer) {
+    private boolean isReiniciarTramaDer(double pesoDerEnMv) {
         if (
-            Datos3.size() <= 21 ||
-            calcPesoDer < 0 ||
-            calcPesoDer == 0
+            (Datos3.size() <= 21 ||
+            pesoDerEnMv < 0 ||
+            pesoDerEnMv == 0)
+            && !activarUmbralPeso
         ) {
             System.out.println("Reiniciando trama Valores por alguna de las siguientes razones plancha derecha: ");
             System.out.println("-Trama por derecho debe ser mayor a 21. Valores: " + Datos3.size());
-            System.out.println("-Los valores de peso no pueden ser menor o igual a cero. Valor: " + calcPesoDer);
+            System.out.println("-Los valores de peso no pueden ser menor o igual a cero. Valor: " + pesoDerEnMv);
             return true;
         } return false;
     }
 
-    private boolean isReiniciarTramaIqz(double calcPesoIzq) {
+    private boolean isReiniciarTramaIqz(double pesoIzqEnMv) {
         if (
-            Datos4.size() <= 21 || 
-            calcPesoIzq < 0 ||
-            calcPesoIzq == 0
+            (Datos4.size() <= 21 || 
+            pesoIzqEnMv < 0 ||
+            pesoIzqEnMv == 0) 
+            && !activarUmbralPeso
         ) {
             System.out.println("Reiniciando trama Valores por alguna de las siguientes razones plancha izquierda: ");
             System.out.println("-Trama por izquierdo debe ser mayor a 21. Valores: " + Datos4.size());
-            System.out.println("-Los valores de peso no pueden ser menor o igual a cero. Valor: " + calcPesoIzq);
+            System.out.println("-Los valores de peso no pueden ser menor o igual a cero. Valor: " + pesoIzqEnMv);
             return true;
         } return false;
     }
@@ -2412,7 +2478,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
                     if (((!isCanal0()) || (!isCanal1())) && (this.pasoactual != 6)) {
                         this.LabelAviso.setBackground(this.PanelTitulos.getBackground());
-                        if ((this.pasoactual == 4) || (this.pasoactual == 5) || isVehiculoMedidoPorUnaLlanta()) {
+                        if ((this.pasoactual == 4) || (this.pasoactual == 5) || isVehiculoMedidoPorUnaLlanta() || activarPresencia) {
                             cont1s = this.tiempo_paso / 1000;
                         } else {
                             this.LabelInfo.setText("El eje se salio de los rodillos");
@@ -2541,21 +2607,59 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     }
 
     public double CalcularMedia(List<Integer> Datos) {
-        long b, s;
-        double c;
-        System.out.println("datos---------------------------------------" + Datos);
-        s = Datos.size();
-        //System.out.println("El numero de datos es: "+s);
-        b = 0;
-        for (t = 0; t < s; t++) {
-            b += Datos.get(t);
+        System.out.println("\nDATOS====================================================\n\n" + Datos + "\n");
+
+        // Copiar y ordenar los datos
+        List<Integer> ordenados = new ArrayList<>(Datos);
+        Collections.sort(ordenados);
+
+        // Calcular Q1 y Q3 (percentiles 25% y 75%)
+        double q1 = calcularPercentil(ordenados, 40);
+        double q3 = calcularPercentil(ordenados, 75);
+        double iqr = q3 - q1;
+
+        double limiteInferior = q1 - 1 * iqr;
+        double limiteSuperior = q3 + 1.5 * iqr;
+
+        // Filtrar datos dentro del rango IQR
+        List<Integer> filtrados = new ArrayList<>();
+        for (int valor : Datos) {
+            if (valor >= limiteInferior && valor <= limiteSuperior) {
+                filtrados.add(valor);
+            }
         }
-        c = (double) b / s;
-        //System.out.println(c);
-        System.out.println("--------------------------------------------------------------promedio" + c);
-        System.out.println("-------------------------------promedio------------------" + s);
-        System.out.println("--------------------------------------------------------------promedio---------------------------------------" + b);
-        return c;
+
+        // Mostrar resumen
+        System.out.println("Q1: " + q1 + ", Q3: " + q3);
+        System.out.println("Limite inferior: " + limiteInferior + ", Limite superior: " + limiteSuperior);
+        System.out.println("Datos filtrados: " + filtrados);
+        System.out.println("NUMERO DE DATOS FILTRADOS: " + filtrados.size());
+        System.out.println("==========================================================================\n\n");
+
+        return calcularPromedio(filtrados);
+    }
+
+    // Método auxiliar para calcular el promedio
+    private double calcularPromedio(List<Integer> lista) {
+        if (lista.isEmpty()) return 0;
+        long suma = 0;
+        for (int valor : lista) suma += valor;
+        return (double) suma / lista.size();
+    }
+
+    // Método auxiliar para calcular un percentil (asumiendo lista ordenada)
+    private double calcularPercentil(List<Integer> lista, double percentil) {
+        int n = lista.size();
+        double rank = (percentil / 100.0) * (n - 1);
+        int bajo = (int) Math.floor(rank);
+        int alto = (int) Math.ceil(rank);
+
+        if (bajo == alto) {
+            return lista.get(bajo);
+        } else {
+            double peso = rank - bajo;
+            return lista.get(bajo) * (1 - peso) + lista.get(alto) * peso;
+        }
     }
 
     public double CalcularMediana(List<Integer> Datos) {
