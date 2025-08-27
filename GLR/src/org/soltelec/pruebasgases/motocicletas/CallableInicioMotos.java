@@ -26,8 +26,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import static jdk.nashorn.internal.objects.NativeRegExp.exec;
-import static jdk.nashorn.internal.runtime.ScriptingFunctions.exec;
 import org.apache.log4j.Logger;
 import org.soltelec.medicionrpm.MedidorRevTemp;
 import org.soltelec.procesosbanco.BancoGasolina;
