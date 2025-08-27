@@ -1251,6 +1251,7 @@ public class Frm_Placas extends javax.swing.JDialog {
         } catch (Exception e) {
             System.out.println("Error en el metodo : pruebaTaximetro()" + e);
             System.out.println("Error " + e.getMessage());
+            e.printStackTrace();
         }
         doClose(0);
     }
@@ -1561,7 +1562,7 @@ public class Frm_Placas extends javax.swing.JDialog {
                         new JDialogLuxometroChino(frame, true, idPrueba, idUsuario).setVisible(true);
                         doClose(0);
                     }
-                    if (versionLuxometro.equalsIgnoreCase("MOON")) {
+                    if (versionLuxometro.equalsIgnoreCase("MOON") || versionLuxometro.startsWith("MOON")) { //aqui tambien moonNuevo
                         LecturaArchivoLuxometroMoon archivoLuxometroMoon = new LecturaArchivoLuxometroMoon(aplicTrans);
 //                        LecturaArchivoLuxomMoonPru archivLuxo= new LecturaArchivoLuxomMoonPru();
                         int tipoVehiculo = 0;
@@ -1592,7 +1593,7 @@ public class Frm_Placas extends javax.swing.JDialog {
                             System.out.println("entre luxometro");
                             boolean verMedidas = verPruebas.equalsIgnoreCase("SI");
                             
-                            FrmLuxometroCapelec luxometroCapelec = new FrmLuxometroCapelec("Moon", placas, idHojaPruebaLocal, idPrueba, idUsuario, ubicacionLuxometro, verMedidas);
+                            FrmLuxometroCapelec luxometroCapelec = new FrmLuxometroCapelec(versionLuxometro, placas, idHojaPruebaLocal, idPrueba, idUsuario, ubicacionLuxometro, verMedidas);
                             
                             JDialog dialog = new JDialog(this, true); // Crear un JDialog
                             dialog.add(luxometroCapelec.getContentPane()); // Agregar el contenido del formulario FrmSeriales al JDialog

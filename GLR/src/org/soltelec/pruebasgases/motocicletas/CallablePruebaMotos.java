@@ -8,6 +8,8 @@ import com.soltelec.loginadministrador.ConsultasLogin;
 import com.soltelec.loginadministrador.LoginServiceCDA;
 import com.soltelec.loginadministrador.UtilLogin;
 import com.soltelec.modulopuc.persistencia.conexion.DBUtil;
+import com.soltelec.servidor.utils.CMensajes;
+
 import eu.hansolo.steelseries.tools.BackgroundColor;
 import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
@@ -108,7 +110,7 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
     boolean activarBotonRPMBolleano;
     private int valorHC;
     //private boolean activarDismiHC;
-    private String activarDismiHC, ActivarLogs;
+    private boolean activarDismiHC, ActivarLogs;
 
     public CallablePruebaMotos(BancoGasolina banco, MedidorRevTemp medidorRevTemp, PanelPruebaGases panel, int numeroEscapes, long numeroPrueba, String placas, boolean activarBotonRPMBolleano, double tempAmbiente, double humedadAmbiente) {
         this.banco = banco;
@@ -144,15 +146,21 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
         int cont = 0;
         System.out.println("Entro en Hilo de Pruebas de Motos para validacion deado que no es simulada");
         String puertoTermo = UtilPropiedades.cargarPropiedad("PuertoTermoHigrometro", "propiedades.properties");
+        String funcionTermoHigrometro = UtilPropiedades.cargarPropiedad("FuncionTermoHigrometro", "propiedades.properties");
         timerTermoHigrometro = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("VALIDANDO CONEXION DE PUERTOS " + puertoTermo);
+                
+                System.out.println("VALIDANDO CONEXION TERMOHIGROMETRO ");
                 List<gnu.io.CommPortIdentifier> d = (List<gnu.io.CommPortIdentifier>) Collections.list(CommPortIdentifier.getPortIdentifiers()).stream().filter(c -> ((gnu.io.CommPortIdentifier) c).getName().equals(puertoTermo)).collect(Collectors.toList());
-                if (d == null || d.isEmpty()) {
+                if ((d == null || d.isEmpty()) && funcionTermoHigrometro.equalsIgnoreCase("Master")) {
                     System.out.println("Validando termo higrometro" + d);
                     JOptionPane.showMessageDialog(null, "Se desconecto el termohigrometro");//
                     System.exit(0);
+                }else{
+                    String mensajeConexionTermo = funcionTermoHigrometro.equalsIgnoreCase("Master") ? 
+                        "Termohigrometro conectado en "+puertoTermo : "Termohigrometro conectado como "+funcionTermoHigrometro;
+                    System.out.println(mensajeConexionTermo);
                 }
                 System.out.println("Validando termo higrometro nombre" + d.get(0).getName());
             }
@@ -163,15 +171,16 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
 
         try {
             //String activarBotonRPM = UtilPropiedades.cargarPropiedad("activarDismiHC", "propiedades.properties");
-            activarDismiHC = UtilPropiedades.cargarPropiedad("activarDismiHC", "propiedades.properties");
-            ActivarLogs = UtilPropiedades.cargarPropiedad("activarLogs", "propiedades.properties");
+            activarDismiHC = LeerArchivo.activarDismiHC();
+            /* ActivarLogs = UtilPropiedades.cargarPropiedad("activarLogs", "propiedades.properties");
             if (ActivarLogs == null) {
                 ActivarLogs = "false";
             }
             if (activarDismiHC == null) {
                 activarDismiHC = "True";
             }
-            ActivarLogs = (ActivarLogs.equalsIgnoreCase("") ? "false" : ActivarLogs);
+            ActivarLogs = (ActivarLogs.equalsIgnoreCase("") ? "false" : ActivarLogs); */
+            ActivarLogs = LeerArchivo.activarLogsMoto();
             //activarDismiHC = (activarDismiHC.equalsIgnoreCase("")) ? "True" : activarDismiHC;
             System.out.println("estado  de los logs :" + ActivarLogs);
             System.out.println("estado  de activarDismiHC :" + activarDismiHC);
@@ -412,7 +421,7 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
                     contadorTemporizacion = 0;
                     timerHc.start();
 
-                    if (activarDismiHC.equalsIgnoreCase("True")) {
+                    if (activarDismiHC) {
                         valorHC = medicion.getValorHC();
                         System.out.println("--------------------------------------------");
                         System.out.println("------------ESTAMOS EN LA DISMI HC ---------");
@@ -830,7 +839,7 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
         lstMedFur.add(medicion);
     }
 
-    public void generarArchivoGases(String placas, BancoGasolina banco, int nroExosto, String ActivarLogs) {
+    public void generarArchivoGases(String placas, BancoGasolina banco, int nroExosto, boolean ActivarLogs) {
         int medTemp = 0;
 
         List<List<MedicionGases>> newListaDeLista = new ArrayList<>();
@@ -847,7 +856,9 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
                 bwP.write(out);
                 bwP.newLine();
 
-                if (ActivarLogs.equalsIgnoreCase("true")) {
+                boolean logsActivo = LeerArchivo.activarLogsMoto();
+
+                if (logsActivo) {
                     System.out.println("creando logs antes de la correcion, valor de ActivarLogs= true");
                     fw2 = new FileWriter("UltLectura_" + placas + ".soltelec");
                     bwP2 = new BufferedWriter(fw2);
@@ -861,7 +872,7 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
                     bwP2.newLine();
                 }
             } else {
-                if (ActivarLogs.equalsIgnoreCase("true")) {
+                if (ActivarLogs) {
                     bwP2.write("-.** Tabla de Valores Moto en RALENTI EXHOSTO 2.-** ");
                     bwP2.newLine();
                 }
@@ -993,7 +1004,7 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
                 bwP.write(out);
                 bwP.newLine();
                 bwP.flush();
-                if (ActivarLogs.equalsIgnoreCase("true")) {
+                if (ActivarLogs) {
                     bwP2.write(out2);
                     bwP2.newLine();
                     bwP2.flush();
@@ -1012,7 +1023,7 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
             bwP.newLine();
             bwP.flush();
 
-            if (ActivarLogs.equalsIgnoreCase("true")) {
+            if (ActivarLogs) {
                 bwP2.write(out2);
                 bwP2.newLine();
                 out2 = "########################################";
@@ -1050,7 +1061,7 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
                 System.out.println("valida co2 try 2");
                 if (valCo2 > valPerm) {
                     Mensajes.mensajeAdvertencia("DISCULPE, NO PUEDO CONTINUAR CON LA PRUEBA DEBIDO A QUE LA SONDA NO ESTA BIEN PUESTA DENTRO DEL EXHOSTO. \n POR FAVOR REVISE LOS ACOPLES DEL EXHOSTO ..! \n CUANDO TERMINE PRESIONE ACEPTAR ");
-                    valDilc = false;
+                    valDilc = LeerArchivo.desactivarDesviacionCeroYSondaExosto();
                     timer.stop();
                     contadorTemporizacion = 0;
                     contadorMedTrue = 0;
@@ -1065,16 +1076,18 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
                 valCo2 = (medicion.getValorO2() * 0.01);
                 System.out.println("valida co2 try 3");
                 if (valCo2 > valPerm) {
-                    int opcion = JOptionPane.showOptionDialog(null, "DISCULPE, LAMENTABLEMENTE LA PRUEBA SERA ABORTADA DEBIDO A QUE NO SE PUEDE TOMAR LA MUESTRA CORRECTAMENTE  EN EL  EXHOSTO \n " + "   POR FAVOR REVISE EL EQUIPO DE MEDICION",
-                            null, JOptionPane.YES_NO_CANCEL_OPTION,
-                            JOptionPane.INFORMATION_MESSAGE, null, new Object[]{"Abortar Prueba"}, "NO");
                     timer.stop();
                     liberarRecursos();
                     Thread.sleep(100);
-                    valDilc = false;
+                    valDilc = LeerArchivo.desactivarDesviacionCeroYSondaExosto();
                     contadorMedTrue = 0;
                     this.lista50Datos = new ArrayList<>();
                     this.lista10Datos = new ArrayList<>();
+
+                    String mensaje = !valDilc
+                    ? "DISCULPE, LAMENTABLEMENTE LA PRUEBA SERA ABORTADA DEBIDO A QUE NO SE PUEDE TOMAR LA MUESTRA CORRECTAMENTE  EN EL  EXHOSTO \n " + "   POR FAVOR REVISE EL EQUIPO DE MEDICION"
+                    : "SE RECOMIENDA NO CONTINUAR CON LA PRUEBA Y CONTACTARSE CON SOLTELEC";
+                    CMensajes.mensajeError(mensaje);
                 }
             }
         } catch (InterruptedException ex) {

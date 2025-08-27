@@ -230,6 +230,21 @@ public class EvaluarRegistrarPruebaGasolina {
                     System.out.println();
                 }
             }
+
+            if (gasolina == 4 && (co2Crucero < 7 || co2Ralenti < 7)) {
+                dilucionVariable = true;
+                pruebaAprobada = false;
+
+                System.out.println();
+                System.out.println();
+                System.out.println("¡¡¡Se detecto dilucion: !!!");
+                System.out.println("o2Ralenti: "+o2Ralenti);
+                System.out.println("o2Crucero: "+o2Crucero);
+                System.out.println("co2Ralenti: "+co2Ralenti);
+                System.out.println("co2Crucero: "+co2Crucero);
+                System.out.println();
+                System.out.println();
+            }
             
             
             

@@ -7,6 +7,8 @@ package org.soltelec.procesosbanco;
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+
+import org.soltelec.util.LeerArchivo;
 import org.soltelec.util.MedicionGases;
 import java.util.Random;
 import org.soltelec.models.controllers.EquipoController;
@@ -33,7 +35,6 @@ public class WorkerDatos extends SwingWorker<Integer, MedicionGases> {
     private boolean primeraEjecucion = true;
     private PanelMedidasSteel panelMedidas;//para actualizar la interfaz cada cierto tiempo
     JPanel panelBotones;
-    private Random random = new Random();
     private BancoGasolina banco;//hay que ponerselo al instanciarlo
     private WorkerCalentamiento workerCalentamiento;
     private String serial, PEF;
@@ -74,8 +75,13 @@ public class WorkerDatos extends SwingWorker<Integer, MedicionGases> {
                             serial = banco.numeroSerial();
                             PEF = banco.obtenerPEF();
                             Equipo serialresolucion = controller.findEquipoBySerialResolucion(serial);
-                            panelMedidas.getLabelTitulo().setText("Serial : " + serialresolucion.getSerialresolucion() + " PEF: 0," + PEF);
-                            
+                            String serialEquipo = LeerArchivo.getSerialOttoPantallaServicio();
+                            panelMedidas.getLabelTitulo().setText(
+                                "Seriales analizador: " + serialEquipo.split("~")[1].split(";")[0]+"   PEF: " + serialEquipo.split("~")[0] +"\n"+ 
+                                "Seriales RPM: " + serialEquipo.split("~")[1].split(";")[1] +"\n"+
+                                "Serial termohigrometro: "+ serialEquipo.split("~")[1].split(";")[2]
+                            );
+
                             primeraEjecucion = false;
                         }
                         //medicion = banco.obtenerDatos();

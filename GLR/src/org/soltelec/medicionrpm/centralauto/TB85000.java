@@ -104,7 +104,7 @@ public class TB85000 implements MedidorRevTemp {
         }catch(NumberFormatException ne){
             temp = -1;
         }
-        System.out.println("R:" + rpm +" T: " + temp);
+        System.out.println("TB85000 R:" + rpm +" T: " + temp);
         }
     }
 
@@ -189,8 +189,9 @@ public class TB85000 implements MedidorRevTemp {
     public int getRpm() throws ArrayIndexOutOfBoundsException {
          try {
             obtenerRPMsTemp();
-         } catch (IOException ex) {
-             System.out.println("Excepcion enviando trama por puerto serial");
+         } catch (Exception ex) {
+             System.out.println("Excepcion en rpm al enviar trama por puerto serial");
+             ex.printStackTrace();
              throw new ArrayIndexOutOfBoundsException();
          }
         return rpm;
@@ -201,8 +202,9 @@ public class TB85000 implements MedidorRevTemp {
     public int getTemp() throws ArrayIndexOutOfBoundsException {
         try {
             obtenerRPMsTemp();
-        } catch (IOException ex) {
-            System.out.println("Excepcion enviando trama por puerto Serial");
+        } catch (Exception ex) {
+            System.out.println("Excepcion en temp al enviar trama por puerto Serial");
+            ex.printStackTrace();
             throw new ArrayIndexOutOfBoundsException();
         }
         return temp;
@@ -210,7 +212,7 @@ public class TB85000 implements MedidorRevTemp {
 
     public byte[] enviarRecibirTrama(byte[] arregloEnviar) throws IOException{
         out.write(arregloEnviar);
-        System.out.println("Trama enviada: ");
+        System.out.println("Trama enviada1: ");
 //            for(byte b: arregloEnviar)
 //                System.out.print(b+" ");
         //Leer la respuesta que envia el TB6000

@@ -143,7 +143,7 @@ public class TB86000 implements MedidorRevTemp{
                 throw aexc;
             }
         }
-        return "R: " + rpms +"T: " + temp;
+        return " TB86000 R: " + rpms +" T: " + temp;
     }
     /**
      * Comando para pedir la version del
@@ -271,7 +271,7 @@ public class TB86000 implements MedidorRevTemp{
     public synchronized byte[] enviarRecibirBytes(byte arregloEnviar[]) throws IOException{
 
             out.write(arregloEnviar);
-            System.out.println("Trama enviada: ");
+            System.out.println("Trama enviada2: ");
             for(byte b: arregloEnviar)
                 System.out.print(b+" ");
             //Leer la respuesta que envia el TB6000

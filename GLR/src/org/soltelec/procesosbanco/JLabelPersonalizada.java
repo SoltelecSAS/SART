@@ -12,7 +12,7 @@ import javax.swing.JLabel;
  * @author Usuario
  */
 public class JLabelPersonalizada extends JLabel{
- static final String cadena = "<html><font size=\"105\" color=\"8a4117\">";
+ static final String cadena = "<html><font size=\"90\" color=\"8a4117\">";
  static final String cadenaFinal = "</font></center></html>";
     public JLabelPersonalizada(String text){
        super();

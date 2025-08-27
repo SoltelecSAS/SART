@@ -29,7 +29,7 @@ class WorkerServicioCentralAuto extends SwingWorker<Void,Void>{
                     temp = tb85000.getTemp();
                     panel.getRadialRPM().setValue(rpm);
                     panel.getLinearTemperatura().setValue(temp);
-                    panel.getTextAreaRPM().append("R: " + rpm +" T: " + temp+"\n");
+                    panel.getTextAreaRPM().append("central auto R: " + rpm +" T: " + temp+"\n");
                     Thread.sleep(200);
                 }
                 Thread.sleep(200);

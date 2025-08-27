@@ -387,29 +387,29 @@ public class Utilidades2 {
     }
 
     public static Boolean leerBooleanDesdeArchivo(String fileName, String key) {
-    try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-        String line;
-        while ((line = reader.readLine()) != null) {
-            if (line.startsWith(key + "=")) {
-                String[] parts = line.split("=", 2);
-                if (parts.length == 2) {
-                    String value = parts[1].trim().toLowerCase();
-                    System.out.println("===Leyendo el valor de la clave: " + key + " valor: " + value);
-                    if (value.equals("true") || value.equals("false")) {
-                        return Boolean.parseBoolean(value);
-                    } else {
-                        System.err.println("Valor inválido para la clave '" + key + "': " + value);
-                        return false;
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith(key + "=")) {
+                    String[] parts = line.split("=", 2);
+                    if (parts.length == 2) {
+                        String value = parts[1].trim().toLowerCase();
+                        System.out.println("===Leyendo el valor de la clave: " + key + " valor: " + value);
+                        if (value.equals("true") || value.equals("false")) {
+                            return Boolean.parseBoolean(value);
+                        } else {
+                            System.err.println("Valor inválido para la clave '" + key + "': " + value);
+                            return false;
+                        }
                     }
                 }
             }
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo: " + fileName + " error: " + e.getMessage());
         }
-    } catch (IOException e) {
-        System.err.println("Error al leer el archivo: " + fileName + " error: " + e.getMessage());
+        System.out.println("===Datos no encontrados en el archivo: " + fileName + " para la clave: " + key);
+        return false;
     }
-    System.out.println("===Datos no encontrados en el archivo: " + fileName + " para la clave: " + key);
-    return false;
-}
 
     public static Long leerLongDesdeArchivo(String fileName, String key) {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {

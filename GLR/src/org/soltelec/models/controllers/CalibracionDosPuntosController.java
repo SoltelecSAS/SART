@@ -176,7 +176,7 @@ public class CalibracionDosPuntosController {
             if (rs.next()) {
                 calibracionDosPuntos = fillData(rs);// a si el regresa la fecha 01-jun-2015 0:00:00
             }else{
-                throw new SQLException("No Existe Equipo con Serial: " + idEquipo);
+                throw new SQLException("No Existe Calibracion 2p para el equipo con id: " + idEquipo);
             }
         }finally {
             rs.close();

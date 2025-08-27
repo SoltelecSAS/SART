@@ -522,10 +522,11 @@ public class Frm_Motorv2 extends javax.swing.JDialog {
      */
     private void cargarConexion() {
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            conexion = (Connection) DriverManager.getConnection("jdbc:mysql://" + Conexion.getIpServidor() + ":" + Conexion.getPuerto() + "/" + Conexion.getBaseDatos(), Conexion.getUsuario(), Conexion.getContraseña());
-        } catch (ClassNotFoundException | SQLException ex) {
-            Mensajes.mostrarExcepcion(ex);
+            //Class.forName("com.mysql.jdbc.Driver");
+            Conexion.getInstance();
+            conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContraseña());
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

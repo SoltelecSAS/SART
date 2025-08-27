@@ -176,6 +176,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     private long tiempoApagarContactores = 0L;
     private boolean activarPresencia = false; // Indica si se debe activar la presencia desde el software
     private boolean activarUmbralPeso = false; // Indica si se debe activar el umbral de peso desde el software
+    private boolean activarComprobacionCero; // Indica si se debe activar la comprobación de cero desde el software
 
     private DlgIntegradoLiviano(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -233,8 +234,8 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
         activarPresencia = Utilidades2.leerBooleanDesdeArchivo("calibracion.properties", "activarPresenciaDesdeSoftware");
         activarUmbralPeso = Utilidades2.leerBooleanDesdeArchivo("calibracion.properties", "activarUmbralPesoDesdeSoftware");
+        activarComprobacionCero = !Utilidades2.leerBooleanDesdeArchivo("calibracion.properties", "activarComprobacionCeroDesdeSoftware");
 
-        
         //solo funciona para cuatrimotos pequeñas, motocarros y ciclomotores lo siguiente
         tiempoFrenado =  Utilidades2.leerLongDesdeArchivo("calibracion.properties", "tiempoFrenado"); 
         tiempoApagarContactores = Utilidades2.leerLongDesdeArchivo("calibracion.properties", "tiempoApagarContactores");
@@ -260,7 +261,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
         
 
-        if(tipoVehiculo.equalsIgnoreCase("CICLOMOTOR")){
+        if(tipoVehiculo.equalsIgnoreCase("CICLOMOTOR") || tipoVehiculo.equalsIgnoreCase("MOTO")){
             this.led2.setVisible(false);
             jLabel4.setVisible(false);
             jLabel3.setText("Presencia");
@@ -2006,7 +2007,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
         double persoDerRef = 0;
         double pesoIzqRef = 0;
-        boolean recalculoCero = false;
+        boolean recalculoCero = activarComprobacionCero;
 
         while (true) {
             CapturarDatos("ceros");
@@ -2027,14 +2028,14 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                     LabelAviso.setText("PLANCHA");
                 }else {
                     LabelInfo.setText("DETECTANDO PESO..!");
-                    LabelAviso.setText(count2 * 20 + "% persoDerRef en "+ Math.abs(persoDerRef-persoDer) + " pesoIzqRef en " + Math.abs(pesoIzqRef-pesoIzq) + "(0 a 20) ");
+                    //LabelAviso.setText(count2 * 20 + "% persoDerRef en "+ Math.abs(persoDerRef-persoDer) + " pesoIzqRef en " + Math.abs(pesoIzqRef-pesoIzq) + "(0 a 20) ");
                 }
                 recalculoCero = true;
                 count = 0;
             } else {
                 System.out.println("Valores de peso en la plancha fuera de rango, reiniciando referencias de peso");
-                LabelInfo.setText("RECALCULANDO CERO, NO COLOQUE PESO ");
-                LabelAviso.setText(count * 20 + "%");
+                LabelInfo.setText("COMPROBANDO CERO, NO COLOQUE PESO ");
+                LabelAviso.setText(count * 20 + "% Completado");
                 if(count == 0) count++;
             }
 
@@ -2054,16 +2055,12 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                 valcalcero3 = persoDerRef + 20;
                 valcalcero4 = pesoIzqRef + 20;
                 count = 0;
-                LabelInfo.setText("CERO CAMBIADO CON ÉXITO");
+                LabelInfo.setText("CERO COMPROBADO CON ÉXITO");
                 LabelAviso.setText("PLANCHA");
                 recalculoCero = true;
             }
 
-
-
             mostrarInformacionSensores(persoDer, pesoIzq);
-
-            
 
             calPesoDerConSpan = (calPesoDerSinSpan) * spanpd;
             calPesoIzqConSpan = (calPesoIzqSinSpan) * spanpi;
@@ -4135,8 +4132,10 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             if (tipoVehiculo.equalsIgnoreCase("CUATRIMOTOP")) registrarMedidasCuatrimotoPequeno();
             else if (tipoVehiculo.equalsIgnoreCase("CICLOMOTOR")) registrarMedidasCiclomotor();
             else if (tipoVehiculo.equalsIgnoreCase("Motocarro")) registrarMedidasMotoCarro();
+            else if (tipoVehiculo.equalsIgnoreCase("MOTO")) registrarMedidasMotos();
             else RegistrarMedidasFrenos();
         }
+
         if (!repetirPrueba) {
             if (enablehwdesv && enableswdesv && enablereg) {
                 RegistrarMedidasDesviacion();
@@ -4204,7 +4203,61 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         }
 
         Mensajes.messageDoneTime("Se ha Registrado la Prueba de frenos de ciclomotor de manera Exitosa.", 3);
+    }
 
+    private void registrarMedidasMotos(){
+        double fuerzaD = Utilidades2.medidasCuatrimotoPequena[0][1]; //fuerza Delantera
+        double fuerzaT = Utilidades2.medidasCuatrimotoPequena[1][1]; //fuerza Trasera
+
+        double pesoD = Utilidades2.medidasCuatrimotoPequena[0][0]; //peso Delantera
+        double pesoT = Utilidades2.medidasCuatrimotoPequena[1][0]; //peso Trasera
+
+        double fFrenoMano = Utilidades2.medidasCuatrimotoPequena[4][0]; //Fuerza freno mano
+
+        double sumaFuerzas = fuerzaD+fuerzaT;
+        double sumaPesos = pesoD+pesoT;
+
+        double eficacia = (sumaFuerzas/sumaPesos)*100;
+
+        double eficaciaFrenoMano = (fFrenoMano / sumaPesos)*100;
+
+        imprimirDatosCuatrimotoPequena(
+            0, 0, fuerzaD, fuerzaT,
+            0, 0, pesoD, pesoT,
+            0, fFrenoMano,
+            0, 0,
+            sumaFuerzas, sumaPesos, fFrenoMano,
+            eficacia, eficaciaFrenoMano
+        );
+
+        Utilidades2.guardarOModificarMedida(5000, idPruebafren, pesoD, "N");
+        Utilidades2.guardarOModificarMedida(5001, idPruebafren, pesoT, "N");
+        Utilidades2.guardarOModificarMedida(5008, idPruebafren, fuerzaD, "N");
+        Utilidades2.guardarOModificarMedida(5009, idPruebafren, fuerzaT, "N");
+        Utilidades2.guardarOModificarMedida(5024, idPruebafren, eficacia, "N");
+
+        if (ejesDondeTieneFrenoMano != 0) { //si ejesDondeTieneFrenoMano es 0, no se tiene en cuenta el freno de mano
+            Utilidades2.guardarOModificarMedida(5016, idPruebafren, fFrenoMano, "N");
+            Utilidades2.guardarOModificarMedida(5036, idPruebafren, eficaciaFrenoMano, "N");
+            //Si se quiere añadirle defecto a los frenos de mano de moto(en caso de que tenga) entonces se puede decomentar la linea de abajo y colocar el codigo de defecto correspondiente donde dice 56003
+            //if (eficaciaFrenoMano<18) Utilidades2.cargarDefectos(56003, (long) idPruebafren);
+        }
+        
+        boolean aprobado = true;
+        if (eficacia<30){
+            if (Utilidades2.getIsEditable() == 0) Utilidades2.cargarDefectos(54010, (long) idPruebafren);
+            aprobado = false;
+        } 
+
+        int idEquipo = Integer.parseInt(Utilidades2.obtenerDatos("equipos.properties", "FRENO"));
+        String serialEquipo = Utilidades2.obtenerSerialResolucionPorId(idEquipo);
+
+        if (Utilidades2.getIsEditable() == 1 && !aprobado)  //si tiene artefacto y esta desaprobado
+            Utilidades2.actualizarPrueba(false, false, (long) idUsuario, serialEquipo, (long) idPruebafren, "");
+        else
+            Utilidades2.actualizarPrueba(true, aprobado, (long) idUsuario, serialEquipo, (long) idPruebafren, "");
+        
+        Mensajes.messageDoneTime("Se ha Registrado la Prueba de frenos de ciclomotor de manera Exitosa.", 3);
     }
 
     private void registrarMedidasCuatrimotoPequeno(){
@@ -4867,7 +4920,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     private boolean isVehiculoMedidoPorUnaLlanta() {
         return tipoVehiculo.equalsIgnoreCase("CUATRIMOTOP") ||
         (tipoVehiculo.equalsIgnoreCase("Motocarro") && ejemedido == 1) ||
-        tipoVehiculo.equalsIgnoreCase("CICLOMOTOR");
+        tipoVehiculo.equalsIgnoreCase("CICLOMOTOR") || tipoVehiculo.equalsIgnoreCase("MOTO");
     }
     
     private void verificarFrenoAuxiliar() {

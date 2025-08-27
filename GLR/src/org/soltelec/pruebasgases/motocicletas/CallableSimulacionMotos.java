@@ -6,6 +6,8 @@ package org.soltelec.pruebasgases.motocicletas;
 
 import com.soltelec.loginadministrador.ConsultasLogin;
 import com.soltelec.loginadministrador.LoginServiceCDA;
+import com.soltelec.servidor.utils.CMensajes;
+
 import eu.hansolo.steelseries.tools.BackgroundColor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -46,6 +48,7 @@ import org.soltelec.pruebasgases.WorkerCruceroRalenti;
 import org.soltelec.util.GenerarArchivo;
 import org.soltelec.util.Mensajes;
 import org.soltelec.util.InfoVehiculo;
+import org.soltelec.util.LeerArchivo;
 import org.soltelec.util.MedicionGases;
 import org.soltelec.util.RegistrarMedidas;
 import org.soltelec.util.UtilInfoVehiculo;
@@ -87,7 +90,7 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
     String out ="",out2 ="";
     private int valorHC;
     String activarBotonRPM;
-    String  ActivarLogs,activarDismiHC;
+    boolean ActivarLogs,activarDismiHC;
 
     public CallableSimulacionMotos(PanelPruebaGases panel, BancoGasolina banco, MedidorRevTemp medidorRevTemp, int numeroTiempos, int numeroEscapes, long idPrueba, long idUsuario,String placas) {
         this.panel = panel;
@@ -117,14 +120,15 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
     public List<MedicionGases> call() throws Exception {
         
          try {         
-            ActivarLogs = UtilPropiedades.cargarPropiedad("activarLogs", "propiedades.properties");
+            /* ActivarLogs = UtilPropiedades.cargarPropiedad("activarLogs", "propiedades.properties");
             
              if(ActivarLogs==null)
             {
                 ActivarLogs="false";
             }
             
-            ActivarLogs = (ActivarLogs.equalsIgnoreCase("") ? "false" : ActivarLogs);            
+            ActivarLogs = (ActivarLogs.equalsIgnoreCase("") ? "false" : ActivarLogs);     */        
+            ActivarLogs = LeerArchivo.activarLogsMoto();
 
         } catch (Exception e) {
             System.out.println("-----------------------------------------------------------");
@@ -302,8 +306,8 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
 
         try 
         {
-            activarDismiHC = UtilPropiedades.cargarPropiedad("activarDismiHC", "propiedades.properties");
-            ActivarLogs = UtilPropiedades.cargarPropiedad("activarLogs", "propiedades.properties");           
+            activarDismiHC = LeerArchivo.activarDismiHC();
+            /* ActivarLogs = UtilPropiedades.cargarPropiedad("activarLogs", "propiedades.properties");           
              if(ActivarLogs==null)
             {
                 ActivarLogs="false";
@@ -312,8 +316,10 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
             {
                 activarDismiHC="True";
             }
-            ActivarLogs = ( ActivarLogs.equalsIgnoreCase("") ? "false" : ActivarLogs);
-            activarDismiHC = ( activarDismiHC.equalsIgnoreCase("")) ? "true" : activarDismiHC;
+            ActivarLogs = ( ActivarLogs.equalsIgnoreCase("") ? "false" : ActivarLogs); */
+
+            ActivarLogs = LeerArchivo.activarLogsMoto();
+            //activarDismiHC = ( activarDismiHC.equalsIgnoreCase("")) ? "true" : activarDismiHC;
             System.out.println("estado  de los logs :" + ActivarLogs);
             System.out.println("estado  de activarDismiHC :" + activarDismiHC);
           // activarDismiHC = Boolean.parseBoolean(activarBotonRPM);
@@ -372,7 +378,7 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
                     contadorTemporizacion = 0;
                     timerHc.start();
                     int temp;
-                    if (activarDismiHC.equalsIgnoreCase("True")) 
+                    if (activarDismiHC) 
                     {
                         valorHC = this.medicion.getValorHC();
                         System.out.println("--------------------------------------------");
@@ -384,17 +390,25 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
                         while ((valorHC > limiteHC) && (this.contadorTemporizacion < 270))
                         {
                             Thread.sleep(1000);
-                            if (PanelCero.calibradoCero.intValue() == 1) {
-                                this.panel.getPanelMensaje().setText(" EL CERO DEL EQUIPO SE ENCUENTRA DESVIADO \n POR FAVOR CONSULTE AL SOPORTE TECNICO ...!");
-                                Thread.sleep(10000);
+                            String mensajeCeroDesviado = "";
+                            if (PanelCero.calibradoCero.intValue() == 1 ) {
+                                mensajeCeroDesviado = " EL CERO DEL EQUIPO DESVIADO \n POR FAVOR CONSULTE AL SOPORTE TECNICO ...!";
+                                this.panel.getPanelMensaje().setText(mensajeCeroDesviado);
                                 this.panel.getFuncion().setText("condicioninesperada");
-                                return true;
+                                
+                                if(!LeerArchivo.desactivarDesviacionCeroYSondaExosto()){
+                                    Thread.sleep(10000);
+                                    return true;
+                                } 
                             }
                             int randon=generarRandon(valorHC);
                             valorHC = valorHC - randon;
                             System.out.println("Valor dismi HC: " + randon);
                             System.out.println("Valor Resultante HC : " + valorHC);
-                            this.panel.getPanelMensaje().setText(new StringBuilder().append(" HC: ").append(valorHC).toString()+ "ppm");
+                            this.panel.getPanelMensaje().setText(
+                                "HC: " + valorHC + "ppm\n"+
+                                mensajeCeroDesviado
+                            );
                             this.panel.getProgressBar().setValue(270 - this.contadorTemporizacion);
                         }
 
@@ -402,14 +416,20 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
 
                         while ((this.medicion.getValorHC() > limiteHC) && (this.contadorTemporizacion < 270)) {
                             Thread.sleep(1000);
+                            String mensajeCeroDesviado = "";
                             if (PanelCero.calibradoCero.intValue() == 1) {
-                                this.panel.getPanelMensaje().setText(" EL CERO DEL EQUIPO SE ENCUENTRA DESVIADO \n POR FAVOR CONSULTE AL SOPORTE TECNICO ...!");
-                                Thread.sleep(10000);
+                                this.panel.getPanelMensaje().setText(" EL CERO DEL EQUIPO DESVIADO \n POR FAVOR CONSULTE AL SOPORTE TECNICO ...!");
                                 this.panel.getFuncion().setText("condicioninesperada");
-                                return true;
+                                if(!LeerArchivo.desactivarDesviacionCeroYSondaExosto()){
+                                    Thread.sleep(10000);
+                                    return true;
+                                } 
                             }
                             this.medicion = this.banco.obtenerDatos();
-                            this.panel.getPanelMensaje().setText(new StringBuilder().append(" HC: ").append(this.medicion.getValorHC()).toString()+ "ppm");
+                            this.panel.getPanelMensaje().setText(
+                                "HC: " + valorHC + "ppm\n"+
+                                mensajeCeroDesviado
+                            );
                             this.panel.getProgressBar().setValue(270 - this.contadorTemporizacion);
                         }
 
@@ -689,8 +709,8 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
                 //out = "Motos;".concat(placas);
                 bwP.write(out);
                 bwP.newLine();
-               System.out.println("");
-                if (ActivarLogs.equalsIgnoreCase("true")) {
+                boolean logsActivo = LeerArchivo.activarLogsMoto();
+                if (logsActivo) {
                    // System.out.println("entro a generar archivo de lectura");
                     fw2 = new FileWriter("UltLectura_" + placas + ".soltelec");
                     bwP2 = new BufferedWriter(fw2);
@@ -704,7 +724,7 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
                     bwP2.newLine();
                 }
             } else {
-                if (ActivarLogs.equalsIgnoreCase("true")) {
+                if (ActivarLogs) {
                     bwP2.write("-.** Tabla de Valores Moto en RALENTI EXHOSTO 2.-** ");
                     bwP2.newLine();
                 }
@@ -840,7 +860,7 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
                 bwP.write(out);
                 bwP.newLine();
                 bwP.flush();
-                if (ActivarLogs.equalsIgnoreCase("true")) {
+                if (ActivarLogs) {
                     bwP2.write(out2);
                     bwP2.newLine();
                     bwP2.flush();
@@ -861,7 +881,7 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
             bwP.newLine();
             bwP.flush();
 
-            if (ActivarLogs.equalsIgnoreCase("true")) {
+            if (ActivarLogs) {
                 bwP2.write(out2);
                 bwP2.newLine();
                 out2 = "########################################";
@@ -907,7 +927,7 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
                 System.out.println("valor del c02 a validar 2 " + medicion.getValorCO2() * 0.1);
                 if (valCo2 > valPerm) {
                     Mensajes.mensajeAdvertencia("DISCULPE, NO PUEDO CONTINUAR CON LA PRUEBA DEBIDO A QUE LA SONDA NO ESTA BIEN PUESTA DENTRO DEL EXHOTO. \n POR FAVOR REVISE LOS ACOPLES DEL EXHOSTO ..! \n CUANDO TERMINE PRESIONE ACEPTAR ");
-                    valDilc = false;
+                    valDilc = LeerArchivo.desactivarDesviacionCeroYSondaExosto();
                 }
             }
 
@@ -917,13 +937,16 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
                 valCo2 = (medicion.getValorO2() * 0.01);
                 System.out.println("valor del c02 a validar 3" + medicion.getValorCO2() * 0.1);
                 if (valCo2 > valPerm) {
-                    int opcion = JOptionPane.showOptionDialog(null, "DISCULPE, LAMENTABLEMENTE LA PRUEBA SERA ABORTADA DEBIDO A QUE NO SE PUEDE TOMAR LA MUESTRA CORRECTAMENTE  EN EL  EXHOSTO \n " + "   POR FAVOR REVISE EL EQUIPO DE MEDICION",
-                            null, JOptionPane.YES_NO_CANCEL_OPTION,
-                            JOptionPane.INFORMATION_MESSAGE, null, new Object[]{"Abortar Prueba"}, "NO");
+                    
                     timer.stop();
                     liberarRecursos();
                     Thread.sleep(100);
-                    valDilc = false;
+                    valDilc = LeerArchivo.desactivarDesviacionCeroYSondaExosto();
+
+                    String mensaje = !valDilc
+                    ? "DISCULPE, LAMENTABLEMENTE LA PRUEBA SERA ABORTADA DEBIDO A QUE NO SE PUEDE TOMAR LA MUESTRA CORRECTAMENTE  EN EL  EXHOSTO \n " + "   POR FAVOR REVISE EL EQUIPO DE MEDICION"
+                    : "SE RECOMIENDA NO CONTINUAR CON LA PRUEBA Y CONTACTARSE CON SOLTELEC";
+                    CMensajes.mensajeError(mensaje);
                 }
             }
         } catch (InterruptedException ex) {

@@ -31,7 +31,7 @@ class WorkerServicioTB86000 extends SwingWorker<Void,Void>{
                     System.out.println("Logro Leer del Kit valores de Temp y RPM");
                     panel.getRadialRPM().setValue(rpm);
                     panel.getLinearTemperatura().setValue(temp);
-                    panel.getTextAreaRPM().append("R: " + rpm +" T: " + temp+"\n");                    
+                    panel.getTextAreaRPM().append("servicio TB86000 R: " + rpm +" T: " + temp+"\n");
                     Thread.sleep(200);
                 }
                 Thread.sleep(200);

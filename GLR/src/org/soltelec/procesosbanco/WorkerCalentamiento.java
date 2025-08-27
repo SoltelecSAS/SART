@@ -56,7 +56,11 @@ public class WorkerCalentamiento extends SwingWorker<Integer, Integer> {
         setProgress(0);
         label.setText("Banco en calentamiento");
         //mientras el estado sea en calentamiento
-        while (estado.isCalentamiento()) {
+
+        String desactivarCalentamiento = UtilPropiedades.cargarPropiedad("desactivarCalentamiento", "propiedades.properties"); //LEE EL VALOR DE LA VARIABLE TemporizadorOpacimetro
+        boolean calentamiento = !desactivarCalentamiento.equalsIgnoreCase("true");
+
+        while (estado.isCalentamiento() && calentamiento) {
 
             contador = estado.getContadorCalentamiento();
             label.setText("Banco en calentamiento:" + contador+"s");
@@ -73,25 +77,27 @@ public class WorkerCalentamiento extends SwingWorker<Integer, Integer> {
         }
         
         //<editor-fold defaultstate="collapsed" desc="ZERO">
-                label.setText("Por Favor Espere. \\n Haciendo Cero en el Banco ...!");
-                System.out.println("Initial ZERO by powerJava"+ System.currentTimeMillis());
-                PanelCero panelCero = new PanelCero();
-                panel.getPanelMensaje().setText("Por Favor Espere. \n Haciendo Cero en el Banco ...!");
-                panelCero.setBanco(banco);
-                panelCero.setBarraTiempo(this.panel.getProgressBar());
-                panelCero.setLabelMensaje(this.panel.getPanelMensaje().getCronometro());
+        if (calentamiento) {
+            label.setText("Por Favor Espere. \\n Haciendo Cero en el Banco ...!");
+            System.out.println("Initial ZERO by powerJava "+ System.currentTimeMillis());
+            PanelCero panelCero = new PanelCero();
+            panel.getPanelMensaje().setText("Por Favor Espere. \n Haciendo Cero en el Banco ...!");
+            panelCero.setBanco(banco);
+            panelCero.setBarraTiempo(this.panel.getProgressBar());
+            panelCero.setLabelMensaje(this.panel.getPanelMensaje().getCronometro());
 
-                Thread t1 = new Thread(panelCero);
-                t1.start();
-                try {
-                    t1.join();
-                    //Realizar calibracion de cero//sincronizar con hilo principal
-                } catch (InterruptedException ex) {
-                    System.out.println("Error haciendo join con hilo de cero");
-                }
-                System.out.println("End ZERO by powerJava: " + System.currentTimeMillis());
-                //</editor-fold>
-        
+            Thread t1 = new Thread(panelCero);
+            t1.start();
+            try {
+                t1.join();
+                //Realizar calibracion de cero//sincronizar con hilo principal
+            } catch (InterruptedException ex) {
+                System.out.println("Error haciendo join con hilo de cero");
+            }
+            System.out.println("End ZERO by powerJava: " + System.currentTimeMillis());
+            //</editor-fold>
+        }
+            
         String Estabilizacion = UtilPropiedades.cargarPropiedad("Estabilizacion", "propiedades.properties"); //LEE EL VALOR DE LA VARIABLE TemporizadorOpacimetro
         Estabilizacion = (Estabilizacion == null) ? "false" : Estabilizacion;
         System.out.println((Estabilizacion == "" || Estabilizacion.equalsIgnoreCase("false")) ? "variable estabilizacion configurada en false" : "variable estabilizacion configurada en true");

@@ -101,7 +101,8 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
     private double valorMaximo = 0;
     private boolean esLujan = false;
     private boolean esMoto = false;
-    
+    private boolean moonNuevo = false;
+
     public FrmLuxometroCapelec(String tipoLuxometro, String placa, int idHojaPrueba, int idPrueba, int idUsuario, String location, boolean ver) throws IOException {
         this.esMoto = tipoLuxometro.equalsIgnoreCase("MOONMOTOS");
         this.placa = placa;
@@ -120,6 +121,7 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
             esLujan = true;
         }else{
             
+            moonNuevo = tipoLuxometro.equalsIgnoreCase("moonNuevo");
             altaIzquierda1.setEnabled(true);
             altaDerecha1.setEnabled(true);
             exploDerecha1.setEnabled(true);
@@ -1364,8 +1366,16 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
         if (posicionDere == 0) posicionIzq = 5;
         
 
-        /*lineas medidas:     inclinacionD  int.bajaD   int.altaD   int.exploradoraD    inclinacionI    int.bajaI   int.altaI   int.exploradoraI*/
-        int[] lineaMedidas = {17,           16,         26,         36,                 22,             21,         31,         41};
+        
+        int[] lineaMedidas;
+
+        if (moonNuevo) 
+            /*lineas medidas:        inclinacionD  int.bajaD   int.altaD   int.exploradoraD    inclinacionI    int.bajaI   int.altaI   int.exploradoraI*/
+            lineaMedidas = new int[]{19,           18,         28,         38,                 24,             23,         33,         43};
+        else
+            /*lineas medidas:        inclinacionD  int.bajaD   int.altaD   int.exploradoraD    inclinacionI    int.bajaI   int.altaI   int.exploradoraI*/
+            lineaMedidas = new int[]{17,           16,         26,         36,                 22,             21,         31,         41};
+        
         crearPlacaFile();
 
         if (esMoto && esDerecho) {
