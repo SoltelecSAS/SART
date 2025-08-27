@@ -46,6 +46,7 @@ import static org.soltelec.pruebasgases.diesel.WorkerCiclosDiesel.actualizarDiam
 import static org.soltelec.pruebasgases.diesel.WorkerCiclosDiesel.diametroExosto;
 import org.soltelec.util.Conex;
 import org.soltelec.util.ConsultarDatosVehiculo;
+import org.soltelec.util.LeerArchivo;
 import org.soltelec.util.MedicionOpacidad;
 import org.soltelec.util.Mensajes;
 import org.soltelec.util.RegistrarMedidas;
@@ -194,6 +195,9 @@ public class CallableInicioDiesel implements Callable<Void> {
     }
 
     private boolean ajustarValorMinimo() {
+        int segundosEspera = LeerArchivo.getTiempoCeroBrianBee();
+        CMensajes.mensajeTemporal("El equipo esta realizando la calibracion a cero, espere..", segundosEspera);
+        CMensajes.mensajeCorrecto("Presione Aceptar para continuar con el ajuste del valor minimo de la escala");
         System.out.println("------------------------------------------");
         System.out.println("----   AJUSTANDO VALOR MINIMO     --------");
         System.out.println("------------------------------------------");
@@ -206,7 +210,7 @@ public class CallableInicioDiesel implements Callable<Void> {
             while (contadorTemporizacion < Opacimetro.TIEMPO_ESCALA) {
                 Thread.sleep(120);
                 med = opacimetro.obtenerDatos();
-//                ev = med.getOpacidadDouble();
+//              ev = med.getOpacidadDouble();
                 panel.getPanelMensaje().setText("Opacidad: " + df2.format(med.getOpacidadDouble()) + ", t: " + contadorTemporizacion + "SEGUNDO");
 
                 if (contadorTemporizacion == Opacimetro.TIEMPO_ESCALA) {
@@ -303,6 +307,8 @@ public class CallableInicioDiesel implements Callable<Void> {
                 }
                 if (contMinimo > 0) {
                     panel.getPanelMensaje().setText("VOY A REDEFINIR LA ESCALA ...");
+                    int segundosEspera = LeerArchivo.getTiempoCeroBrianBee();
+                    CMensajes.mensajeTemporal("El equipo esta realizando la calibracion a cero, espere..", segundosEspera);
                     Thread.sleep(3000);
                 }
                 if (!ajustarValorMinimo()) {
@@ -340,6 +346,8 @@ public class CallableInicioDiesel implements Callable<Void> {
                 }
                 if (contadorMaximo > 0) {
                     panel.getPanelMensaje().setText("VOY A REDEFINIR LA ESCALA ...");
+                    int segundosEspera = LeerArchivo.getTiempoCeroBrianBee();
+                    CMensajes.mensajeTemporal("El equipo esta realizando la calibracion a cero, espere..", segundosEspera);
                     Thread.sleep(3000);
                 }
                 if (!ajustarValorMaximo()) {

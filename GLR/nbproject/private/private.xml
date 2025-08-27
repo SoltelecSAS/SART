@@ -3,6 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/procesosbanco/WorkerDatos.java</file>
             <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/sonometro/WorkerSonometroBocina.java</file>
             <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/luxometro/FrmLuxometroCapelec.java</file>
@@ -13,6 +14,16 @@
             <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/pruebasgases/EvaluarRegistrarPruebaGasolina.java</file>
             <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/pruebasgases/diesel/WorkerInicioDiesel.java</file>
             <file>file:/C:/Users/Oscar/OneDrive/Documents/soltelec/SART/GLR/src/org/soltelec/pruebasgases/motocicletas/CallableSimulacionMotos.java</file>
+=======
+            <file>file:/C:/Users/user/Documents/Soltelec/SART/GLR/src/com/soltelec/opacimetro/brianbee/UtilOpacimetroBrianBee.java</file>
+            <file>file:/C:/Users/user/Documents/Soltelec/SART/GLR/src/org/soltelec/procesosopacimetro/PanelMedicionStatus.java</file>
+            <file>file:/C:/Users/user/Documents/Soltelec/SART/GLR/src/com/soltelec/opacimetro/brianbee/HiloTomaDatosDieselBrianBee.java</file>
+            <file>file:/C:/Users/user/Documents/Soltelec/SART/GLR/src/org/soltelec/procesosbanco/MessageDisplayThread.java</file>
+            <file>file:/C:/Users/user/Documents/Soltelec/SART/GLR/src/org/soltelec/procesosopacimetro/PanelServicioOpacimetro.java</file>
+            <file>file:/C:/Users/user/Documents/Soltelec/SART/GLR/src/com/soltelec/opacimetro/brianbee/OpacimetroBrianBee.java</file>
+            <file>file:/C:/Users/user/Documents/Soltelec/SART/GLR/src/org/soltelec/pruebasgases/diesel/CallableInicioDiesel.java</file>
+            <file>file:/C:/Users/user/Documents/Soltelec/SART/GLR/src/com/soltelec/opacimetro/brianbee/MensajeOpacimetroBrianBee.java</file>
+>>>>>>> 3cb5de338daf72b6ab4c8a14fb8c51d76ec39a5b
         </group>
     </open-files>
 </project-private>
