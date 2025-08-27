@@ -331,5 +331,6 @@ public class EquipoController {
     }
     
 
+     
     
 }

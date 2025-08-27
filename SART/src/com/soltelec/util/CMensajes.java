@@ -4,14 +4,7 @@
  */
 package com.soltelec.util;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import javax.swing.BorderFactory;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
 
 /**
  *
@@ -45,28 +38,5 @@ public class CMensajes {
         }
         
         return estado;
-    }
-
-    public static void mensajeTemporal(String mensaje, int segundos) {
-        final JDialog dialogo = new JDialog();
-        dialogo.setTitle("Mensaje");
-        dialogo.setModal(false);
-        dialogo.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
-        JLabel label = new JLabel(mensaje, SwingConstants.CENTER);
-        label.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
-        dialogo.getContentPane().add(label);
-        dialogo.pack();
-        dialogo.setLocationRelativeTo(null); // Centrar en pantalla
-
-        // Crear un temporizador para cerrarlo después de 'segundos'
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            public void run() {
-                dialogo.dispose();
-            }
-        }, segundos * 1000); // convertir a milisegundos
-
-        dialogo.setVisible(true);
     }
 }

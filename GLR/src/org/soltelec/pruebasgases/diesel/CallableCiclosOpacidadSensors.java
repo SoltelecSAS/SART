@@ -50,7 +50,6 @@ import org.soltelec.pruebasgases.SimuladorRpm;
 import static org.soltelec.pruebasgases.diesel.WorkerCiclosDiesel.aplicTrans;
 import org.soltelec.util.Conex;
 import org.soltelec.util.ConsultarDatosVehiculo;
-import org.soltelec.util.LeerArchivo;
 import org.soltelec.util.MedicionOpacidad;
 import org.soltelec.util.MedidaGeneral;
 import org.soltelec.util.ShiftRegister;
@@ -1545,8 +1544,6 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
 
                 if (contMinimo > 0) {
                     panel.getPanelMensaje().setText("VOY A REDEFINIR LA ESCALA ...");
-                    int segundosEspera = LeerArchivo.getTiempoCeroBrianBee();
-                    CMensajes.mensajeTemporal("El equipo esta realizando la calibracion a cero, espere..", segundosEspera);
                     Thread.sleep(3000);
                 }
                 if (!ajustarValorMinimo()) {
@@ -1568,9 +1565,6 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
     }
 
     private boolean ajustarValorMinimo() {
-        int segundosEspera = LeerArchivo.getTiempoCeroBrianBee();
-        CMensajes.mensajeTemporal("El equipo esta realizando la calibracion a cero, espere..", segundosEspera);
-        CMensajes.mensajeCorrecto("Presione Aceptar para continuar con el ajuste del valor minimo de la escala");
         System.out.println("------------------------------------------");
         System.out.println("----   AJUSTANDO VALOR MINIMO     --------");
         System.out.println("------------------------------------------");
@@ -1626,8 +1620,6 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
                 }
                 if (contadorMaximo > 0) {
                     panel.getPanelMensaje().setText("VOY A REDEFINIR LA ESCALA ...");
-                    int segundosEspera = LeerArchivo.getTiempoCeroBrianBee();
-                    CMensajes.mensajeTemporal("El equipo esta realizando la calibracion a cero, espere..", segundosEspera);
                     Thread.sleep(3000);
                 }
                 if (!ajustarValorMaximo()) {
@@ -2162,7 +2154,6 @@ public class CallableCiclosOpacidadSensors implements Callable<List<MedidaGenera
 
     private List<MedidaGeneral> armarListas(List<Double> listaMaximosTresCiclos, double velocidadRalenti, double velocidadGobernada, int temperaturaAntesIniciar, int temperaturaFinal, int gob0, int gob1, int gob2, int gob3) {
 
-        
         List<MedidaGeneral> listaMedidas = new ArrayList<MedidaGeneral>();
         MedidaGeneral maximoCiclo0 = new MedidaGeneral(8033, listaMaximosTresCiclos.get(0));
         listaMedidas.add(maximoCiclo0);
