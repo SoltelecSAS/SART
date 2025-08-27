@@ -12,9 +12,12 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import org.soltelec.procesosbanco.RegVefCalibraciones;
+import org.soltelec.util.LeerArchivo;
 import org.soltelec.util.MedicionOpacidad;
 import org.soltelec.util.Mensajes;
 import org.soltelec.util.capelec.OpacimetroCapelec;
+
+import com.soltelec.modulopuc.utilidades.CMensajes;
 
 /**
  *

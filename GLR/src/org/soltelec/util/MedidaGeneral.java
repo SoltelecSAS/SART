@@ -39,5 +39,10 @@ public class MedidaGeneral {
         this.valorMedida = valorMedida;
     }
 
+    @Override
+    public String toString() {
+        return "MedidaGeneral [tipoMedida=" + tipoMedida + ", valorMedida=" + valorMedida + "]";
+    }
+
     
 }
