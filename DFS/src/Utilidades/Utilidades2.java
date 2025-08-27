@@ -464,7 +464,7 @@ public class Utilidades2 {
         { 0         , 0              , 0              , 0}, //llanta 4 TIzq
         //----------------------------------------------------------------------------
         { 0         , 0              , 0              , 0}, //fuerzas de estacionamiento Der , D
-        { 0         , 0              , 0              , 0} //fuerzas de estacionamiento Izq , I
+        { 0         , 0              , 0              , 0}  //fuerzas de estacionamiento Izq , I
     };
 
     public static String generarReporteParametros(boolean aplicarOffset) {

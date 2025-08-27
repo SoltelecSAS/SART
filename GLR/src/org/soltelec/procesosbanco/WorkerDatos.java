@@ -74,6 +74,7 @@ public class WorkerDatos extends SwingWorker<Integer, MedicionGases> {
                         if (primeraEjecucion) {
                             serial = banco.numeroSerial();
                             PEF = banco.obtenerPEF();
+                            
                             Equipo serialresolucion = controller.findEquipoBySerialResolucion(serial);
                             String serialEquipo = LeerArchivo.getSerialOttoPantallaServicio();
                             panelMedidas.getLabelTitulo().setText(

@@ -1287,7 +1287,19 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                 Utilidades2.parametros[ejemedido - 1][1] = auxfuerzad;
                 Utilidades2.parametros[ejemedido - 1][2] = offsetCeroFuerzaDer;
                 Utilidades2.parametros[ejemedido - 1][3] = spanfd;
-            } else {
+            } 
+            else {
+                fuerzasfdAux.add(fuerzaDerSinSpan);
+                System.out.println("fuerzaDerMano sin cero: " + auxfuerzad + " mV. Valor cero: "+ valcalcero1 + " mV. span: "+spanfd +". offset: "+ offsetCeroFuerzaDer+" mV.");
+                Utilidades2.medidasCuatrimotoPequena[4][0] = fuerzaDerSinSpan * spanfd;
+                Utilidades2.medidasCuatrimotoPequena[4][0] = fuerzaDerSinSpan * spanfd;
+                Utilidades2.parametros[4][0] = valcalcero1;
+                Utilidades2.parametros[4][1] = auxfuerzad;
+                Utilidades2.parametros[4][2] = offsetCeroFuerzaDer;
+                Utilidades2.parametros[4][3] = spanfd;
+            }
+
+            if (tipoVehiculo.equals("Moto") && ensenianza ) {
                 fuerzasfdAux.add(fuerzaDerSinSpan);
                 System.out.println("fuerzaDerMano sin cero: " + auxfuerzad + " mV. Valor cero: "+ valcalcero1 + " mV. span: "+spanfd +". offset: "+ offsetCeroFuerzaDer+" mV.");
                 Utilidades2.medidasCuatrimotoPequena[4][0] = fuerzaDerSinSpan * spanfd;
