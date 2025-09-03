@@ -146,7 +146,9 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
         int cont = 0;
         System.out.println("Entro en Hilo de Pruebas de Motos para validacion deado que no es simulada");
         String puertoTermo = UtilPropiedades.cargarPropiedad("PuertoTermoHigrometro", "propiedades.properties");
-        String funcionTermoHigrometro = UtilPropiedades.cargarPropiedad("FuncionTermoHigrometro", "propiedades.properties");
+        String funcionTermoHigrometro = LeerArchivo.obtenerFuncionTermohigrometro();
+        double temperatura = LeerArchivo.obtenerTemperatura();
+        double humedad = LeerArchivo.obtenerHumedad();
         timerTermoHigrometro = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -155,7 +157,15 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
                 List<gnu.io.CommPortIdentifier> d = (List<gnu.io.CommPortIdentifier>) Collections.list(CommPortIdentifier.getPortIdentifiers()).stream().filter(c -> ((gnu.io.CommPortIdentifier) c).getName().equals(puertoTermo)).collect(Collectors.toList());
                 if ((d == null || d.isEmpty()) && funcionTermoHigrometro.equalsIgnoreCase("Master")) {
                     System.out.println("Validando termo higrometro" + d);
-                    JOptionPane.showMessageDialog(null, "Se desconecto el termohigrometro");//
+                    JOptionPane.showMessageDialog(null, "El termohigrometro esta desconectado");
+                    System.exit(0);
+                }else if (temperatura == 0 || humedad == 0) {
+                    JOptionPane.showMessageDialog(
+                        null,
+                        "El termohigrómetro está desconectado del computador al que debería estar conectado,\n" +
+                        "o no se pudo establecer comunicación con el computador donde esta conectado dicho equipo.\n"+
+                        "Asegúrese que el computador donde se encuentra el master tenga abierto el programa SART"
+                    );
                     System.exit(0);
                 }else{
                     String mensajeConexionTermo = funcionTermoHigrometro.equalsIgnoreCase("Master") ? 

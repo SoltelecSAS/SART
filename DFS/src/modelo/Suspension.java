@@ -7,6 +7,8 @@ package modelo;
 import java.util.ArrayList;
 import java.util.List;
 
+import Utilidades.Utilidades2;
+
 /**
  *
  * @author GerenciaDesarrollo
@@ -206,36 +208,39 @@ public class Suspension implements PruebaDefault {
         
         System.out.println("fuerzaDerecha.size() = " +fuerzaDerecha.size());
         System.out.println("fuerzaIzquierda.size() = " +fuerzaIzquierda.size());
+
+        double valorDeRecalculoSuspension = Utilidades2.leerDoubleDesdeArchivo("calibracion.properties", "valorDeRecalculoSuspension");
         
         System.out.println("Datos:");
         for (int i = 0; i < (fuerzaDerecha.size()); i++) 
         {
-            if (fuerzaDerecha.get(i) != 0){
+            if (fuerzaDerecha.get(i) >= valorDeRecalculoSuspension){
                 numeroDeDatos++;
                 sumaDatos+=fuerzaDerecha.get(i);
                 System.out.println("fuerza derecha "+i+"="+fuerzaDerecha.get(i));
             }else System.out.println("fuerza derecha "+i+"= 0");
-            if (fuerzaIzquierda.get(i) != 0) {
+            if (fuerzaIzquierda.get(i) >= valorDeRecalculoSuspension) {
                 numeroDeDatos++;
                 sumaDatos+=fuerzaIzquierda.get(i);
                 System.out.println("fuerza izquierda "+i+"="+fuerzaIzquierda.get(i));
             }else System.out.println("fuerza izquierda "+i+"= 0");
         }
 
-        System.out.println("\n\nnumero de elementos: "+numeroDeDatos);
-        System.out.println("sumaTotal: "+numeroDeDatos);
+        System.out.println("valorDeRecalculoSuspension de calibracion.properties = "+valorDeRecalculoSuspension);
+        System.out.println("\n\nnumero de elementos mayores al valor de recalculo = "+numeroDeDatos);
+        System.out.println("sumaTotal = "+numeroDeDatos);
         Double promedio = sumaDatos / numeroDeDatos;
-        System.out.println("Promedio recalculo: "+promedio);
+        System.out.println("Promedio recalculo = "+promedio);
 
         for (int i = 0; i < (fuerzaDerecha.size()); i++) 
         {
-            if ((fuerzaDerecha.get(i) >=0 && fuerzaDerecha.get(i) <1)) {
-                int random = (int) (Math.random() * 201) - 100;
+            if ((fuerzaDerecha.get(i) >=0 && fuerzaDerecha.get(i) <= valorDeRecalculoSuspension)) {
+                int random = (int) (Math.random() * 201) - 100; // -100 <= random <= 100
                 fuerzaDerecha.set(i, promedio+random);
                 System.out.println("Derecha C " + (i + 1) + ": " + fuerzaDerecha.get(i));
             }
-            if ((fuerzaIzquierda.get(i) >=0 && fuerzaIzquierda.get(i) <1)) {
-                int random = (int) (Math.random() * 201) - 100;
+            if ((fuerzaIzquierda.get(i) >=0 && fuerzaIzquierda.get(i) <= valorDeRecalculoSuspension)) {
+                int random = (int) (Math.random() * 201) - 100; // -100 <= random <= 100
                 fuerzaIzquierda.set(i, promedio+random);
                 System.out.println("Izquierda C " + (i + 1) + ": " + fuerzaIzquierda.get(i));
             }

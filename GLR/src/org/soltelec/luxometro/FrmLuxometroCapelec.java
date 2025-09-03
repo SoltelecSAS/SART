@@ -128,12 +128,12 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
             exploIzquierda1.setEnabled(true);
             leerDatos.setVisible(false);
             
-            ED3.setSelected(false);
-            ED2.setSelected(false);
-            ED1.setSelected(false);
-            EI3.setSelected(false);
-            EI2.setSelected(false);
-            EI1.setSelected(false);
+            ED3.setSelected(true);
+            ED2.setSelected(true);
+            ED1.setSelected(true);
+            EI3.setSelected(true);
+            EI2.setSelected(true);
+            EI1.setSelected(true);
             
             
             if(esMoto){
@@ -1509,7 +1509,7 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                     if (contadorLineas == lineaMedidas[5]){
                         medidas[1][posicionIzq] = Double.parseDouble(linea.split(",")[1]) / 1000;
                         if (posicionIzq == 3){
-                            bajaDerecha1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/baja-izquierda-ok.png")));
+                            bajaIzquierda1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/baja-izquierda-ok.png")));
                             if(mostrarMedidas) intBajaIzquierda1.setText(String.valueOf(medidas[1][posicionIzq]) + " Klux" );
                         }
                         if (posicionIzq == 4){
@@ -1526,18 +1526,18 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
                         medidas[2][posicionIzq] = Double.parseDouble(linea.split(",")[1]) / 1000;
 
                         if (posicionIzq == 3){
-                            altaDerecha1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
-                            altaDerecha1.setEnabled(true);
+                            altaIzquierda1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
+                            altaIzquierda1.setEnabled(true);
                             if(mostrarMedidas) intAltaIzquierda1.setText(String.valueOf(medidas[2][posicionIzq]) + " Klux" );
                         }
                         if (posicionIzq == 4){
-                            altaDerecha2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
-                            altaDerecha2.setEnabled(true);
+                            altaIzquierda2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
+                            altaIzquierda2.setEnabled(true);
                             if(mostrarMedidas) intAltaIzquierda2.setText(String.valueOf(medidas[2][posicionIzq]) + " Klux" );
                         }
                         if (posicionIzq == 5){
-                            altaDerecha3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
-                            altaDerecha3.setEnabled(true);
+                            altaIzquierda3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/alta-izquierda-ok.png")));
+                            altaIzquierda3.setEnabled(true);
                             if(mostrarMedidas) intAltaIzquierda3.setText(String.valueOf(medidas[2][posicionIzq]) + " Klux" );
                         }
 

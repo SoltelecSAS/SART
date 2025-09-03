@@ -14,6 +14,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import conexion.Conexion;
 
 public class Utilidades2 {
@@ -542,5 +545,24 @@ public class Utilidades2 {
         }
     
         return reporte;
+    }
+
+    public static boolean dialogo2Opciones(String opcion1, String opcion2, String title, String message) {
+        JFrame frame = new JFrame(title);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(300, 200);
+        frame.setLocationRelativeTo(null);
+
+        Object[] options = {opcion1, opcion2};
+        int choice = JOptionPane.showOptionDialog(frame,
+                message,
+                title,
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+        return choice == JOptionPane.YES_OPTION;
     }
 }

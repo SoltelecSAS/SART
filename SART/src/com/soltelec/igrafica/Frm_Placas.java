@@ -1562,7 +1562,8 @@ public class Frm_Placas extends javax.swing.JDialog {
                         new JDialogLuxometroChino(frame, true, idPrueba, idUsuario).setVisible(true);
                         doClose(0);
                     }
-                    if (versionLuxometro.equalsIgnoreCase("MOON") || versionLuxometro.startsWith("MOON")) { //aqui tambien moonNuevo
+                    if (versionLuxometro.equalsIgnoreCase("MOON") || versionLuxometro.startsWith("moon")) { //aqui tambien moonNuevo
+                        System.out.println("entre luxometro moon");
                         LecturaArchivoLuxometroMoon archivoLuxometroMoon = new LecturaArchivoLuxometroMoon(aplicTrans);
 //                        LecturaArchivoLuxomMoonPru archivLuxo= new LecturaArchivoLuxomMoonPru();
                         int tipoVehiculo = 0;
@@ -1836,8 +1837,19 @@ public class Frm_Placas extends javax.swing.JDialog {
                             regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
                         }
                     } else {
-                        DlgFrenoMoto dfm = new DlgFrenoMoto(frame, true, idPrueba, idUsuario, idHojaPruebaLocal, aplicTrans, ipEquipo, vehiculoVariable.getCarplate(), cam_usuario.getText());
-                        dfm.setVisible(true);
+
+                        String tipoVehiculo = vehiculoVariable.getTipoVehiculo().getNombre();
+
+                        if (ensenianza) {
+                            DlgIntegradoLiviano dlg = new DlgIntegradoLiviano(
+                                frame, 0, 0, idPrueba, idUsuario, idHojaPruebaLocal, ensenianza, aplicTrans, ipEquipo, 
+                                tipoVehiculo, vehiculoVariable.getCarplate(), cam_usuario.getText(), 0
+                            );
+                            dlg.setVisible(true);
+                        }else{
+                            DlgFrenoMoto dfm = new DlgFrenoMoto(frame, true, idPrueba, idUsuario, idHojaPruebaLocal, aplicTrans, ipEquipo, vehiculoVariable.getCarplate(), cam_usuario.getText());
+                            dfm.setVisible(true);
+                        }
                         doClose(0);
                         regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
                     }

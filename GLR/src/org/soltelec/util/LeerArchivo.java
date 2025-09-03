@@ -1,8 +1,11 @@
 package org.soltelec.util;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Properties;
 
 public class LeerArchivo {
 
@@ -45,10 +48,17 @@ public class LeerArchivo {
     public static String leerDatoDesdeArchivo(String archivo, String buscarTexto) {
         try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
             String linea;
+            String buscarTextoLower = buscarTexto.toLowerCase();
             while ((linea = br.readLine()) != null) {
-                if (linea.contains(buscarTexto)) {
-                    // Extraer el dato después de "opacimetro-calibracion:"
-                    return linea.substring(linea.indexOf(buscarTexto) + buscarTexto.length()).trim();
+                linea = linea.trim(); // Elimina espacios en blanco al inicio y fin
+
+                // Ignorar líneas vacías o comentarios
+                if (linea.isEmpty() || !linea.startsWith(buscarTexto)) continue;
+                
+
+                String lineaLower = linea.toLowerCase();
+                if (lineaLower.contains(buscarTextoLower)) {
+                    return linea.substring(lineaLower.indexOf(buscarTextoLower) + buscarTexto.length()).trim();
                 }
             }
         } catch (IOException e) {
@@ -91,6 +101,57 @@ public class LeerArchivo {
         String resultado = LeerArchivo.leerDatoDesdeArchivo(archivo, buscarTexto);
         if (resultado != null) return Integer.parseInt(resultado);
         return 0;
+    }
+
+    public static String obtenerRutaTermoHigrometro() {
+        String archivo = "propiedades.properties"; 
+        String buscarTexto = "TermoHData=";
+
+        return leerDatoDesdeArchivo(archivo, buscarTexto);
+    }
+
+    public static String obtenerFuncionTermohigrometro(){
+        String archivo = "propiedades.properties";
+        String buscarTexto = "FuncionTermoHigrometro=";
+        return leerDatoDesdeArchivo(archivo, buscarTexto);
+    }
+
+    public static double obtenerTemperatura() {
+        String rutaArchivoDatos = obtenerRutaTermoHigrometro();
+        if (rutaArchivoDatos == null) {
+            System.err.println("No se encontró la ruta del archivo en propiedades.properties");
+            return 0.0;
+        }
+
+        Properties props = new Properties();
+        try (FileInputStream fis = new FileInputStream(rutaArchivoDatos)) {
+            props.load(fis);
+            String valor = props.getProperty("temperatura");
+            System.out.println("Valor temperatura: " + valor);
+            return valor != null ? Double.parseDouble(valor) : 0.0;
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
+    public static double obtenerHumedad() {
+        String rutaArchivoDatos = obtenerRutaTermoHigrometro();
+        if (rutaArchivoDatos == null) {
+            System.err.println("No se encontró la ruta del archivo en propiedades.properties");
+            return 0.0;
+        }
+
+        Properties props = new Properties();
+        try (FileInputStream fis = new FileInputStream(rutaArchivoDatos)) {
+            props.load(fis);
+            String valor = props.getProperty("humedad");
+            System.out.println("Valor humedad: " + valor);
+            return valor != null ? Double.parseDouble(valor) : 0.0;
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
     }
 
     public static String getSerialOtto() throws IOException{

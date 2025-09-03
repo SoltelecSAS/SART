@@ -136,7 +136,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     private byte salidaalta, salidabaja;
     private double anchoplacadesv;
     private int aplcSenDesv;
-    private int teporizadorInercia;
+    private int temporizadorInercia;
     private int numeroejes = 2, ejemedido = 1, tiempomensajes, numtimerautomatico2 = 0;
     //private boolean ladomedido=true; //true=derecho false=izquierdo
     private double velminimad, velminimai, umbral_velo, umbralPeso;
@@ -176,7 +176,8 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     private long tiempoApagarContactores = 0L;
     private boolean activarPresencia = false; // Indica si se debe activar la presencia desde el software
     private boolean activarUmbralPeso = false; // Indica si se debe activar el umbral de peso desde el software
-    private boolean activarComprobacionCero; // Indica si se debe activar la comprobación de cero desde el software
+    private boolean esMoto = false;
+    private boolean esEnsenanzaYEsMoto = false;
 
     private DlgIntegradoLiviano(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -234,7 +235,6 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
         activarPresencia = Utilidades2.leerBooleanDesdeArchivo("calibracion.properties", "activarPresenciaDesdeSoftware");
         activarUmbralPeso = Utilidades2.leerBooleanDesdeArchivo("calibracion.properties", "activarUmbralPesoDesdeSoftware");
-        activarComprobacionCero = !Utilidades2.leerBooleanDesdeArchivo("calibracion.properties", "activarComprobacionCeroDesdeSoftware");
 
         //solo funciona para cuatrimotos pequeñas, motocarros y ciclomotores lo siguiente
         tiempoFrenado =  Utilidades2.leerLongDesdeArchivo("calibracion.properties", "tiempoFrenado"); 
@@ -259,9 +259,9 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         this.setTitle("SART 1.7.3 MOD D.F.S. PARA "+tipoVehiculo.toLowerCase());
         LabelPrueba.setText("PRUEBA PARA "+tipoVehiculo.toUpperCase());
 
-        
+        esMoto = tipoVehiculo.equalsIgnoreCase("MOTO");
 
-        if(tipoVehiculo.equalsIgnoreCase("CICLOMOTOR") || tipoVehiculo.equalsIgnoreCase("MOTO")){
+        if(tipoVehiculo.equalsIgnoreCase("CICLOMOTOR") || esMoto){
             this.led2.setVisible(false);
             jLabel4.setVisible(false);
             jLabel3.setText("Presencia");
@@ -401,7 +401,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             }
             if ((line = config.readLine()).startsWith("resol_max:")) {
                 resolMax = Integer.parseInt(line.substring(line.indexOf(" ") + 1, line.length()));
-                System.out.println(" RESOL MIN " + resolMax);
+                System.out.println(" RESOL MAX " + resolMax);
             } else {
                 JOptionPane.showMessageDialog(null, "Falla en el archivo de configuración campo resol_max para Desv.. Por Favor Llame Soporte Tecnico",
                         "SART 1.7.3", JOptionPane.ERROR_MESSAGE);
@@ -427,7 +427,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                 setError_config(true);
             }
             if ((line = config.readLine()).startsWith("temporizador_inercia")) {
-                teporizadorInercia = Integer.parseInt(line.substring(line.indexOf(" ") + 1, line.length()));
+                temporizadorInercia = Integer.parseInt(line.substring(line.indexOf(" ") + 1, line.length()));
             } else {
                 JOptionPane.showMessageDialog(null, "Falla en el archivo de configuración campo temporizador_inercia. Llame a servicio técnico  " + line,
                         "SART 1.7.3", JOptionPane.ERROR_MESSAGE);
@@ -708,7 +708,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
     }
 
-    public void LeePaso() {
+    public void LeePasoMetodo() {
         String line;
         try {
             if ((line = config.readLine()).startsWith("salidas:")) {
@@ -1279,7 +1279,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             double ceroFuerzaDer = this.valcalcero1 + offsetCeroFuerzaDer;
             fuerzaDerSinSpan = Math.abs(auxfuerzad - ceroFuerzaDer);
             System.out.println("\n\nFUERZA DERECHA "+ejeORueda+ruedasOEjes[ejemedido-1]+"--(RECORDAR QUE LOS VALORES NEGATIVOS SE LES SACA VALOR ABSOLUTO Y LOS CALCULOS TIENEN EN CUENTA TODAS LAS CIFRAS DECIMALES)-------------------\n");
-            if (freAux == false) {
+            if (!freAux) {
                 this.fuerzasfd.add(fuerzaDerSinSpan);
                 System.out.println("fuerzaDer sin cero: " + auxfuerzad + " mV. Valor cero: "+ valcalcero1 + " mV. span: "+spanfd +". offset: "+ offsetCeroFuerzaDer+" mV.");
                 Utilidades2.medidasCuatrimotoPequena[ejemedido - 1][1] = fuerzaDerSinSpan * spanfd;
@@ -1290,7 +1290,6 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             } else {
                 fuerzasfdAux.add(fuerzaDerSinSpan);
                 System.out.println("fuerzaDerMano sin cero: " + auxfuerzad + " mV. Valor cero: "+ valcalcero1 + " mV. span: "+spanfd +". offset: "+ offsetCeroFuerzaDer+" mV.");
-                Utilidades2.medidasCuatrimotoPequena[4][0] = fuerzaDerSinSpan * spanfd;
                 Utilidades2.medidasCuatrimotoPequena[4][0] = fuerzaDerSinSpan * spanfd;
                 Utilidades2.parametros[4][0] = valcalcero1;
                 Utilidades2.parametros[4][1] = auxfuerzad;
@@ -1355,7 +1354,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         int bc;
         long s;
         LabelInfo.setText("MIDIENDO FUERZA VERTICAL...!");
-        Thread.sleep(teporizadorInercia);
+        Thread.sleep(temporizadorInercia);
         //  Thread.sleep(1777);
         comandoSUSP();
         for (i = 0; i < 12; i++) {
@@ -1366,7 +1365,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             jProgressBar1.setString(Math.round((i + 1) * 8.334) + "%");
             Thread.sleep(500);
         }
-        Thread.sleep(teporizadorInercia);
+        Thread.sleep(temporizadorInercia);
         CapturarDatos("fuerzaVertical");
         comandoSTOP();
         switch (lado) {
@@ -2007,7 +2006,8 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
         double persoDerRef = 0;
         double pesoIzqRef = 0;
-        boolean recalculoCero = activarComprobacionCero;
+        boolean recalcularCeroPeso = Utilidades2.leerBooleanDesdeArchivo("calibracion.properties", "recalcularCeroPeso");
+        boolean recalculoCero = !recalcularCeroPeso;
 
         while (true) {
             CapturarDatos("ceros");
@@ -2019,7 +2019,6 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
             double calPesoDerSinSpan = persoDer - valorCeroDer;
             double calPesoIzqSinSpan = pesoIzq - valorCeroIzq;
-
 
             if (((calPesoDerSinSpan) < 0 && (calPesoIzqSinSpan) < 0 && (calPesoDerSinSpan) > -20 && (calPesoIzqSinSpan) > -20 && count == 0) || recalculoCero) { //valores entre 15 y -15 para comprobar que los valores de peso en cero son correctos
                 System.out.println("Esperando eje " + ejemedido + " en la plancha de peso..!");
@@ -2079,9 +2078,8 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             System.out.println("activarUmbralPeso: " + activarUmbralPeso);
             if (activarUmbralPeso || (calPesoDerConSpan >= umbralPeso && calPesoIzqConSpan >= umbralPeso && recalculoCero)) {
                 if (activarUmbralPeso) {
-                    CMensajes.mensajeAdvertencia("Si esta es una prueba real, por favor aborte la prueba y contacte al soporte Soltelec.\n"+
-                    "Propiedad 'activarUmbralPesoDesdeSoftware' de peso activada. Desactivarla desde el archivo de calibracion.properties poniendola en false\n"+
-                    "Esto solo se usa para pruebas de calibración en cero.\n");
+                    CMensajes.mensajeAdvertencia("Si esta es una prueba real, se recomienda que aborte la prueba y contacte al soporte Soltelec.\n"+
+                    "Propiedad 'activarUmbralPesoDesdeSoftware' de peso activada\n");
                 }
                 LabelInfo.setText("DETECTANDO PESO..!");
                 LabelAviso.setText("PLANCHA");
@@ -2162,9 +2160,8 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             
             if (activarUmbralPeso || calPesoDer >= umbralPeso || calPesoIzq >= umbralPeso ) {
                 if (activarUmbralPeso) {
-                    CMensajes.mensajeAdvertencia("Si esta es una prueba real, por favor aborte la prueba y contacte al soporte Soltelec.\n"+
-                    "Propiedad 'activarUmbralPesoDesdeSoftware' de peso activada. Desactivarla desde el archivo de calibracion.properties poniendola en false\n"+
-                    "Esto solo se usa para pruebas de calibración en cero.\n");
+                    CMensajes.mensajeAdvertencia("Si esta es una prueba real, se recomienda que aborte la prueba y contacte al soporte Soltelec.\n"+
+                    "Propiedad 'activarUmbralPesoDesdeSoftware' de peso activada\n");
                 }
                 break;
             }
@@ -2303,9 +2300,8 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             CapturarDatos("frenometro");
             if ((isCanal0() && isCanal1()) || activarPresencia) {
                 if (activarPresencia) {
-                    CMensajes.mensajeAdvertencia("Si esta es una prueba real, por favor aborte la prueba y contacte al soporte Soltelec.\n"+
-                    "Propiedad 'activarPresenciaDesdeSoftware' de peso activada. Desactivarla desde el archivo de calibracion.properties poniendola en false\n"+
-                    "Esto solo se usa para activar las presencias automaticas en pruebas de calibración en cero.\n");
+                    CMensajes.mensajeAdvertencia("Si esta es una prueba real, se recomienda que aborte la prueba y contacte al soporte Soltelec.\n"+
+                    "Propiedad 'activarUmbralPesoDesdeSoftware' de peso activada\n");
                 }
                 conteoreg++;
             } else {
@@ -2352,9 +2348,8 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             CapturarDatos("frenometro");
             if ((isCanal0() && isDerecho) || (isCanal1() && !isDerecho) || activarPresencia) {
                 if (activarPresencia) {
-                    CMensajes.mensajeAdvertencia("Si esta es una prueba real, por favor aborte la prueba y contacte al soporte Soltelec.\n"+
-                    "Propiedad 'activarPresenciaDesdeSoftware' de peso activada. Desactivarla desde el archivo de calibracion.properties poniendola en false\n"+
-                    "Esto solo se usa para activar las presencias automaticas en pruebas de calibración en cero.\n");
+                    CMensajes.mensajeAdvertencia("Si esta es una prueba real, se recomienda que aborte la prueba y contacte al soporte Soltelec.\n"+
+                    "Propiedad 'activarUmbralPesoDesdeSoftware' de peso activada\n");
                 }
                 conteoreg++;
             } else {
@@ -2422,7 +2417,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         puerto.setFlujoEnt(puerto);
         comandoFREN();
         for (this.pasoactual = 1; this.pasoactual <= this.numpasos / 2; this.pasoactual = ((byte) (this.pasoactual + 1))) {
-            LeePaso();
+            LeePasoMetodo();
             if (this.tiempo_paso == 0) {
                 JOptionPane.showMessageDialog(this, "Disculpe, Consegui un ERROR en el archivo de configuración", "SART 1.7.3", 0);
                 comandoSTOP();
@@ -2515,11 +2510,9 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                         break;
                     case 4:
 
-                        if (lado.equalsIgnoreCase("ambos")) {
-                            MedirFuerzaFrenado(freAux);
-                        }else{
-                            MedirFuerzaFrenado(freAux, lado);
-                        }
+                        if (lado.equalsIgnoreCase("ambos")) MedirFuerzaFrenado(freAux);
+                        else MedirFuerzaFrenado(freAux, lado);
+                        
                         
                         this.timeraviso.stop();
                         this.LabelAviso.setText("");
@@ -4164,7 +4157,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
         double eficaciaFrenoMano = (fFrenoMano / sumaPesos)*100;
 
-        imprimirDatosCuatrimotoPequena(
+        imprimirDatos(
             0, 0, fuerzaD, fuerzaT,
             0, 0, pesoD, pesoT,
             0, fFrenoMano,
@@ -4212,22 +4205,22 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         double pesoD = Utilidades2.medidasCuatrimotoPequena[0][0]; //peso Delantera
         double pesoT = Utilidades2.medidasCuatrimotoPequena[1][0]; //peso Trasera
 
-        double fFrenoMano = Utilidades2.medidasCuatrimotoPequena[4][0]; //Fuerza freno mano
+        double fFrenoEnsenanza = Utilidades2.medidasCuatrimotoPequena[4][0]; //Fuerza freno enseñanza
 
         double sumaFuerzas = fuerzaD+fuerzaT;
         double sumaPesos = pesoD+pesoT;
 
         double eficacia = (sumaFuerzas/sumaPesos)*100;
 
-        double eficaciaFrenoMano = (fFrenoMano / sumaPesos)*100;
+        double eficaciaEnsenanza = (fFrenoEnsenanza / sumaPesos)*100;
 
-        imprimirDatosCuatrimotoPequena(
+        imprimirDatos(
             0, 0, fuerzaD, fuerzaT,
             0, 0, pesoD, pesoT,
-            0, fFrenoMano,
+            0, fFrenoEnsenanza,
             0, 0,
-            sumaFuerzas, sumaPesos, fFrenoMano,
-            eficacia, eficaciaFrenoMano
+            sumaFuerzas, sumaPesos, fFrenoEnsenanza,
+            eficacia, eficaciaEnsenanza
         );
 
         Utilidades2.guardarOModificarMedida(5000, idPruebafren, pesoD, "N");
@@ -4236,15 +4229,17 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         Utilidades2.guardarOModificarMedida(5009, idPruebafren, fuerzaT, "N");
         Utilidades2.guardarOModificarMedida(5024, idPruebafren, eficacia, "N");
 
-        if (ejesDondeTieneFrenoMano != 0) { //si ejesDondeTieneFrenoMano es 0, no se tiene en cuenta el freno de mano
-            Utilidades2.guardarOModificarMedida(5016, idPruebafren, fFrenoMano, "N");
-            Utilidades2.guardarOModificarMedida(5036, idPruebafren, eficaciaFrenoMano, "N");
+        String comentario = "";
+        if (esEnsenanzaYEsMoto) { //si ejesDondeTieneFrenoMano es 0, no se tiene en cuenta el freno de mano
+            Utilidades2.guardarOModificarMedida(5037, idPruebafren, fFrenoEnsenanza, "N");
+            Utilidades2.guardarOModificarMedida(5038, idPruebafren, eficaciaEnsenanza, "N");
             //Si se quiere añadirle defecto a los frenos de mano de moto(en caso de que tenga) entonces se puede decomentar la linea de abajo y colocar el codigo de defecto correspondiente donde dice 56003
             //if (eficaciaFrenoMano<18) Utilidades2.cargarDefectos(56003, (long) idPruebafren);
+            comentario = "Freno de enseñanza: " + String.format("%.2f", fFrenoEnsenanza) + ", eficacia enseñanza: " + String.format("%.2f", eficaciaEnsenanza) + "%";
         }
         
         boolean aprobado = true;
-        if (eficacia<30){
+        if (eficacia<30 || (esEnsenanzaYEsMoto && eficaciaEnsenanza<30)){
             if (Utilidades2.getIsEditable() == 0) Utilidades2.cargarDefectos(54010, (long) idPruebafren);
             aprobado = false;
         } 
@@ -4255,7 +4250,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         if (Utilidades2.getIsEditable() == 1 && !aprobado)  //si tiene artefacto y esta desaprobado
             Utilidades2.actualizarPrueba(false, false, (long) idUsuario, serialEquipo, (long) idPruebafren, "");
         else
-            Utilidades2.actualizarPrueba(true, aprobado, (long) idUsuario, serialEquipo, (long) idPruebafren, "");
+            Utilidades2.actualizarPrueba(true, aprobado, (long) idUsuario, serialEquipo, (long) idPruebafren, comentario);
         
         Mensajes.messageDoneTime("Se ha Registrado la Prueba de frenos de ciclomotor de manera Exitosa.", 3);
     }
@@ -4290,7 +4285,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         double eficaciaTotal = (sumaFuerzas/sumaPesos)*100;
         double eficaciaMano = (sumaFuerzasMano/sumaPesos)*100;
 
-        imprimirDatosCuatrimotoPequena(
+        imprimirDatos(
             fuerzaDI, fuerzaTI, fuerzaDD, fuerzaTD,
             pesoDI, pesoTI, pesoDD, pesoTD,
             fIzqFrenoMano, fDerFrenoMano,
@@ -4379,7 +4374,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         double eficaciaTotal = (sumaFuerzas/sumaPesos)*100;
         double eficaciaMano = (sumaFuerzasMano/sumaPesos)*100;
 
-        imprimirDatosCuatrimotoPequena(
+        imprimirDatos(
             0, fuerzaTI, fuerzaDD, fuerzaTD,
             0, pesoTI, pesoDD, pesoTD,
             fIzqFrenoMano, fDerFrenoMano,
@@ -4426,13 +4421,15 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         Mensajes.messageDoneTime("Se ha Registrado la Prueba de frenos de motocarro de manera Exitosa.", 3);
     }
 
-    public static void imprimirDatosCuatrimotoPequena(
+    public void imprimirDatos(
         double fuerzaDI, double fuerzaTI, double fuerzaDD, double fuerzaTD,
         double pesoDI, double pesoTI, double pesoDD, double pesoTD,
         double fIzqFrenoMano, double fDerFrenoMano,
         double desequilibrioEje1, double desequilibrioEje2,
         double sumaFuerzas, double sumaPesos, double sumaFuerzasMano,
         double eficaciaTotal, double eficaciaMano) {
+
+        String frenoAdicional = esMoto ? "Freno del instructor" : "Freno de mano";
     
         System.out.println("\n\n====== DATOS DE LA PRUEBA ======");
         System.out.println("\nFuerzas:");
@@ -4448,7 +4445,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         System.out.println("  Trasera Izquierda  : " + pesoTI);
         
 
-        System.out.println("\nFuerzas Freno de mano:");
+        System.out.println("\nFuerzas "+frenoAdicional+":");
         System.out.println("  Derecha  : " + fDerFrenoMano);
         System.out.println("  Izquierda: " + fIzqFrenoMano);
         
@@ -4966,11 +4963,18 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     }
 
     private void ejecutarFrenoDeMano(String lado) throws InterruptedException {
-        if (aplicFreAux) {
+        esEnsenanzaYEsMoto = ensenianza && tipoVehiculo.equalsIgnoreCase("Moto") && ejemedido == 2 &&
+                Utilidades2.dialogo2Opciones("Sí", "No", "Confirmar", "¿Desea realizar la prueba de freno del instructor?");
+
+        boolean noEsMotoYAplicaFrenoAux = !tipoVehiculo.equalsIgnoreCase("Moto") && aplicFreAux;
+        if (
+            (noEsMotoYAplicaFrenoAux) || (esEnsenanzaYEsMoto)
+        ) {
+            String tipoDeFreno = noEsMotoYAplicaFrenoAux ? "MANO" : "INSTRUCTOR";
             imageOn = new ImageIcon(getClass().getResource("/Imagenes/FrenoManoOn.png"));
             imageOff = new ImageIcon(getClass().getResource("/Imagenes/FrenoManoOf.png"));
-            LabelEje.setText(ejeORueda + ruedasOEjes[ejemedido-1] + " (MANO)");
-            LabelInfo.setText("INICIANDO PRUEBA DE FRENO DE MANO");
+            LabelEje.setText(ejeORueda + ruedasOEjes[ejemedido-1] + " (" + tipoDeFreno + ")");
+            LabelInfo.setText("INICIANDO PRUEBA DE FRENO DE " + tipoDeFreno);
             setFrenmano(true);
             Thread.sleep(2000);
             EsperaRodillos(lado);

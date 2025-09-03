@@ -5,6 +5,8 @@ import com.soltelec.dao.UsuariosJpaController;
 import com.soltelec.dao.conexion.PersistenceController;
 import com.soltelec.model.TextPrompt;
 import com.soltelec.model.Usuarios;
+import com.soltelec.util.Utilidades2;
+
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -46,6 +48,7 @@ public class FrmLogin extends javax.swing.JFrame {
     {   
         System.out.println("paso validando");
         initComponents();
+        Utilidades2.editarHumedadTemperatura("0", "0");
         ponerLookAndFeel();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(d);

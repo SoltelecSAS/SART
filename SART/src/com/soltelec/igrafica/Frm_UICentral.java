@@ -12,8 +12,11 @@ import com.soltelec.loginadministrador.LoginServiceCDA;
 import com.soltelec.loginadministrador.UtilLogin;
 import com.soltelec.model.Usuarios;
 import com.soltelec.modulopuc.utilidades.Mensajes;
+import com.soltelec.modulopuc.utilidades.Utilidades;
 import com.soltelec.util.MonitoreoOpacimetro;
 import com.soltelec.util.UtilInfoOpacidad;
+import com.soltelec.util.Utilidades2;
+
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Toolkit;
@@ -932,8 +935,9 @@ public class Frm_UICentral extends javax.swing.JDialog {
             try {
                 nombreUsuario = pane.getUserName();
                 Logger.getLogger("igrafica").info("Usuario: " + nombreUsuario + " cierra el programa");
-                
-
+                String funcionTermohigrometro = Utilidades2.obtenerFuncionTermohigrometro();
+                if (funcionTermohigrometro != null && funcionTermohigrometro.equalsIgnoreCase("Master"))
+                    Utilidades2.editarHumedadTemperatura("0", "0");
                 System.exit(0);
             } catch (Exception ex) {
                 Mensajes.mostrarExcepcion(ex);
@@ -1325,6 +1329,7 @@ public class Frm_UICentral extends javax.swing.JDialog {
                             
                             //JOptionPane.showMessageDialog(null, "");
                             if(count == 7 && strFuncionTermo.equalsIgnoreCase("Master")){
+                                Utilidades2.editarHumedadTemperatura("0", "0");
                                 JOptionPane.showMessageDialog(null, "TermoHigrometro desconectado. Saliendo...");
 
                                 // Crear un temporizador que cerrará el cuadro de diálogo después de 3 segundos
