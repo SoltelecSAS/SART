@@ -29,6 +29,10 @@ import javax.swing.Timer;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+
+import com.mysql.jdbc.Util;
+
+import Utilidades.Utilidades2;
 import eu.hansolo.steelseries.gauges.DisplaySingle;
 import static vistas.DlgTaximetro.teporizadorPulsos;
 
@@ -51,6 +55,8 @@ public class DlgServicio extends javax.swing.JDialog {
     private int contadorTemporizacion;
     private final List<Integer> Datos1 = new ArrayList<>(); //Datos correspondientes al canal a calibrar
     private double spanfd, spanfi, spanpd, spanpi, spanvd, spanvi, spand;  //valores de span de los canales obtenidos de la calibración
+    private String desvEnXmV, desvEnYmm;
+    private boolean activarMedicionDesvAlternativa = false;
     private double offsetfd, offsetfi, offsetpd, offsetpi, offsetvd, offsetvi, offsetd;  //valores de offset de los canales obtenidos de la calibración
     private int pulsosporvuelta;
     private double diametrorodillo;
@@ -139,6 +145,9 @@ public class DlgServicio extends javax.swing.JDialog {
         offsetvd = Double.parseDouble(archivop.getProperty("offsetvd"));
         offsetvi = Double.parseDouble(archivop.getProperty("offsetvi"));
         offsetd = Double.parseDouble(archivop.getProperty("offsetd"));
+        activarMedicionDesvAlternativa = Boolean.parseBoolean(archivop.getProperty("activarMedicionDesvAlternativa"));
+        desvEnXmV = archivop.getProperty("desvEnXmV");
+        desvEnYmm = archivop.getProperty("desvEnYmm");
 
         puerto = new PuertoRS232();
         try {
@@ -1588,6 +1597,19 @@ private void crearNuevoTimer() {
                     Logger.getLogger(DlgServicio.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
+                XYSeriesCollection collection = (XYSeriesCollection) dataset1;
+                XYSeries serie = collection.getSeries(0);
+
+                double voltaje = 0;
+
+                if (serie.getItemCount() > 0) {
+                    int lastIndex = serie.getItemCount() - 1;
+                    double x = serie.getX(lastIndex).doubleValue();
+                    voltaje = serie.getY(lastIndex).doubleValue();
+
+                    System.out.println("Último punto: Tiempo=" + x + ", Voltaje=" + voltaje);
+                }
+
                 if (cambiocanal) {
                     try {
                         puerto.in.read(buffer);
@@ -1605,6 +1627,8 @@ private void crearNuevoTimer() {
                     } else if (SeleccionPromedio.getSelectedIndex() == 1) {
                         promedio = CalcularMediana(Datos1);
                     }
+
+                    
                     if (getCanal() == 0) {
                         promedio *= spanfd;
                         if (SeleccionOffset.isSelected()) {
@@ -1635,6 +1659,15 @@ private void crearNuevoTimer() {
                         if (SeleccionOffset.isSelected()) {
                             promedio += offsetvi;
                         }
+                    } else if (getCanal() == 6 && activarMedicionDesvAlternativa) {
+                        
+                        System.out.println("Valor del voltaje: " + voltaje);
+                        double[] xValores = Utilidades2.stringToDoubleArray(desvEnXmV);
+                        double[] yValores = Utilidades2.stringToDoubleArray(desvEnYmm);
+                        promedio = Utilidades2.interpolar(xValores, yValores, voltaje);
+                        displayCanal.setLcdDecimals(2);
+                        System.out.println("After of Operation: " + promedio);
+                        //System.out.println(Datos1);
                     } else if (getCanal() == 6) {
                         promedio *= spand;
                         if (SeleccionOffset.isSelected()) {
@@ -1645,6 +1678,7 @@ private void crearNuevoTimer() {
                         promedio = promedio / anchoPlaca;
                         displayCanal.setLcdDecimals(2);
                         System.out.println("After of Operation: " + promedio);
+                        //System.out.println(Datos1);
                     } else {
                         displayCanal.setLcdDecimals(0);
                     }

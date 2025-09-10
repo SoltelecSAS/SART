@@ -565,4 +565,49 @@ public class Utilidades2 {
 
         return choice == JOptionPane.YES_OPTION;
     }
+
+    public static double interpolar(double[] x, double[] y, double valorX) {
+        // Recorremos para encontrar el intervalo donde cae valorX
+        for (int i = 0; i < x.length - 1; i++) {
+            double x1 = x[i];
+            double x2 = x[i + 1];
+
+            if ((valorX >= x1 && valorX <= x2) || (valorX <= x1 && valorX >= x2)) {
+                double y1 = y[i];
+                double y2 = y[i + 1];
+
+                // Fórmula de interpolación lineal
+                return y1 + (valorX - x1) * (y2 - y1) / (x2 - x1);
+            }
+        }
+
+        // Si no entró en ningún intervalo → fuera de rango
+        if (valorX < x[0]) {
+            return y[0]; // está antes del rango
+        } else if (valorX > x[x.length - 1]) {
+            return y[y.length - 1]; // está después del rango
+        } else {
+            // caso raro si el arreglo no está ordenado
+            return 0;
+        }
+    }
+
+    public static double[] stringToDoubleArray(String s) {
+        // Quitamos corchetes y espacios
+        s = s.replace("[", "").replace("]", "").trim();
+
+        if (s.isEmpty()) {
+            return new double[0]; // arreglo vacío
+        }
+
+        // Separamos por coma
+        String[] parts = s.split(",");
+
+        double[] result = new double[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            result[i] = Double.parseDouble(parts[i].trim());
+        }
+
+        return result;
+    }
 }

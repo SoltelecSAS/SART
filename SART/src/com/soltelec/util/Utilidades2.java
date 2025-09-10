@@ -6,10 +6,16 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Properties;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+
+import com.soltelec.conexion_seriales.Conexion;
 
 public class Utilidades2 {
     private static char patron = 's';
@@ -89,7 +95,51 @@ public class Utilidades2 {
       return null;
    }
 
+   public static int getIsEditable(){ //evalua si el artefacto esta activo o no
+      String consulta = "SELECT artf FROM cda WHERE id_cda = 1";
+      Conexion.setConexionFromFile();
+      try (Connection con = DriverManager.getConnection(
+         Conexion.getUrl(), 
+         Conexion.getUsuario(), 
+         Conexion.getContrasena()
+      ); 
+         PreparedStatement consultaDagma = con.prepareStatement(consulta)) {
+
+         //rc representa el resultado de la consulta
+         try (ResultSet rc = consultaDagma.executeQuery()) {
+               while (rc.next()) {
+                  return rc.getInt("artf");
+               }
+         }
+         return 0;
+      } catch (Exception e) {
+         CMensajes.mensajeError(
+               "Hubo un error al tratar de conectarse a la base de datos, contactese con Soltelec.\n"+
+               "Revise por favor el archivo conexion.soltelec\n"
+         );
+         e.printStackTrace();
+         throw new RuntimeException("Error al tratar de conectarse con el base de datos: \n"+ e.getMessage());
+      }
+   }
+
+   public static boolean mockTermoHigrometro(){
+      String archivo = "propiedades.properties"; // Nombre del archivo
+      String buscarTexto = "mockTermohigrometro=";
+
+      String resultado = Utilidades2.leerDatoDesdeArchivo(archivo, buscarTexto);
+
+      boolean estaActivoDesdePropiedades = resultado != null && resultado.equalsIgnoreCase("true");
+      boolean estaActivoElArtefacto = getIsEditable() == 1;
+      boolean elTermohigrometroEsSlave = obtenerFuncionTermohigrometro() != null && !obtenerFuncionTermohigrometro().equalsIgnoreCase("Master");
+      return estaActivoDesdePropiedades && estaActivoElArtefacto && elTermohigrometroEsSlave;
+   }
+
    public static void editarHumedadTemperatura(String humedad, String temperatura) {
+
+      if (mockTermoHigrometro()) {
+         System.err.println("El mock del termohigrómetro está activado. No se van a actualizar los datos reales.");
+         return;
+      }
 
       String rutaArchivoDatos = obtenerRutaTermoHigrometro();
       if (rutaArchivoDatos == null) {

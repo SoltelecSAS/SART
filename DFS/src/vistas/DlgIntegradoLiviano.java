@@ -484,6 +484,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                         "SART 1.7.3", JOptionPane.ERROR_MESSAGE);
                 setError_config(true);
             }
+            //String livianoOMoto = tipoVehiculo.equalsIgnoreCase("MOTO") || tipoVehiculo.equalsIgnoreCase("CICLOMOTOR") ? "motos:" : "livianos:";
             while (!config.readLine().startsWith("livianos:")) {
             }
             if ((line = config.readLine()).startsWith("pasos:")) {
@@ -526,8 +527,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                     regdatosd2.write("  BITACORA DE LOS DATOS DE LA PRUEBA DE DESVIACION DEL EJE TRASERO");
                     regdatosd2.newLine();
                     regdatosd2.flush();
-                }
-                if (isEnablehwsusp() || isEnablehwfren()) {
+                }if (isEnablehwsusp() || isEnablehwfren()) {
                     System.out.println("--Creación de los archivos backup de peso para las pruebas de suspension y frenos--");
 
                     regdatospd1 = new BufferedWriter(new FileWriter(new File("Backup Datos Peso Derecho 1.txt")));
@@ -703,7 +703,8 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             });
 
         } catch (Exception e) {
-            System.err.println("Error rn el metodo : configuracion()" + e.getMessage() + e.getLocalizedMessage());
+            System.err.println("Error en el metodo : configuracion() " + e.getMessage() +" "+ e.getLocalizedMessage());
+            e.printStackTrace();
         }
 
     }
@@ -721,6 +722,53 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         } catch (IOException ex) {
             Logger.getLogger(DlgFrenoMoto.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Se perdio de lineas");
+        }
+    }
+
+    public void LeePasoGrupo(String grupoBuscado, int pasoBuscado) {
+        String line;
+        int pasoActual = 0;
+        boolean dentroGrupo = false;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("configuracion.txt"))) {
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+
+                // Detecta inicio de un grupo (ej: "motos:", "pesados:", etc.)
+                if (line.endsWith(":")) {
+                    dentroGrupo = line.equalsIgnoreCase(grupoBuscado + ":");
+                    pasoActual = 0; // reiniciamos el contador al entrar en un grupo
+                }
+
+                // Si estamos en el grupo correcto y encontramos "salidas:"
+                if (dentroGrupo && line.startsWith("salidas:")) {
+                    pasoActual++;
+
+                    // ¿Es el paso que buscamos?
+                    if (pasoActual == pasoBuscado) {
+                        // Procesar salidas
+                        String data = line.substring("salidas:".length()).trim();
+                        String[] partes = data.split(",");
+                        salidaalta = Byte.parseByte(partes[0].trim(), 2);
+                        salidabaja = Byte.parseByte(partes[1].trim(), 2);
+
+                        // Leer la siguiente línea para el tiempo
+                        String tiempoLine = reader.readLine();
+                        tiempo_paso = Integer.parseInt(tiempoLine.substring("tiempo:".length()).trim());
+                        break; // ¡ya lo encontramos!
+                    }
+                }
+            }
+
+            if (!dentroGrupo) {
+                System.out.println("⚠ No se encontró el grupo: " + grupoBuscado);
+            } else if (pasoActual < pasoBuscado) {
+                System.out.println("⚠ El grupo " + grupoBuscado + " tiene solo " + pasoActual + " pasos.");
+            }
+
+        } catch (IOException ex) {
+            Logger.getLogger(DlgFrenoMoto.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error leyendo archivo.");
         }
     }
 
@@ -2416,8 +2464,25 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         System.out.println("moviendo rodillos start");
         puerto.setFlujoEnt(puerto);
         comandoFREN();
+
+        int pasoMotos = ejemedido == 1 ? 0 : this.numpasos / 2;
+
         for (this.pasoactual = 1; this.pasoactual <= this.numpasos / 2; this.pasoactual = ((byte) (this.pasoactual + 1))) {
-            LeePasoMetodo();
+
+            pasoMotos++;
+
+            if (tipoVehiculo.equalsIgnoreCase("MOTO") || tipoVehiculo.equalsIgnoreCase("CICLOMOTOR")) {
+                LeePasoGrupo("motos",pasoMotos);
+            }else{
+                LeePasoMetodo();
+            }
+            System.out.println("===========================================================================================================================");
+            System.out.println("Paso actual: " + this.pasoactual + " paso motos: " + pasoMotos);
+            System.out.println("salidabaja (binario): " + String.format("%6s", Integer.toBinaryString(salidabaja & 0xFF)).replace(' ', '0'));
+            System.out.println("===========================================================================================================================");
+            if (activarPresencia || activarUmbralPeso) 
+                CMensajes.mensajeCorrecto("salidabaja (binario): " + String.format("%6s", Integer.toBinaryString(salidabaja & 0xFF)).replace(' ', '0'));
+
             if (this.tiempo_paso == 0) {
                 JOptionPane.showMessageDialog(this, "Disculpe, Consegui un ERROR en el archivo de configuración", "SART 1.7.3", 0);
                 comandoSTOP();
@@ -2425,7 +2490,6 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                 dispose();
             } else {
                 EnviaSalidas(this.salidaalta, this.salidabaja);
-
                 switch (this.pasoactual) {
                     case 1:
                         System.out.println("Moviendo Rodillos");

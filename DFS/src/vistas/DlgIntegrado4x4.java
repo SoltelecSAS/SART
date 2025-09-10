@@ -115,8 +115,8 @@ public class DlgIntegrado4x4 extends javax.swing.JDialog implements ActionListen
     //y desviacion repectivamente
     private byte pasomeddesv = 0, numpasos, pasoactual = 0;
     private float ajusteDsq;
-     private String tipoPista;
-      private String tipoVehiculo;
+    private String tipoPista;
+    private String tipoVehiculo;
     public static String Placa;
     public static String NombreUsr;
 
