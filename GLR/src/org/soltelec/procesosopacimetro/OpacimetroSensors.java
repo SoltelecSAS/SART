@@ -475,8 +475,13 @@ public int obtenerFrecuenciaMuestreo(){
             msjOpacimetro.setByteDelComando((byte)117);
             byte[] tramaRespuesta = enviarRecibirTrama(UtilGasesModelo.armarTramaOpacimetro(msjOpacimetro));
             respuesta = UtilGasesModelo.armarMensajeOpacimetro(tramaRespuesta);
+            String toStringRespuesta = "";
+            if (respuesta == null || respuesta.toString() == null) {
+                System.out.println("No se recibieron datos en el intento " + count);
+                toStringRespuesta = "null";
+            }else toStringRespuesta = respuesta.toString();
             System.out.println("/====================================================================");
-            System.out.println("/=========Respuesta recibida desde el opacimetro en el intento " + count + ":\n" + respuesta.toString());
+            System.out.println("/=========Respuesta recibida desde el opacimetro en el intento " + count + ":\n" + toStringRespuesta);
             System.out.println("/====================================================================");
             if (respuesta.getDatos() != null && respuesta.getDatos().length > 0) {
                 break;

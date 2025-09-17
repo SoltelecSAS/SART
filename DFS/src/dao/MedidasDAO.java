@@ -5,6 +5,8 @@
 package dao;
 
 import com.soltelec.modulopuc.persistencia.conexion.DBUtil;
+
+import Utilidades.Utilidades2;
 import excepciones.NoPersistException;
 import java.sql.SQLException;
 import java.util.List;
@@ -28,7 +30,8 @@ public class MedidasDAO {
      public boolean guardarMedidas(PruebaDefault prueba, int idPrueba, String lugarTomaDatos) throws NoPersistException 
      {
 
-        
+        boolean activarPresencia = Utilidades2.leerBooleanDesdeArchivo("calibracion.properties", "activarPresenciaDesdeSoftware") && Utilidades2.getIsEditable() != 1;
+        boolean activarUmbralPeso = Utilidades2.leerBooleanDesdeArchivo("calibracion.properties", "activarUmbralPesoDesdeSoftware") && Utilidades2.getIsEditable() != 1;
 
         System.out.println("---------------------------------------------------");
         System.out.println("------------------Guardar Medidas desde "+lugarTomaDatos+"------------------");
@@ -41,8 +44,9 @@ public class MedidasDAO {
         System.out.println("Lonfirud List tipoMedida : " + tiposMedida.size());
         System.out.println("Lonfirud List valoresMedida : " + valoresMedida.size());
         
-        if (prueba.isRepetirPrueba()) 
+        if (prueba.isRepetirPrueba() && (!activarPresencia || !activarUmbralPeso)) 
         {
+            System.out.println("LA PRUEBA SE VA A REPETIR, NO SE GUARDAN LAS MEDIDAS");
             return true;
         }
         if (prueba instanceof Desviacion)
@@ -53,8 +57,10 @@ public class MedidasDAO {
 //                    valoresMedida.set(i, 0.0);
 //                    System.out.println("-----------------------------------------------prueba desviacion cero: " + valoresMedida.get(i));
 //                }
-                if(verifica==false){
-                     return true;
+                if(verifica==false && (!activarPresencia || !activarUmbralPeso)){
+                    System.out.println("Valor fuera de rango en desviacion: " + valoresMedida.get(i));
+                    System.out.println("LAS MEDIDAS NO SE VAN A GUARDAR DEBIDO A QUE HAY UN VALOR FUERA DE RANGO EN DESVIACION Y QUE EL ARTEFACTO ESTA DESACTIVADO");
+                    return true;
                 }
              }
          }

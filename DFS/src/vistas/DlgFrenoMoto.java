@@ -1466,6 +1466,7 @@ public class DlgFrenoMoto extends javax.swing.JDialog implements ActionListener 
                                 this.sleep(2000);
                                 t3enabled(false);
                                 LabelInfo.setText("Prueba abortada. Presione finalizar");
+                                this.sleep(2000);
                                 BotonFinalizar.setEnabled(true);
                                 comandoSTOP();
                                 break;

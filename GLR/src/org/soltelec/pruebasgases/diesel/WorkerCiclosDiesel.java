@@ -317,6 +317,20 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
                         registrarFallaSubita(idPrueba);
                     }
                 });
+
+                if (future.get() == null) {
+                    System.out.println("Prueba de Gases canceladaKitCentralAuto");
+                    System.out.println("VoyCloseKit");
+                    panel.cerrar();
+                    if (simulacion == false) {
+                        tb8500.getPuertoSerial().close();//cierra de todas formas el puerto serial.
+                    }
+                    System.out.println("VoyCloseOpacimetro");
+                    opacimetro.getPort().close();
+                    System.out.println("VoyClosePanel");
+                    CMensajes.mensajeError("Hubo un error en Lista medidas debido a que son nulas");
+                    return null;
+                }
                 
                 try {
                     listaMedidas = future.get();

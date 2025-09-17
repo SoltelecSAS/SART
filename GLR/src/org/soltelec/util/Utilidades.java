@@ -269,6 +269,7 @@ public class Utilidades {
 
     public static void actualizarPrueba(boolean finalizada, boolean aprobada, Long usuario, String serialEquipo, Long idPruebas, String comentario) {
         // Consulta SQL para actualizar los valores en la tabla pruebas
+        Conexion.setConexionFromFile();
         String query = "UPDATE pruebas " +
                        "SET Finalizada = ?, " +
                        "    Aprobada = ?, " +

@@ -85,26 +85,42 @@ public class TB85000 implements MedidorRevTemp {
    }
 
     public void obtenerRPMsTemp() throws IOException{
-        byte[] trama = armarComando("VE");
-        byte[] respuesta = enviarRecibirTrama( trama);
-        byte[] byteRpms = new byte[4];
+        byte[] respuesta = null;
+        byte[] trama = null;
+        byte[] byteRpms = null;
+        try {
+            trama = armarComando("VE");
+            respuesta = enviarRecibirTrama(trama);
+            byteRpms = new byte[4];
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
         if(respuesta != null){
-        System.arraycopy(respuesta, 10, byteRpms,0, 4);
-        String strInt = new String(byteRpms);
-        try{
-            rpm = Integer.parseInt(strInt);
-        }catch(NumberFormatException ne){
-            rpm = -1;
-        }
-        byte[] byteTemp = new byte[3];
-        System.arraycopy(respuesta,15, byteTemp, 0, 3);
-        String strTemp = new String(byteTemp);
-        try{
-            temp = Integer.parseInt(strTemp);
-        }catch(NumberFormatException ne){
-            temp = -1;
-        }
-        System.out.println("TB85000 R:" + rpm +" T: " + temp);
+            
+            String strInt;
+            try{
+                System.arraycopy(respuesta, 10, byteRpms,0, 4);
+                strInt = new String(byteRpms);
+                rpm = Integer.parseInt(strInt);
+            }catch(NumberFormatException ne){
+                rpm = -1;
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+
+            String strTemp;
+            try{
+                byte[] byteTemp = new byte[3];
+                System.arraycopy(respuesta,15, byteTemp, 0, 3);
+                strTemp = new String(byteTemp);
+                temp = Integer.parseInt(strTemp);
+            }catch(NumberFormatException ne){
+                temp = -1;
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+            System.out.println("TB85000 R:" + rpm +" T: " + temp);
         }
     }
 

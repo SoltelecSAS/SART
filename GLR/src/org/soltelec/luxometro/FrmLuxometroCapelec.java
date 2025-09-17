@@ -30,6 +30,7 @@ import com.soltelec.modulopuc.configuracion.modelo.Conexion;
 import com.soltelec.util.Utilidades2;
 
 import org.soltelec.util.ConsultarDatosVehiculo;
+import org.soltelec.util.LeerArchivo;
 import org.soltelec.util.UtilPropiedades;
 import org.soltelec.util.Utilidades;
 
@@ -1898,7 +1899,7 @@ public class FrmLuxometroCapelec extends javax.swing.JFrame {
         String comentario = Utilidades.obtenerComentario();
         System.out.println("Comentario: " + comentario);
 
-        String serialEquipo = UtilPropiedades.cargarPropiedad("serialLux", "seriales.properties");
+        String serialEquipo = LeerArchivo.leerDatoDesdeArchivo("seriales.properties", "serialLux=");
 
         if (esAprobada || (Utilidades.getIsEditable() == 0 && !esAprobada)) {
             Utilidades.actualizarPrueba(true, esAprobada, (long) idUsuario, serialEquipo, (long)idPrueba, comentario);
