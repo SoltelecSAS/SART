@@ -29,15 +29,15 @@
               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="0" pref="131" max="32767" attributes="0"/>
           </Group>
-          <Component id="chb84038" alignment="0" max="32767" attributes="0"/>
-          <Component id="chb84037" alignment="0" max="32767" attributes="0"/>
-          <Component id="chb84035" alignment="0" pref="0" max="32767" attributes="0"/>
+          <Component id="salidasAdicionales" alignment="0" max="32767" attributes="0"/>
+          <Component id="AusenciaTaponesAceite" alignment="0" max="32767" attributes="0"/>
+          <Component id="fugasTubo" alignment="0" pref="0" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
-              <Component id="chb84039" min="-2" pref="558" max="-2" attributes="0"/>
+              <Component id="tapaCombustible" min="-2" pref="558" max="-2" attributes="0"/>
               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
-              <Component id="chb84040" min="-2" pref="558" max="-2" attributes="0"/>
+              <Component id="SalidasDiseno" min="-2" pref="558" max="-2" attributes="0"/>
               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -48,22 +48,22 @@
               <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="chb84035" min="-2" max="-2" attributes="0"/>
+              <Component id="fugasTubo" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="chb84038" min="-2" max="-2" attributes="0"/>
+              <Component id="salidasAdicionales" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="chb84037" min="-2" max="-2" attributes="0"/>
+              <Component id="AusenciaTaponesAceite" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="chb84039" min="-2" max="-2" attributes="0"/>
+              <Component id="tapaCombustible" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="chb84040" min="-2" max="-2" attributes="0"/>
+              <Component id="SalidasDiseno" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JCheckBox" name="chb84035">
+    <Component class="javax.swing.JCheckBox" name="fugasTubo">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Tahoma" size="14" style="0"/>
@@ -71,13 +71,13 @@
         <Property name="text" type="java.lang.String" value="&lt;html&gt;Existencia de fugas en el tubo, uniones del m&#xfa;ltiple y silenciador del sistema de escape del veh&#xed;culo&lt;/html&gt;"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chb84035ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fugasTuboActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="chb84035.addActionListener(this);"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="fugasTubo.addActionListener(this);"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JCheckBox" name="chb84038">
+    <Component class="javax.swing.JCheckBox" name="salidasAdicionales">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Tahoma" size="14" style="0"/>
@@ -85,10 +85,10 @@
         <Property name="text" type="java.lang.String" value="&lt;html&gt;Salidas adicionales en el sistema de escape diferentes a las de dise&#xf1;o original del veh&#xed;culo&lt;/html&gt;"/>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="chb84038.addActionListener(this);"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="salidasAdicionales.addActionListener(this);"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JCheckBox" name="chb84037">
+    <Component class="javax.swing.JCheckBox" name="AusenciaTaponesAceite">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Tahoma" size="14" style="0"/>
@@ -96,7 +96,7 @@
         <Property name="text" type="java.lang.String" value="&lt;html&gt;Ausencia de tapones de aceite o fugas en el mismo &lt;/html&gt;"/>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="chb84037.addActionListener(this);"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="AusenciaTaponesAceite.addActionListener(this);"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
@@ -111,7 +111,7 @@
         <Property name="text" type="java.lang.String" value="VERIFICACION CONDICIONES ANORMALES"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JCheckBox" name="chb84039">
+    <Component class="javax.swing.JCheckBox" name="tapaCombustible">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Tahoma" size="14" style="0"/>
@@ -119,13 +119,13 @@
         <Property name="text" type="java.lang.String" value="Presencia tapa llenado combustible"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chb84039ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tapaCombustibleActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="chb84039.addActionListener(this);"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="tapaCombustible.addActionListener(this);"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JCheckBox" name="chb84040">
+    <Component class="javax.swing.JCheckBox" name="SalidasDiseno">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Tahoma" size="14" style="0"/>
@@ -133,10 +133,10 @@
         <Property name="text" type="java.lang.String" value="Salidas adicionales a las del dise&#xf1;o"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chb84040ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="SalidasDisenoActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="chb84040.addActionListener(this);"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="SalidasDiseno.addActionListener(this);"/>
       </AuxValues>
     </Component>
   </SubComponents>

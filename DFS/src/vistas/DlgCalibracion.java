@@ -85,6 +85,7 @@ public class DlgCalibracion extends javax.swing.JDialog {
     public DlgCalibracion(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        indexPos.setText("0");
         this.setSize(this.getToolkit().getScreenSize());
         configuracion();
     }
@@ -997,54 +998,47 @@ public class DlgCalibracion extends javax.swing.JDialog {
                     patronesDesvI[5] = Double.parseDouble(mmIzq5.getText());
                     mvIzq5.setText(formateador.format(muestra));
                     mvIzq5.setBackground(Color.green);
-                    mmIzq5.setEditable(false);
-                    ladoizqOk = true;
+                    
                     break;
                 case -4:
                     muestrasDesvI[4] = muestra;
                     patronesDesvI[4] = Double.parseDouble(mmIzq4.getText());
-                    mmIzq5.setEditable(true);
-                    mmIzq4.setEditable(false);
                     mvIzq4.setText(formateador.format(muestra));
                     mvIzq4.setBackground(Color.green);
-                    mvIzq5.setBackground(Color.yellow);
                     break;
                 case -3:
                     muestrasDesvI[3] = muestra;
                     patronesDesvI[3] = Double.parseDouble(mmIzq3.getText());
-                    mmIzq4.setEditable(true);
-                    mmIzq3.setEditable(false);
                     mvIzq3.setText(formateador.format(muestra));
                     mvIzq3.setBackground(Color.green);
-                    mvIzq4.setBackground(Color.yellow);
                     break;
                 case -2:
                     muestrasDesvI[2] = muestra;
                     patronesDesvI[2] = Double.parseDouble(mmIzq2.getText());
-                    mmIzq3.setEditable(true);
-                    mmIzq2.setEditable(false);
                     mvIzq2.setText(formateador.format(muestra));
                     mvIzq2.setBackground(Color.green);
-                    mvIzq3.setBackground(Color.yellow);
                     break;
                 case -1:
                     muestrasDesvI[1] = muestra;
                     patronesDesvI[1] = Double.parseDouble(mmIzq1.getText());
-                    mmIzq2.setEditable(true);
-                    mmIzq1.setEditable(false);
                     mvIzq1.setText(formateador.format(muestra));
                     mvIzq1.setBackground(Color.green);
-                    mvIzq2.setBackground(Color.yellow);
                     break;
                 case 0:
                     muestrasDesvD[0] = muestra;
                     patronesDesvD[0] = 0;
                     muestrasDesvI[0] = muestra;
                     patronesDesvI[0] = 0;
-                    mmDer1.setEditable(true);
-                    mvDer1.setBackground(Color.yellow);
                     mmIzq1.setEditable(true);
-                    mvIzq1.setBackground(Color.yellow);
+                    mmDer1.setEditable(true);
+                    mmIzq2.setEditable(true);
+                    mmDer2.setEditable(true);
+                    mmIzq3.setEditable(true);
+                    mmDer3.setEditable(true);
+                    mmIzq4.setEditable(true);
+                    mmDer4.setEditable(true);
+                    mmIzq5.setEditable(true);
+                    mmDer5.setEditable(true);
                     LabelPun0D.setText(formateador.format(muestra));
                     LabelPun0D.setBackground(Color.green);
                     
@@ -1052,50 +1046,36 @@ public class DlgCalibracion extends javax.swing.JDialog {
                 case 1:
                     muestrasDesvD[1] = muestra;
                     patronesDesvD[1] = Double.parseDouble(mmDer1.getText());
-                    mmDer2.setEditable(true);
-                    mmDer1.setEditable(false);
                     mvDer1.setText(formateador.format(muestra));
                     mvDer1.setBackground(Color.green);
-                    mvDer2.setBackground(Color.yellow);
                     break;
                 case 2:
                     muestrasDesvD[2] = muestra;
                     patronesDesvD[2] = Double.parseDouble(mmDer2.getText());
-                    mmDer3.setEditable(true);
-                    mmDer2.setEditable(false);
                     mvDer2.setText(formateador.format(muestra));
                     mvDer2.setBackground(Color.green);
-                    mvDer3.setBackground(Color.yellow);
                     break;
                 case 3:
                     muestrasDesvD[3] = muestra;
                     patronesDesvD[3] = Double.parseDouble(mmDer3.getText());
-                    mmDer4.setEditable(true);
-                    mmDer3.setEditable(false);
                     mvDer3.setText(formateador.format(muestra));
                     mvDer3.setBackground(Color.green);
-                    mvDer4.setBackground(Color.yellow);
                     break;
                 case 4:
                     muestrasDesvD[4] = muestra;
                     patronesDesvD[4] = Double.parseDouble(mmDer4.getText());
-                    mmDer5.setEditable(true);
-                    mmDer4.setEditable(false);
                     mvDer4.setText(formateador.format(muestra));
                     mvDer4.setBackground(Color.green);
-                    mvDer5.setBackground(Color.yellow);
                     break;
                 case 5:
                     muestrasDesvD[5] = muestra;
                     patronesDesvD[5] = Double.parseDouble(mmDer5.getText());
-                    mmDer5.setEditable(false);
                     mvDer5.setText(formateador.format(muestra));
                     mvDer5.setBackground(Color.green);
-                    ladoDerOk = true;
                     break;
             }
 
-            if (ladoDerOk && ladoizqOk) BotonCalcularD.setEnabled(true);
+            BotonCalcularD.setEnabled(true);
             /* numpuntod++;
             if (numpuntod == 3) {
                 BotonCapturarD.setEnabled(false);
@@ -1113,6 +1093,15 @@ public class DlgCalibracion extends javax.swing.JDialog {
                 mmIzq2.setText("");
             }
         }
+    }
+
+    private boolean estanLlenos(double[] muestras, double[] patrones) {
+        for (int i = 0; i < muestras.length; i++) {
+            if (muestras[i] == 0.0 || patrones[i] == 0.0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void AnteriorD() {

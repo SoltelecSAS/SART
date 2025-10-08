@@ -134,6 +134,17 @@ public class Utilidades2 {
       return estaActivoDesdePropiedades && estaActivoElArtefacto && elTermohigrometroEsSlave;
    }
 
+   public static boolean termohigrometroAtlanticoMotos(){
+      String archivo = "propiedades.properties"; // Nombre del archivo
+      String buscarTexto = "termohigrometroAtlanticoMotos=";
+
+      String resultado = Utilidades2.leerDatoDesdeArchivo(archivo, buscarTexto);
+
+      boolean estaActivoDesdePropiedades = resultado != null && resultado.equalsIgnoreCase("true");
+      boolean estaActivoElArtefacto = getIsEditable() == 1;
+      return estaActivoDesdePropiedades && estaActivoElArtefacto;
+   }
+
    public static void editarHumedadTemperatura(String humedad, String temperatura) {
 
       if (mockTermoHigrometro()) {

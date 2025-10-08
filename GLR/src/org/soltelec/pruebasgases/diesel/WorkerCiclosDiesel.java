@@ -318,7 +318,7 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
                     }
                 });
 
-                if (future.get() == null) {
+                /* if (future.get() == null) {
                     System.out.println("Prueba de Gases canceladaKitCentralAuto");
                     System.out.println("VoyCloseKit");
                     panel.cerrar();
@@ -330,7 +330,7 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
                     System.out.println("VoyClosePanel");
                     CMensajes.mensajeError("Hubo un error en Lista medidas debido a que son nulas");
                     return null;
-                }
+                } */
                 
                 try {
                     listaMedidas = future.get();
@@ -390,10 +390,7 @@ public class WorkerCiclosDiesel extends SwingWorker<Void, Void> {
                 //Logger.getRootLogger().error(ejex);
                 ejex.printStackTrace();
                 JOptionPane.showMessageDialog(panel, 
-                    "Excepcion durante la prueba.\n "+
-                    "Por favor revise que el kit de RPM este conectado y funcionando.\n"+
-                    "En 'Servicio de gases/cental auto' puede revisar si esta comunicando el kit.\n"+
-                    "Info exta del error:"+ ejex.getMessage());
+                    "Excepcion durante la prueba.\n "+ ejex.getMessage());
             }
         } catch (Exception exc) {
             Logger.getRootLogger().error(exc);

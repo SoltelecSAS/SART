@@ -6,6 +6,7 @@ package dao;
 
 import com.soltelec.modulopuc.persistencia.conexion.DBUtil;
 
+import Utilidades.CMensajes;
 import Utilidades.Utilidades2;
 import excepciones.NoPersistException;
 import java.sql.SQLException;
@@ -51,18 +52,17 @@ public class MedidasDAO {
         }
         if (prueba instanceof Desviacion)
         {
-             for (int i = 0; i < valoresMedida.size(); i++) {
+            for (int i = 0; i < valoresMedida.size(); i++) {
                 Boolean verifica = prueba.verifResolMedDesv(valoresMedida.get(i),0 ,0);
-//                if(valoresMedida.get(i) >= 43.0 && valoresMedida.get(i) <= 45.0){
-//                    valoresMedida.set(i, 0.0);
-//                    System.out.println("-----------------------------------------------prueba desviacion cero: " + valoresMedida.get(i));
-//                }
+
                 if(verifica==false && (!activarPresencia || !activarUmbralPeso)){
                     System.out.println("Valor fuera de rango en desviacion: " + valoresMedida.get(i));
+                    CMensajes.mensajeError("Valor fuera de rango en desviacion"+"\nLas medidas no se guardaran");
                     System.out.println("LAS MEDIDAS NO SE VAN A GUARDAR DEBIDO A QUE HAY UN VALOR FUERA DE RANGO EN DESVIACION Y QUE EL ARTEFACTO ESTA DESACTIVADO");
+                    if (Utilidades2.getIsEditable() == 1) CMensajes.mensajeError("Por favor entrar a llamar a soporte tecnico y entrar a caja negra para ver mas detallesx");
                     return true;
                 }
-             }
+            }
          }
         System.out.println("--------------------------------------");
         System.out.println("--PRUEBA SUSPENSION 12/04/2021--------");

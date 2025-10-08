@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JFrame;
@@ -37,8 +38,8 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
         Dimension d = new java.awt.Dimension(583, 90);
         this.setSize(583, 127);
         setSize(d);
-        chb84039.setVisible(ActivarTapaLlenado);
-        chb84040.setVisible(ActivarSalidasAdicional);
+        tapaCombustible.setVisible(ActivarTapaLlenado);
+        SalidasDiseno.setVisible(ActivarSalidasAdicional);
     }
 
     public boolean isDefectoEncontrado() {
@@ -62,53 +63,53 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        chb84035 = new javax.swing.JCheckBox();
-        chb84035.addActionListener(this);
-        chb84038 = new javax.swing.JCheckBox();
-        chb84038.addActionListener(this);
-        chb84037 = new javax.swing.JCheckBox();
-        chb84037.addActionListener(this);
+        fugasTubo = new javax.swing.JCheckBox();
+        fugasTubo.addActionListener(this);
+        salidasAdicionales = new javax.swing.JCheckBox();
+        salidasAdicionales.addActionListener(this);
+        AusenciaTaponesAceite = new javax.swing.JCheckBox();
+        AusenciaTaponesAceite.addActionListener(this);
         jLabel1 = new javax.swing.JLabel();
-        chb84039 = new javax.swing.JCheckBox();
-        chb84039.addActionListener(this);
-        chb84040 = new javax.swing.JCheckBox();
-        chb84040.addActionListener(this);
+        tapaCombustible = new javax.swing.JCheckBox();
+        tapaCombustible.addActionListener(this);
+        SalidasDiseno = new javax.swing.JCheckBox();
+        SalidasDiseno.addActionListener(this);
 
         setMinimumSize(new java.awt.Dimension(600, 500));
         setPreferredSize(new java.awt.Dimension(600, 300));
 
-        chb84035.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        chb84035.setText("<html>Existencia de fugas en el tubo, uniones del múltiple y silenciador del sistema de escape del vehículo</html>");
-        chb84035.addActionListener(new java.awt.event.ActionListener() {
+        fugasTubo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        fugasTubo.setText("<html>Existencia de fugas en el tubo, uniones del múltiple y silenciador del sistema de escape del vehículo</html>");
+        fugasTubo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chb84035ActionPerformed(evt);
+                fugasTuboActionPerformed(evt);
             }
         });
 
-        chb84038.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        chb84038.setText("<html>Salidas adicionales en el sistema de escape diferentes a las de diseño original del vehículo</html>");
+        salidasAdicionales.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        salidasAdicionales.setText("<html>Salidas adicionales en el sistema de escape diferentes a las de diseño original del vehículo</html>");
 
-        chb84037.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        chb84037.setText("<html>Ausencia de tapones de aceite o fugas en el mismo </html>");
+        AusenciaTaponesAceite.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        AusenciaTaponesAceite.setText("<html>Ausencia de tapones de aceite o fugas en el mismo </html>");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 0, 0));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("VERIFICACION CONDICIONES ANORMALES");
 
-        chb84039.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        chb84039.setText("Presencia tapa llenado combustible");
-        chb84039.addActionListener(new java.awt.event.ActionListener() {
+        tapaCombustible.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        tapaCombustible.setText("Presencia tapa llenado combustible");
+        tapaCombustible.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chb84039ActionPerformed(evt);
+                tapaCombustibleActionPerformed(evt);
             }
         });
 
-        chb84040.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        chb84040.setText("Salidas adicionales a las del diseño");
-        chb84040.addActionListener(new java.awt.event.ActionListener() {
+        SalidasDiseno.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        SalidasDiseno.setText("Salidas adicionales a las del diseño");
+        SalidasDiseno.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chb84040ActionPerformed(evt);
+                SalidasDisenoActionPerformed(evt);
             }
         });
 
@@ -120,14 +121,14 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
                 .addGap(0, 118, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addGap(0, 131, Short.MAX_VALUE))
-            .addComponent(chb84038)
-            .addComponent(chb84037)
-            .addComponent(chb84035, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(salidasAdicionales)
+            .addComponent(AusenciaTaponesAceite)
+            .addComponent(fugasTubo, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(chb84039, javax.swing.GroupLayout.PREFERRED_SIZE, 558, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tapaCombustible, javax.swing.GroupLayout.PREFERRED_SIZE, 558, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
-                .addComponent(chb84040, javax.swing.GroupLayout.PREFERRED_SIZE, 558, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(SalidasDiseno, javax.swing.GroupLayout.PREFERRED_SIZE, 558, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -136,46 +137,46 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
                 .addGap(26, 26, 26)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(chb84035, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(fugasTubo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(chb84038, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(salidasAdicionales, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(chb84037, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(AusenciaTaponesAceite, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(chb84039)
+                .addComponent(tapaCombustible)
                 .addGap(18, 18, 18)
-                .addComponent(chb84040)
+                .addComponent(SalidasDiseno)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void chb84039ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chb84039ActionPerformed
+    private void tapaCombustibleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tapaCombustibleActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_chb84039ActionPerformed
+    }//GEN-LAST:event_tapaCombustibleActionPerformed
 
-    private void chb84040ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chb84040ActionPerformed
+    private void SalidasDisenoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalidasDisenoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_chb84040ActionPerformed
+    }//GEN-LAST:event_SalidasDisenoActionPerformed
 
-    private void chb84035ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chb84035ActionPerformed
+    private void fugasTuboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fugasTuboActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_chb84035ActionPerformed
+    }//GEN-LAST:event_fugasTuboActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JCheckBox chb84035;
-    private javax.swing.JCheckBox chb84037;
-    private javax.swing.JCheckBox chb84038;
-    private javax.swing.JCheckBox chb84039;
-    private javax.swing.JCheckBox chb84040;
+    private javax.swing.JCheckBox AusenciaTaponesAceite;
+    private javax.swing.JCheckBox SalidasDiseno;
+    private javax.swing.JCheckBox fugasTubo;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JCheckBox salidasAdicionales;
+    private javax.swing.JCheckBox tapaCombustible;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void actionPerformed(ActionEvent e) 
     {
         String mensajeNew = "";
-        defectoEncontrado = (chb84035.isSelected() || chb84038.isSelected() || chb84037.isSelected() || chb84039.isSelected() || chb84040.isSelected()); // 
+        defectoEncontrado = (fugasTubo.isSelected() || salidasAdicionales.isSelected() || AusenciaTaponesAceite.isSelected() || tapaCombustible.isSelected() || SalidasDiseno.isSelected()); // 
         Boolean douDefc = false;
         
         if (defectoEncontrado) 
@@ -185,10 +186,11 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
 //            System.out.println("------------------------------Se ha añadido el defecto 84018----------------------------");
 //            conjuntoDefectos.add(84018);
             //1
-            if (chb84035.isSelected()) 
+            if (fugasTubo.isSelected()) 
             {
+                int idDefectoTablaRechazoGases = 8;
 //              mensaje.append(" 40103041 ".concat(chb84035.getText()));
-                mensajeNew = mensajeNew +"-4.1.1.1.1 " +chb84035.getText();
+                mensajeNew = mensajeNew +"-4.1.1.1.1 " +fugasTubo.getText();
                 mensajeNew = mensajeNew.replaceAll("<html>", " ");
                 mensajeNew = mensajeNew.replaceAll("</html>", "; \n");
                 
@@ -200,7 +202,7 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
                     }
                 }
                 if (douDefc == false) {
-                    str = chb84035.getText().replaceFirst("<html>", "");
+                    str = fugasTubo.getText().replaceFirst("<html>", "");
 //                    mapStrRechazos.put(84035," 40103041 ".concat(str.replaceAll("</html>", "; ")));
                      mapStrRechazos.put(84035,"4.1.1.1.1 ".concat(str.replaceAll("</html>", "; ")));
                 }
@@ -211,10 +213,10 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
             douDefc = false;
             
             //2
-            if (chb84038.isSelected()) 
+            if (salidasAdicionales.isSelected()) 
             {
                 
-                mensajeNew = mensajeNew + "-4.1.1.1.2 "+ chb84038.getText();
+                mensajeNew = mensajeNew + "-4.1.1.1.2 "+ salidasAdicionales.getText();
                 mensajeNew = mensajeNew.replaceAll("<html>", " ");
                 mensajeNew = mensajeNew.replaceAll("</html>", "; \n");
 //              mensaje.append(" 40103042 ".concat(chb84038.getText()));
@@ -226,7 +228,7 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
                     }
                 }
                 if (douDefc == false) {
-                    str = chb84038.getText().replaceFirst("<html>", "");
+                    str = salidasAdicionales.getText().replaceFirst("<html>", "");
 //                  mapStrRechazos.put(84038," 40103042 ".concat(str.replaceAll("</html>", "; ")));
                     mapStrRechazos.put(84038," 4.1.1.1.2 ".concat(str.replaceAll("</html>", "; ")));
                 }
@@ -236,9 +238,9 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
             douDefc = false;
             
             //3
-            if (chb84037.isSelected()) 
+            if (AusenciaTaponesAceite.isSelected()) 
             {
-                mensajeNew = mensajeNew + "-4.1.1.1.3 "+chb84037.getText();
+                mensajeNew = mensajeNew + "-4.1.1.1.3 "+AusenciaTaponesAceite.getText();
                 mensajeNew = mensajeNew.replaceAll("<html>", " ");
                 mensajeNew = mensajeNew.replaceAll("</html>", "; \n");
                 //mensaje.append("-4.1.1.1.3 ".concat(mensajeNew));
@@ -249,7 +251,7 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
                     }
                 }
                 if (douDefc == false) {
-                    str = chb84037.getText().replaceFirst("<html>", "");
+                    str = AusenciaTaponesAceite.getText().replaceFirst("<html>", "");
                     mapStrRechazos.put(84037," 4.1.1.1.3 ".concat(str.replaceAll("</html>", "; ")));
                 }
             } else {
@@ -259,10 +261,10 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
             douDefc = false;
             
             //4
-            if (chb84039.isSelected()) 
+            if (tapaCombustible.isSelected()) 
             {
                 
-                mensajeNew = mensajeNew +"-4.1.1.1.4 " +chb84039.getText();
+                mensajeNew = mensajeNew +"-4.1.1.1.4 " +tapaCombustible.getText();
                 mensajeNew = mensajeNew.replaceAll("<html>", " ");
                 mensajeNew = mensajeNew.replaceAll("</html>", "; \n");
                // mensaje.append("-4.1.1.1.4 ".concat(mensajeNew));
@@ -276,7 +278,7 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
                 }
                 if (douDefc == false) 
                 {
-                    str = chb84039.getText().replaceFirst("<html>", "");
+                    str = tapaCombustible.getText().replaceFirst("<html>", "");
                     mapStrRechazos.put(84039, " 4.1.1.1.4 ".concat(str.replaceAll("</html>", "; ")));
                 }
             }else{
@@ -285,10 +287,10 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
             }
           
 //            //5
-            if (chb84040.isSelected()) 
+            if (SalidasDiseno.isSelected()) 
             {
                 
-                mensajeNew = mensajeNew + "-4.1.1.1.6 "+ chb84040.getText();
+                mensajeNew = mensajeNew + "-4.1.1.1.6 "+ SalidasDiseno.getText();
                 mensajeNew = mensajeNew.replaceAll("<html>", " ");
                 mensajeNew = mensajeNew.replaceAll("</html>", "; \n");
                // mensaje.append(" 4.1.1.1.6 ".concat(mensajeNew));
@@ -302,7 +304,7 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
                 }
                 if (douDefc == false) 
                 {
-                    str = chb84040.getText().replaceFirst("<html>", "");
+                    str = SalidasDiseno.getText().replaceFirst("<html>", "");
                     mapStrRechazos.put(84041, " 4.1.1.1.6 ".concat(str.replaceAll("</html>", "; ")));
                 }
             }else{

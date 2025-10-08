@@ -171,6 +171,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     private int ejesDondeTieneFrenoMano = 0; // 0=Ninguno 1=Eje1, 2=Eje2, 3=Ambos ejes
     private Double offsetCeroFuerzaDer = 0.0, offsetCeroFuerzaIzq = 0.0, offsetCeroPesoDer = 0.0, offsetCeroPesoIzq = 0.0;
     private String[] ruedasOEjes = {"1 ", "2 ", "3 ", "4 "};
+    private boolean[] anunciosRetirarVehiculoMostrados = {false, false, false, false};
     private String ejeORueda = "EJE "; 
     private long tiempoFrenado = 0L;
     private long tiempoApagarContactores = 0L;
@@ -1985,8 +1986,22 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     }
 
     public void MedirDesviacion() throws InterruptedException {
+
+        Properties archivop = new Properties();
+        try {
+            archivop.load(new FileInputStream("calibracion.properties"));
+        } catch (IOException e) {
+            System.out.println("Ha ocurrido una excepcion al abrir el fichero, no se encuentra o está protegido");
+        }
+
+        String desvEnXmV = archivop.getProperty("desvEnXmV");
+        String desvEnYmm = archivop.getProperty("desvEnYmm");
+        boolean activarMedicionDesvAlternativa = Boolean.parseBoolean(archivop.getProperty("activarMedicionDesvAlternativa"));
+
+        int z=0;
+
         System.out.println("entre metodo de desviacion");
-        double auxdesv;
+        double promedioVoltaje;
         int bc;
         LabelInfo.setText("Midiendo Desviación...");
         System.out.println(" voy a craer al puerto");
@@ -1998,38 +2013,80 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         Datosfil1.clear();
         comandoDESV();
         System.out.println(" call al cmd desviacion");
-        for (i = 0; i < 10; i++) {
-            System.out.println(" estoe en bucle con " + i);
-            if (i == 1) {
+        /* for (int z = 0; z < 10; z++) {
+            System.out.println(" estoe en bucle con " + z);
+            if (z == 1) {
                 jProgressBar1.setMaximum(10);
             }
-            jProgressBar1.setValue(i + 1);
-            jProgressBar1.setString((i + 1) * 10 + "%");
+            jProgressBar1.setValue(z + 1);
+            jProgressBar1.setString((z + 1) * 10 + "%");
             Thread.sleep(500);
+            CapturarDatos("soloPresencia");
+            if (!isCanal0()) z = 0;
+        } */
+        
+        jProgressBar1.setValue(z);
+        jProgressBar1.setString((z) * 10 + "%");
+        while (z < 10) {
+            
+            System.out.println("Bucle midiendo desviacion con z= " + z);
+            if (z == 1) {
+                jProgressBar1.setMaximum(10);
+            }
+            
+            Thread.sleep(250);
+            z++;
+            jProgressBar1.setValue(z);
+            jProgressBar1.setString((z) * 10 + "%");
+            Thread.sleep(250);
         }
+
+
+        /* System.out.println("Valor del voltaje: " + voltaje);
+        double[] xValores = Utilidades2.stringToDoubleArray(desvEnXmV);
+        double[] yValores = Utilidades2.stringToDoubleArray(desvEnYmm);
+        promedio = Utilidades2.interpolar(xValores, yValores, voltaje);
+        displayCanal.setLcdDecimals(2);
+        System.out.println("After of Operation: " + promedio); */
+
+
         System.out.println(" sali del bucle ");
         comandoSTOP();
         System.out.println(" call cmd stop ");
         CapturarDatos("desviacion");
         System.out.println(" capturo datos ");
-        Datosfil1 = filtrar(Datos7);
-        auxdesv = CalcularDesviacion(valcalcero7, Datosfil1);
-        //Se calcula la desviacion teniendo en cuenta el span y el ancho de placa
-        System.out.println("-------------------------Valor medido en voltios-----------------" + auxdesv);
-        System.out.println("-------------------------Valor calculado en voltios-----------------" + valcalcero7);
-        System.out.println("-------------------------Valor span Desvioacion en nada-----------------" + spand);
-        System.out.println("-------------------------Valor ancho plancha-----------------" + anchoplacadesv);
-        Double valDesv = (((auxdesv - valcalcero7) * spand) / anchoplacadesv);
-        System.out.println("---------Resultado" + valDesv);
+        
+        Double valDesv = null;
+        
+        if(activarMedicionDesvAlternativa){
+            promedioVoltaje = CalcularMedia(Datos7);
+            System.out.println("Valor promedio del voltaje: " + promedioVoltaje);
+            double[] xValores = Utilidades2.stringToDoubleArray(desvEnXmV);
+            double[] yValores = Utilidades2.stringToDoubleArray(desvEnYmm);
+            valDesv = Utilidades2.interpolarMedidaDesv(xValores, yValores, promedioVoltaje);
+        }else{
+            Datosfil1 = filtrar(Datos7);
+            promedioVoltaje = CalcularDesviacion(valcalcero7, Datosfil1);
+
+            //Se calcula la desviacion teniendo en cuenta el span y el ancho de placa
+            System.out.println("-------------------------Valor medido en miliVoltios-----------------" + promedioVoltaje);
+            System.out.println("-------------------------Valor cero en miliVoltios-----------------" + valcalcero7);
+            System.out.println("-------------------------Valor span Desviacion-----------------" + spand);
+            System.out.println("-------------------------Valor ancho plancha-----------------" + anchoplacadesv);
+            valDesv = (((promedioVoltaje - valcalcero7) * spand) / anchoplacadesv);
+        }
+
+        System.out.println("---------Resultado: " + valDesv);
+
         desviaciones.add(valDesv);
         bc = desviaciones.size();
-        System.out.println(".-******-.");
+        /* System.out.println(".-******-.");
         System.out.println("desviacion del eje " + ejemedido);
         System.out.println(" auxdesv " + (auxdesv));
         System.out.println(" EL CERO IS " + valcalcero7);
         System.out.println(" EL SPAN DE DESVIACION " + spand);
         System.out.println("ANCHO DE PLANCHA " + anchoplacadesv);
-        System.out.println("opr. (auxdesv - valcalcero7) * spand / anchoplacadesv " + valDesv);
+        System.out.println("opr. (auxdesv - valcalcero7) * spand / anchoplacadesv " + valDesv); */
 
         System.out.println(".-******-.");
         LabelInfo.setText("Desviación del eje No." + this.ejemedido + " medida");
@@ -2313,18 +2370,54 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
         Datos4.clear();
     }
 
-    public void EsperaDesviacion() {
+    public void EsperaDesviacion() throws InterruptedException {
         LabelAviso.setText("PLACA");
         timeraviso.start();
         if (tiempomensajes == 0) {
             JOptionPane.showMessageDialog(this, "Asegurese de que el eje No." + this.ejemedido + " del vehiculo pase sobre la plancha de desviación", "Precaución", JOptionPane.WARNING_MESSAGE);
         } else {
-            if (aplcSenDesv == 1) {
-                timerPreseDesv.start();
+            if (aplcSenDesv == 1) { //parte desv
+                canal0 = false;
+                //timerPreseDesv.start();
+                CMensajes.mensajeTemporal("Asegurese de que el eje No." + this.ejemedido + " del vehiculo pase sobre la plancha de desviación", 2);
+                boolean detectando = false;
+                long startTime = 0;
+
+                while (true) {
+                    canal0 = false;
+                    CapturarDatos("soloPresencia");
+                    if (!detectando) {
+                        // Estado: esperando vehículo
+                        
+                        LabelInfo.setText("ESPERANDO EL VEHICULO");
+
+                        if (isCanal0()) {
+                            // Apenas detecta -> pasa a estado detectando
+                            detectando = true;
+                            startTime = System.currentTimeMillis();
+                            LabelInfo.setText("DETECTANDO VEHICULO...");
+                        }
+                    } else {
+                        // Estado: detectando vehículo
+                        if (!isCanal0()) {
+                            // Cancelado antes de tiempo
+                            detectando = false;
+                        } else if (System.currentTimeMillis() - startTime >= 3000) {
+                            // Confirmado 3 segundos
+                            System.out.println("Vehículo confirmado, salir del while");
+                            LabelInfo.setText("VEHICULO DETECTADO. INICIANDO MEDICION...");
+                            Thread.sleep(1000);
+                            break;
+                        }
+                    }
+
+                    Thread.sleep(100); // refresco rápido
+                }
             } else {
                 timerautomatico2.start();
+                JOptionPane.showMessageDialog(this, "Asegurese de que el eje No." + this.ejemedido + " del vehiculo pase sobre la plancha de desviación", "Precaución", JOptionPane.WARNING_MESSAGE);
             }
-            JOptionPane.showMessageDialog(this, "Asegurese de que el eje No." + this.ejemedido + " del vehiculo pase sobre la plancha de desviación", "Precaución", JOptionPane.WARNING_MESSAGE);
+            
         }
         LabelAviso.setText("");
         timeraviso.stop();
@@ -2882,6 +2975,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     }
 
     public void CapturarDatos(String opcion) {
+        
         int opc = 0;
         switch (opcion) {
             case "ceros":
@@ -2899,7 +2993,11 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
             case "fuerzaVertical":
                 opc = 5;
                 break;
+            case "soloPresencia":
+                opc = 6;
+                break;
         }
+        System.out.println("Capturando datos para: " + opcion+" (opc="+opc+")");
         try {
             len = puerto.in.read(buffer);
             switch (opc) {
@@ -3146,8 +3244,8 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                         led1.setLedOn(isCanal0());
                         led2.setLedOn(isCanal1());
 
-                        Utilidades2.writeListToFile(Datos3, "datos3-2.txt");
-                        Utilidades2.writeListToFile(Datos4, "datos4-2.txt");
+                        //Utilidades2.writeListToFile(Datos3, "datos3-2.txt");
+                        //Utilidades2.writeListToFile(Datos4, "datos4-2.txt");
                     } else {
                         comandoFREN();
                     }
@@ -3217,9 +3315,9 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                 // <editor-fold desc="Obtener tramas de comando DESV">
                 case 4:
                     if (len > 0) {
-                        for (i = 0; i < len; i++) {
+                        for (int z = 0; z < len; z++) {
                             System.out.println("------------------------------------------------estoy dentro del for de desviacion---------------------------------------");
-                            data = buffer[i];
+                            data = buffer[z];
                             // <editor-fold desc="Se valida la cabecera de la trama">
                             if (data == 72) {
                                 System.out.println("------------------------------------------------estoy antes del j=1---------------------------------------" + j);
@@ -3315,6 +3413,40 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                         Utilidades2.writeListToFile(Datos4, "datos4-5.txt");
                     } else {
                         comandoSUSP();
+                    }
+                    break;
+                case 6:
+                    if (len > 0) {
+                        for (i = 0; i < len; i++) {
+                            data = buffer[i];
+                            System.out.println("J=" + j + " Data=" + data + " (" + (char)data + ")");
+                            if (data == 72) { // 'H'
+                                j = 1;
+                            }
+                            else if (j == 1) {
+                                if (data <= 15) {
+                                    ComandoRecibido[1] = (byteToInt(data) & 0x03);
+                                    j = 2;
+                                }
+                            }
+                            // Ignorar todo lo intermedio (j=2 hasta j=13)
+                            else if (j >= 2 && j < 14) {
+                                j++;
+                            }
+                            // Validar la cola
+                            else if (j == 14) {
+                                if (data == 'W') {
+                                    setCanal0((ComandoRecibido[1] & 0x01) > 0);
+                                    setCanal1((ComandoRecibido[1] & 0x02) > 0);
+                                } 
+                                j = 0; // reinicia para próxima trama
+                            }
+                        }
+
+                        led1.setLedOn(isCanal0());
+                        led2.setLedOn(isCanal1());
+                    } else {
+                        comandoFREN();
                     }
                     break;
                 // </editor-fold>
@@ -4922,7 +5054,8 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
     //start privates methods
 
     private void verificarRetiroVehiculo() {
-        if (ejemedido > 1) {
+        if (ejemedido > 1 && !anunciosRetirarVehiculoMostrados[ejemedido-2] ) {
+            anunciosRetirarVehiculoMostrados[ejemedido-2] = true;
             Mensajes.messageWarningTime("Por Favor Retire el vehiculo de las maquinas, para iniciar con "+ejeORueda + ruedasOEjes[ejemedido-1], 6);
         }
     }

@@ -4,7 +4,14 @@
  */
 package Utilidades;
 
+import java.util.concurrent.CountDownLatch;
+
+import javax.swing.BorderFactory;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -38,5 +45,39 @@ public class CMensajes {
         }
         
         return estado;
+    }
+
+    public static void mensajeTemporal(String mensaje, int segundos) {
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        SwingUtilities.invokeLater(() -> {
+            final JDialog dialogo = new JDialog();
+            dialogo.setTitle("Mensaje");
+            dialogo.setModal(true);
+            dialogo.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+            JLabel label = new JLabel(mensaje, SwingConstants.CENTER);
+            label.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+            dialogo.getContentPane().add(label);
+            dialogo.pack();
+            dialogo.setLocationRelativeTo(null);
+
+            // Usar javax.swing.Timer para asegurar ejecución en EDT
+            new javax.swing.Timer(segundos * 1000, e -> {
+                dialogo.dispose();
+                latch.countDown();
+            }) {{
+                setRepeats(false);
+                start();
+            }};
+
+            dialogo.setVisible(true);
+        });
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

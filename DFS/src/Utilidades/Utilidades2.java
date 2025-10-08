@@ -567,6 +567,7 @@ public class Utilidades2 {
     }
 
     public static double interpolar(double[] x, double[] y, double valorX) {
+
         // Recorremos para encontrar el intervalo donde cae valorX
         for (int i = 0; i < x.length - 1; i++) {
             double x1 = x[i];
@@ -590,6 +591,67 @@ public class Utilidades2 {
             // caso raro si el arreglo no está ordenado
             return 0;
         }
+    }
+
+    //valorMxK = valor metros por kilometro
+    //voltajes = valores en mV
+    // valorVoltaje = valor en mV a interpolar
+    public static double interpolarMedidaDesv(double[] voltajes, double[] valorMxK, double valorVoltaje) {
+        double porcentajeTolerancia = leerTolerancia();
+        double valorCero = voltajes[5];
+        double tolerancia = calcularTolerancia(valorCero, porcentajeTolerancia);
+
+        Double valorInterpolado = interpolarDesv(voltajes, valorMxK, valorVoltaje);
+
+        if (estaDentroDeTolerancia(valorVoltaje, valorCero, tolerancia)
+                && esMenorAlUnoPorCiento(valorInterpolado)) {
+            return 0.0;
+        }
+
+        if (valorInterpolado != null) {
+            return valorInterpolado;
+        }
+
+        return extrapolar(voltajes, valorMxK, valorVoltaje);
+    }
+
+    private static double leerTolerancia() {
+        return leerDoubleDesdeArchivo("calibracion.properties", "toleranciaCeroDesv");
+    }
+
+    private static double calcularTolerancia(double valorCero, double porcentaje) {
+        return valorCero * (porcentaje / 100);
+    }
+
+    private static Double interpolarDesv(double[] voltajes, double[] valores, double valorVoltaje) {
+        for (int i = 0; i < voltajes.length - 1; i++) {
+            double x1 = voltajes[i], x2 = voltajes[i + 1];
+
+            if ((valorVoltaje >= x1 && valorVoltaje <= x2) || (valorVoltaje <= x1 && valorVoltaje >= x2)) {
+                double y1 = valores[i], y2 = valores[i + 1];
+                return y1 + (valorVoltaje - x1) * (y2 - y1) / (x2 - x1);
+            }
+        }
+        return null;
+    }
+
+    private static boolean estaDentroDeTolerancia(double valor, double referencia, double tolerancia) {
+        return referencia - tolerancia <= valor && valor <= referencia + tolerancia;
+    }
+
+    private static boolean esMenorAlUnoPorCiento(Double valor) {
+        return valor != null && Math.abs(valor) < 1.0;
+    }
+
+    private static double extrapolar(double[] voltajes, double[] valores, double valorVoltaje) {
+        if (valorVoltaje < voltajes[0]) {
+            return valores[0];
+        } else if (valorVoltaje > voltajes[voltajes.length - 1]) {
+            return valores[valores.length - 1];
+        }
+
+        CMensajes.mensajeError("El arreglo de voltajes no está ordenado correctamente. \nPor favor, revise la configuración de calibración.");
+        throw new IllegalArgumentException("El arreglo de voltajes no está ordenado correctamente.");
     }
 
     public static double[] stringToDoubleArray(String s) {

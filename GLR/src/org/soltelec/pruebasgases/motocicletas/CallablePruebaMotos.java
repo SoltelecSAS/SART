@@ -287,7 +287,27 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
             panel.getRadialTacometro().setBackgroundColor(BackgroundColor.BLACK);
             panel.getLinearTemperatura().setValue(temp);
             contadorTemporizacion = 0;
+            int count = 0;
             while (!aceleracionHumoTerminada) {
+                count++;
+                System.out.println("count etapa validacion RPM: "+count);
+                int respuesta = count > 1 ? JOptionPane.showConfirmDialog(panel,
+                "Se salio del rango de 2500 a 3000 RPMs.\n" +
+                "¿Desea rechazarlo por RPM?",
+                "Advertencia: RPM fuera de rango",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE) : 22;
+
+                // Si el usuario acepta (responde "Sí"), ejecutamos el método rechazoRpmMetodo
+                if (respuesta == JOptionPane.YES_OPTION) {
+                    panel.getButtonRpm().setVisible(true);
+                    panel.getButtonRpm().setEnabled(true);
+                    panel.getButtonRpm().doClick();
+                }else if(respuesta != 22){
+                    panel.getButtonRpm().setVisible(true);
+                    panel.getButtonRpm().setEnabled(true);
+                }
+
                 rpm = medidorRevTemp.getRpm();
                 temp = medidorRevTemp.getTemp();
                 while (rpm < 2500 || rpm > 3000) {
@@ -295,13 +315,28 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
                     panel.getRadialTacometro().setBackgroundColor(BackgroundColor.BLACK);
                     System.out.println("Validando rpm 2500 - 3000");
                     Thread.sleep(250);
-                    panel.getMensaje().setText(" Acelere entre 2500 y 3000 rpm T:" + contadorTemporizacion + " TIENE TRES MINUTOS PARA GARANTIZAR ESTA CONDICION");
+                    panel.getMensaje().setText(" Acelere entre 2500 y 3000 rpm, tiempo: " + contadorTemporizacion + " \nTIENE 90 SEGUNDOS PARA GARANTIZAR ESTA CONDICION");
                     rpm = medidorRevTemp.getRpm();
                     panel.getRadialTacometro().setValue(rpm);
                     panel.getLinearTemperatura().setValue(temp);
-                    if (contadorTemporizacion >= 180) {
+                    if (contadorTemporizacion >= 90) {
 
-                        int opcion = JOptionPane.showOptionDialog(null, " La Presente Prueba de Gases  NO ALCANZO el Rango de RPM  establecido por  el Inspector ",
+                        respuesta = JOptionPane.showConfirmDialog(panel,
+                            "No se alcanzo el rango de 2500 y 3000 RPMs en el tiempo de 90 Segundos.\n" +
+                            "¿Desea rechazarlo por RPM?",
+                            "Advertencia: RPM fuera de rango",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE);
+
+                        // Si el usuario acepta (responde "Sí"), ejecutamos el método rechazoRpmMetodo
+                        if (respuesta == JOptionPane.YES_OPTION) {
+                            panel.getButtonRpm().setEnabled(true);
+                            panel.getButtonRpm().setVisible(true);
+                            panel.getButtonRpm().doClick();
+                            return null;
+                        }
+
+                        int opcion = JOptionPane.showOptionDialog(null, "La Presente Prueba de Gases NO ALCANZO el Rango de RPM  establecido por  el Inspector ",
                                 null, JOptionPane.YES_NO_CANCEL_OPTION,
                                 JOptionPane.INFORMATION_MESSAGE, null, new Object[]{"Aceptar"}, "NO");
                         panel.getFuncion().setText("Tiempo Limite Toma Revoluciones");
@@ -329,10 +364,7 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
                         panel.getMensaje().setText("POR FAVOR MANTENGA ACELERADA DURANTE 10 seg ");
                     }
                 }
-                if (contadorTemporizacion >= 10) {
-                    aceleracionHumoTerminada = true;
-                }
-
+                if (contadorTemporizacion >= 10) aceleracionHumoTerminada = true;
             }
             System.out.println(panel.getFuncion().getText());
             if (isSalida()) {

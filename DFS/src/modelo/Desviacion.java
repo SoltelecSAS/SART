@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 
+import Utilidades.CMensajes;
+
 /**
  *
  * @author Gerencia TIC
@@ -134,16 +136,16 @@ public class Desviacion implements PruebaDefault {
     public Boolean verifResolMedDesv(Double medida,Integer resolMin,Integer resolMax) {
         boolean verifica= true;
          System.out.println("\n..........VALORES medido DESV..........\n"+medida);        
-        if( this.resolMin > medida ){
+        if( this.resolMin > medida && this.resolMax < medida){
             verifica= false;            
-        }
-        if( this.resolMax < medida ){
-            verifica= false;            
+            System.out.println("Los valores de resolucion estan entre: "+this.resolMin+" y "+this.resolMax);
+            System.out.println("Valor fuera del rango de resolucion en desviacion: " + medida);
+            CMensajes.mensajeError("Valor fuera del rango de resolucion en desviacion"+"\nLa medida no se guardara");
         }
         if(verifica==false){
-          imprimirValores("verifResolMedDesv desde Desviacion");
-          Object[] choices = {"REPETIR"};         
-          /* int dato = */ JOptionPane.showOptionDialog(null, "<html><div><center><img src='file:images/flag-red-icon.png' alt='algo'/><h2 style='font-family: \"Open Sans Condensed Light\"; color:#069'>Falla en el proceso</h2><hr/><p align='justify' style='font-family: 'Open Sans Condensed Light'; font-size: 15px; '>LA MEDIDA ESTA POR FUERA DE LA RESOLUCION DE LA MAQUINA</p><hr/><br/></center></div></html>", "SART 1.7.3 DESVIACION FUERA DE RESOLUCION", 0, -1, null, choices, choices[0]);                   
+            imprimirValores("verifResolMedDesv desde Desviacion");
+            Object[] choices = {"REPETIR"};         
+            JOptionPane.showOptionDialog(null, "<html><div><center><img src='file:images/flag-red-icon.png' alt='algo'/><h2 style='font-family: \"Open Sans Condensed Light\"; color:#069'>Falla en el proceso</h2><hr/><p align='justify' style='font-family: 'Open Sans Condensed Light'; font-size: 15px; '>LA MEDIDA ESTA POR FUERA DE LA RESOLUCION DE LA MAQUINA</p><hr/><br/></center></div></html>", "SART 1.7.3 DESVIACION FUERA DE RESOLUCION", 0, -1, null, choices, choices[0]);                   
         }        
         return verifica;        
     }

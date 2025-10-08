@@ -68,7 +68,7 @@ public class CallableInicioMotos implements Callable<Void> {
     private final long idHojaPrueba, idPrueba, idUsuario;
     private int contadorTemporizacion;
     private final Timer timer;
-    private PanelVerificacionMoto p;
+    private PanelVerificacionMoto panelVerificacionDeMoto;
     private final DialogoMotos dlgMotos;
     private int limiteHC = 20;
     private String placas;
@@ -217,16 +217,16 @@ public class CallableInicioMotos implements Callable<Void> {
                 //-------------------------------PANEL DE INSPECCION VISUAL INCIO-------------------------------------------------------------
                 panel.getPanelMensaje().setText(" ");
                 configurarPanelVerificacion(TapaLlenadoActivador, alidasAdicionalActivador);//oculta items no aplicables a Motocicletas
-                JOptionPane.showMessageDialog(null, p, "SART 1.7.3.- Inspeccion Sensorial ", JOptionPane.PLAIN_MESSAGE);
-                if (p.isDefectoEncontrado()) {
-                    System.out.println("Defecto " + p.getMensaje().toString());
-                    JOptionPane.showMessageDialog(panel, p.getMensaje().toString());
+                JOptionPane.showMessageDialog(null, panelVerificacionDeMoto, "SART 1.7.3.- Inspeccion Sensorial ", JOptionPane.PLAIN_MESSAGE);
+                if (panelVerificacionDeMoto.isDefectoEncontrado()) {
+                    System.out.println("Defecto " + panelVerificacionDeMoto.getMensaje().toString());
+                    JOptionPane.showMessageDialog(panel, panelVerificacionDeMoto.getMensaje().toString());
                     try {
                         RegistrarMedidas regMedidas = new RegistrarMedidas();
-                        regMedidas.setMensaDefe(p.getDetallesRechazos());
+                        regMedidas.setMensaDefe(panelVerificacionDeMoto.getDetallesRechazos());
                         CallableInicioMotos.lecturaCondicionesAnormales = regMedidas.getMensaDefe();
                         System.out.println("Imprimo :" + CallableInicioMotos.lecturaCondicionesAnormales);
-                        regMedidas.registrarDefectosVisuales(p.getConjuntoDefectos(), idPrueba, idUsuario);
+                        regMedidas.registrarDefectosVisuales(panelVerificacionDeMoto.getConjuntoDefectos(), idPrueba, idUsuario);
                         regMedidas.registrarTemperaturInicio(tempAmbiente, idPrueba);
                         regMedidas.registrarHumedadInicio(humedadAmbiente, idPrueba);
                         
@@ -408,8 +408,8 @@ public class CallableInicioMotos implements Callable<Void> {
     }//end of method call
 
     private void configurarPanelVerificacion(boolean ActivarTapaLlenado, boolean ActivarSalidasAdicional) {
-        p = new PanelVerificacionMoto(ActivarTapaLlenado, ActivarSalidasAdicional);
-        p.setSize(583, 125);
+        panelVerificacionDeMoto = new PanelVerificacionMoto(ActivarTapaLlenado, ActivarSalidasAdicional);
+        panelVerificacionDeMoto.setSize(583, 125);
     }
 
     private void liberarRecursos() {

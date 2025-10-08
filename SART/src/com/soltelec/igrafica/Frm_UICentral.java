@@ -1305,8 +1305,9 @@ public class Frm_UICentral extends javax.swing.JDialog {
         try {
             String strMarcaTermohigrometro = UtilPropiedades.cargarPropiedad("MarcaTermoHigrometro", "propiedades.properties");
             if (strMarcaTermohigrometro.equalsIgnoreCase("Artisan")) {
-                 System.out.println("readArtisan");
-                termoHigrometroArtisan = new TermoHigrometroArtisan();                
+                System.out.println("readArtisan");
+                termoHigrometroArtisan = new TermoHigrometroArtisan(); 
+                boolean termohigrometroAtlanticoMotos = Utilidades2.termohigrometroAtlanticoMotos();
                 timerTermoHigrometro = new Timer(1000, new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         try {
@@ -1315,20 +1316,20 @@ public class Frm_UICentral extends javax.swing.JDialog {
                             if(strFuncionTermo.equalsIgnoreCase("Master")){
                                 System.out.println("readArtisanMaster");
                                 lee = termoHigrometroArtisan.capturaDatos();  
-                                
                             }else{
-                                System.out.println("readArtisanSLAVE    ");
+                                System.out.println("readArtisanSLAVE");
                                 termoHigrometroArtisan.capturaSlave();                              
-                            }      
+                            }
+
                             
-                            if(lee || !strFuncionTermo.equalsIgnoreCase("Master")){
+                            if(lee || !strFuncionTermo.equalsIgnoreCase("Master") || termohigrometroAtlanticoMotos){
                                 displayMultiHumedad.setLcdValue(Double.parseDouble(termoHigrometroArtisan.obtenerHumedad()));
                                 displayMultiTemp.setLcdValue(Double.parseDouble(termoHigrometroArtisan.obtenerTemperatura()));
                                 count = 0;
                             }else count++;
                             
                             //JOptionPane.showMessageDialog(null, "");
-                            if(count == 7 && strFuncionTermo.equalsIgnoreCase("Master")){
+                            if(count == 7 && strFuncionTermo.equalsIgnoreCase("Master") && !termohigrometroAtlanticoMotos){
                                 Utilidades2.editarHumedadTemperatura("0", "0");
                                 JOptionPane.showMessageDialog(null, "TermoHigrometro desconectado. Saliendo...");
 
