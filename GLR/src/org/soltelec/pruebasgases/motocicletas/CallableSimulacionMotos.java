@@ -424,6 +424,7 @@ public class CallableSimulacionMotos implements Callable<List<MedicionGases>> {
                                     Thread.sleep(10000);
                                     return true;
                                 } 
+                                //CERO DESVIADO
                             }
                             this.medicion = this.banco.obtenerDatos();
                             this.panel.getPanelMensaje().setText(

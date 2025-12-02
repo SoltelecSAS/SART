@@ -29,7 +29,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
                           <Component id="desvidere3" alignment="0" max="32767" attributes="0"/>
-                          <Component id="bajaIzquierda3" max="32767" attributes="0"/>
+                          <Component id="bajaDerecha3" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="intBajaDerecha3" min="-2" pref="95" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -38,7 +38,7 @@
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="bajaIzquierda2" max="32767" attributes="0"/>
+                          <Component id="bajaDerecha2" max="32767" attributes="0"/>
                           <Component id="desvidere2" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="intBajaDerecha2" max="32767" attributes="0"/>
@@ -168,7 +168,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="bajaDerecha2" min="-2" max="-2" attributes="0"/>
+                          <Component id="bajaIzquierda2" min="-2" max="-2" attributes="0"/>
                           <Component id="desviIzqui2" alignment="1" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="BI2" min="-2" max="-2" attributes="0"/>
@@ -178,7 +178,7 @@
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="bajaDerecha3" max="32767" attributes="0"/>
+                          <Component id="bajaIzquierda3" max="32767" attributes="0"/>
                           <Component id="desviIzqui3" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="BI3" min="-2" max="-2" attributes="0"/>
@@ -263,12 +263,12 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="bajaIzquierda3" min="-2" pref="85" max="-2" attributes="0"/>
+                          <Component id="bajaDerecha3" min="-2" pref="85" max="-2" attributes="0"/>
                           <Component id="bajaIzquierda1" min="-2" max="-2" attributes="0"/>
-                          <Component id="bajaDerecha2" min="-2" max="-2" attributes="0"/>
-                          <Component id="bajaDerecha3" min="-2" max="-2" attributes="0"/>
-                          <Component id="bajaDerecha1" min="-2" max="-2" attributes="0"/>
                           <Component id="bajaIzquierda2" min="-2" max="-2" attributes="0"/>
+                          <Component id="bajaIzquierda3" min="-2" max="-2" attributes="0"/>
+                          <Component id="bajaDerecha1" min="-2" max="-2" attributes="0"/>
+                          <Component id="bajaDerecha2" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -305,7 +305,7 @@
                           <Component id="intAltaDerecha2" alignment="0" max="32767" attributes="0"/>
                           <Component id="intAltaDerecha1" alignment="0" max="32767" attributes="0"/>
                           <Component id="AD3" min="-2" max="-2" attributes="0"/>
-                          <Component id="intAltaIzquierda1" alignment="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="intAltaIzquierda1" alignment="0" max="32767" attributes="0"/>
                           <Component id="AD1" alignment="0" max="32767" attributes="0"/>
                           <Component id="AI1" alignment="0" max="32767" attributes="0"/>
                           <Component id="AI2" alignment="0" max="32767" attributes="0"/>
@@ -355,67 +355,30 @@
                       <Component id="EI3" alignment="0" max="32767" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace min="0" pref="14" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="124" max="-2" attributes="0"/>
+                      <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="122" max="-2" attributes="0"/>
+                      <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                       <Component id="leerDatos" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                       <Component id="finalizar" min="-2" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="62" max="-2" attributes="0"/>
-                              <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="124" max="-2" attributes="0"/>
-                      <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JButton" name="bajaIzquierda3">
-      <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/imagenes/baja-izquierda-not.png"/>
-        </Property>
-        <Property name="enabled" type="boolean" value="false"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bajaIzquierda3ActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="bajaIzquierda2">
-      <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/imagenes/baja-izquierda-not.png"/>
-        </Property>
-        <Property name="enabled" type="boolean" value="false"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bajaIzquierda2ActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="bajaDerecha1">
-      <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/imagenes/baja-izquierda-not.png"/>
-        </Property>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bajaDerecha1ActionPerformed"/>
-      </Events>
-    </Component>
     <Component class="javax.swing.JButton" name="bajaDerecha3">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -436,6 +399,38 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bajaDerecha2ActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="bajaDerecha1">
+      <Properties>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/imagenes/baja-izquierda-not.png"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bajaDerecha1ActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="bajaIzquierda3">
+      <Properties>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/imagenes/baja-izquierda-not.png"/>
+        </Property>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bajaIzquierda3ActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="bajaIzquierda2">
+      <Properties>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/imagenes/baja-izquierda-not.png"/>
+        </Property>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bajaIzquierda2ActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="bajaIzquierda1">

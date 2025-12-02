@@ -168,6 +168,12 @@ public class CalibracionDosPuntosController {
                 + "WHERE " + CalibracionDosPuntos.ID_EQUIPO + " = " + idEquipo + " AND " + CalibracionDosPuntos.ID_TIPO_CALIBRACION + "= 2"
                 + " ORDER BY " + CalibracionDosPuntos.FECHA + " DESC LIMIT 1";
 
+
+        /* String sql2 = "SELECT * FROM calibraciones c " 
+                + "LEFT JOIN calibracion_dos_puntos cdp on c.CALIBRATION = cdp.CALIBRATION "
+                + "WHERE c.id_equipo = " + idEquipo+ " AND c.id_tipo_calibracion = 2 "
+                + "ORDER BY c.CURDATE DESC LIMIT 1"; */
+
         System.out.println("..... findCalibracionDosPuntos .....");
         // System.out.println(sql);
         ResultSet rs = DBUtil.executeQuery(sql);

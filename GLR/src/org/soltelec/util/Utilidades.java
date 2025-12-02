@@ -24,6 +24,10 @@ import org.soltelec.conexion_seriales.Conexion;
 import com.soltelec.servidor.utils.CMensajes;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 import javax.swing.Timer;
 
 /**
@@ -178,6 +182,62 @@ public class Utilidades {
                     "Es posible que el defecto y la prueba ya estén registrados en 'defxprueba'. Detalles del error: " + e.getMessage());
         }
     }
+
+    public static void actualizarConfigCalibracion(int serial, double config1, double config2) {
+        Conexion.setConexionFromFile();
+        String updateQuery = "UPDATE config_calibracion SET config_1 = ?, config_2 = ? WHERE serial = ?";
+
+        try (Connection conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContrasena());
+            PreparedStatement pstmt = conexion.prepareStatement(updateQuery)) {
+
+            // Asignar valores a los parámetros
+            pstmt.setDouble(1, config1);
+            pstmt.setDouble(2, config2);
+            pstmt.setInt(3, serial);
+
+            System.out.println("Ejecutando actualización para el serial: " + serial);
+            int filasAfectadas = pstmt.executeUpdate();
+
+            if (filasAfectadas > 0) {
+                System.out.println("Configuración actualizada correctamente para el serial: " + serial);
+            } else {
+                System.out.println("No se encontró ningún registro con el serial: " + serial);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar configuración para el serial (" + serial + "). Detalles: " + e.getMessage());
+        }
+    }
+
+    public static void cargarCausalRechazoGases(int idCausal, Long idPrueba) {
+        Conexion.setConexionFromFile();
+        String addDefecto = "INSERT INTO pruebas_rechazo_gases (id_prueba, id_rechazo_gases) VALUES(?, ?)";
+    
+        try (Connection conexion = DriverManager.getConnection(Conexion.getUrl(), Conexion.getUsuario(), Conexion.getContrasena());
+                PreparedStatement pstmt = conexion.prepareStatement(addDefecto)) {
+    
+            // Asigna los valores al PreparedStatement
+            pstmt.setLong(1, idPrueba);
+            pstmt.setInt(2, idCausal);
+            
+    
+            System.out.println("Ejecutando query para insertar la causalRechazoGases con id_rechazo_gases: " + idCausal + " en la prueba con ID: " + idPrueba);
+    
+            // Ejecuta la actualización
+            int filasAfectadas = pstmt.executeUpdate();
+            if (filasAfectadas > 0) {
+                System.out.println("Causal insertada correctamente.");
+            } else {
+                System.out.println("No se pudo insertar la Causal.");
+            }
+    
+        } catch (SQLException e) {
+            System.err.println("Error al intentar insertar la causalRechazoGases (ID: " + idCausal + ") para la prueba (ID: " + idPrueba + "). " +
+                    "Es posible que el defecto y la prueba ya estén registrados en 'defxprueba'. Detalles del error: " + e.getMessage());
+        }
+    }
+
+    
 
     // Array de código de medidas
     private static final Integer[][] CODIGO_MEDIDAS = {
@@ -375,5 +435,30 @@ public class Utilidades {
         }
     
         return false; // Retorna false si ocurre un error
+    }
+
+    public static Boolean leerBooleanDesdeArchivo(String fileName, String key) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith(key + "=")) {
+                    String[] parts = line.split("=", 2);
+                    if (parts.length == 2) {
+                        String value = parts[1].trim().toLowerCase();
+                        System.out.println("===Leyendo el valor de la clave: " + key + " valor: " + value);
+                        if (value.equals("true") || value.equals("false")) {
+                            return Boolean.parseBoolean(value);
+                        } else {
+                            System.err.println("Valor inválido para la clave '" + key + "': " + value+". Se asumira como false.");
+                            return false;
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo: " + fileName + " error: " + e.getMessage());
+        }
+        System.out.println("===Datos no encontrados en el archivo: " + fileName + " para la clave: " + key);
+        return false;
     }
 }

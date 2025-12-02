@@ -13,6 +13,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
+import org.soltelec.util.Utilidades;
+
 /**
  *
  * @author user
@@ -217,6 +219,12 @@ public class Config_Lentes extends javax.swing.JPanel {
             props.setProperty("VFBAJO", Valor_Lente_Bajo.getText());
             props.setProperty("SERIALOP", Serial_Op.getText());
             props.store(os, "");
+
+            int serialOpacimetro = Integer.parseInt(Serial_Op.getText());
+            double lenteBajo = Double.parseDouble(Valor_Lente_Bajo.getText());
+            double lenteAlto = Double.parseDouble(Valor_Lente_Alto.getText());
+
+            Utilidades.actualizarConfigCalibracion(serialOpacimetro, lenteBajo, lenteAlto);
 
             JOptionPane.showMessageDialog(null, "Configuración Exitosa..!");
         } catch (Exception ex) {

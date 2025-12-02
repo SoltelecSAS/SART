@@ -76,6 +76,7 @@ public class DlgTaximetro extends javax.swing.JDialog implements ActionListener 
     public static String serialEquipo = "";
     public static Integer teporizadorPulsos = 0; 
     public static Integer pulsosXMilesima = 0;
+    private boolean botonContinuarPruebaOprimido= false;
     
     Timer timer3;
 
@@ -582,7 +583,7 @@ public class DlgTaximetro extends javax.swing.JDialog implements ActionListener 
                 if (velocidadReal >= 20) {
                     estaEnElRango = true;
                 }
-                if ((velocidadReal < 20 || velocidadReal > 50) && estaEnElRango) {
+                if ((velocidadReal < 20 || velocidadReal > 50) && estaEnElRango && !botonContinuarPruebaOprimido) {
                     JOptionPane.showMessageDialog(null, "Se salio del rango de velocidad(20 km - 50 km).\n Saliendo del programa...",
                             "Aviso", JOptionPane.INFORMATION_MESSAGE);
                     System.exit(0);
@@ -724,7 +725,9 @@ public class DlgTaximetro extends javax.swing.JDialog implements ActionListener 
             return "true";
         }
 
+    // BOTON DE CONTINUAR
     private void BotonContinuarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonContinuarActionPerformed
+        botonContinuarPruebaOprimido = true;
         BotonContinuar.setEnabled(false);                
         /*try {
             comandoTAX();

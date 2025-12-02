@@ -4,8 +4,9 @@
  */
 package com.soltelec.servidor.utils;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Font;
 import java.util.concurrent.CountDownLatch;
 
 import javax.swing.BorderFactory;
@@ -14,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 /**
  *
@@ -81,5 +83,34 @@ public class CMensajes {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    public static void mensajeTemporal(Component parent, String mensaje, int segundos) {
+        // Crear el diálogo
+        final JDialog dialog = new JDialog(
+                SwingUtilities.getWindowAncestor(parent),
+                "Mensaje",
+                Dialog.ModalityType.MODELESS
+        );
+
+        // Configurar el contenido
+        JLabel label = new JLabel(mensaje, SwingConstants.CENTER);
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        label.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+        dialog.add(label);
+
+        // Apariencia
+        dialog.setUndecorated(true); // sin bordes ni botones
+        dialog.pack();
+        dialog.setLocationRelativeTo(parent); // centrar sobre la ventana principal
+        dialog.setAlwaysOnTop(true);
+
+        // Mostrar
+        dialog.setVisible(true);
+
+        // Crear un temporizador para cerrarlo después de X segundos
+        Timer timer = new Timer(segundos * 1000, e -> dialog.dispose());
+        timer.setRepeats(false);
+        timer.start();
     }
 }

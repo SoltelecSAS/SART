@@ -1,5 +1,6 @@
 
 package com.soltelec.igrafica;//GEN-FIRST:event_btn_verificarActionPerformed
+import com.soltelec.conexion_seriales.Conexion;
 //GEN-LAST:event_btn_verificarActionPerformed
 import com.soltelec.dao.ControladorVerificar;
 import com.soltelec.eventos.utils.CMensajes;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
@@ -74,7 +76,11 @@ import myplayer.CapturarFoto;
 import org.soltelec.pruebasgases.DialogoVehiculo;
 import com.soltelec.util.MensajesOut;
 import com.soltelec.util.Utilidades2;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 
 import org.apache.axis.wsdl.symbolTable.Utils;
 import org.apache.commons.lang.StringUtils;
@@ -1586,7 +1592,8 @@ public class Frm_Placas extends javax.swing.JDialog {
                             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE); // Establecer la operación de cierre del JDialog
                             dialog.pack(); // Ajustar el tamaño del JDialog al tamaño preferido de su contenido
                             dialog.setTitle("Luxometro"); // Establecer el título del JDialog
-                            regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
+                            luxometroCapelec.setDialog(dialog);
+                            //regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
                             doClose(0);
                             dialog.setVisible(true); // Hacer visible el JDialog
                         } else {
@@ -1601,13 +1608,12 @@ public class Frm_Placas extends javax.swing.JDialog {
                             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE); // Establecer la operación de cierre del JDialog
                             dialog.pack(); // Ajustar el tamaño del JDialog al tamaño preferido de su contenido
                             dialog.setTitle("Luxometro"); // Establecer el título del JDialog
-                            regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
+                            luxometroCapelec.setDialog(dialog);
+                            //regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
                             doClose(0);
                             dialog.setVisible(true); // Hacer visible el JDialog
                         }
 
-                        
-//                        archivLuxo.iniciarTomaMedidaLuxometro(placas, idHojaPruebaLocal, idPrueba, idUsuario,tipoVehiculo);
                         regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
                         try {
                             Thread.sleep(1000);
@@ -2315,6 +2321,10 @@ public class Frm_Placas extends javax.swing.JDialog {
                 System.out.println(" voy apartar idAuditoria para motos ");
                 regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
 
+                if (Utilidades2.getIfHaveBogotaReport()) {
+                    Conexion.sendReviewMotosBogota(idHojaPruebaLocal);
+                }
+
             } else if (v.getTipoVehiculo().getNombre().equalsIgnoreCase("Liviano")
                     || v.getTipoVehiculo().getNombre().equalsIgnoreCase("Pesado")
                     || v.getTipoVehiculo().getNombre().equalsIgnoreCase("4x4")
@@ -2344,6 +2354,8 @@ public class Frm_Placas extends javax.swing.JDialog {
                         JDialogPruebaGasolina dlgPruebaGasolina = new JDialogPruebaGasolina(frame, true, idPrueba, idUsuario, idHojaPruebaLocal, this, placas, termoHigrometroArtisan);
                         dlgPruebaGasolina.setVisible(true);
                         regIdAuditoria(idPrueba, revTec, true, eventoDTO, cda);
+                        //aquireporte
+                        
                     } catch (SQLException | ClassNotFoundException | IOException ex) {
                         Mensajes.mostrarExcepcion(ex);
                     }

@@ -763,6 +763,9 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
             if (!dentroGrupo) {
                 System.out.println("⚠ No se encontró el grupo: " + grupoBuscado);
+                CMensajes.mensajeAdvertencia("⚠ No se encontro la configuracion para el grupo: " + grupoBuscado+"\n Verifique el archivo configuracion.txt");
+                this.BotonFinalizar.setEnabled(true);
+                throw new IOException("Grupo no encontrado");
             } else if (pasoActual < pasoBuscado) {
                 System.out.println("⚠ El grupo " + grupoBuscado + " tiene solo " + pasoActual + " pasos.");
             }
@@ -2564,17 +2567,22 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
             pasoMotos++;
 
+            String textoDeFrenos;
+
             if (tipoVehiculo.equalsIgnoreCase("MOTO") || tipoVehiculo.equalsIgnoreCase("CICLOMOTOR")) {
-                LeePasoGrupo("motos",pasoMotos);
+                LeePasoGrupo("motosEnse",pasoMotos);
+                textoDeFrenos = "FRENANDO ...!";
             }else{
                 LeePasoMetodo();
+                textoDeFrenos =  "POR FAVOR VAYA FRENANDO ..!";
             }
             System.out.println("===========================================================================================================================");
             System.out.println("Paso actual: " + this.pasoactual + " paso motos: " + pasoMotos);
             System.out.println("salidabaja (binario): " + String.format("%6s", Integer.toBinaryString(salidabaja & 0xFF)).replace(' ', '0'));
+            System.out.println("Tiempo de paso (ms): " + this.tiempo_paso);
             System.out.println("===========================================================================================================================");
             if (activarPresencia || activarUmbralPeso) 
-                CMensajes.mensajeCorrecto("salidabaja (binario): " + String.format("%6s", Integer.toBinaryString(salidabaja & 0xFF)).replace(' ', '0'));
+                CMensajes.mensajeCorrecto("salidabaja inicio (binario): " + String.format("%6s", Integer.toBinaryString(salidabaja & 0xFF)).replace(' ', '0'));
 
             if (this.tiempo_paso == 0) {
                 JOptionPane.showMessageDialog(this, "Disculpe, Consegui un ERROR en el archivo de configuración", "SART 1.7.3", 0);
@@ -2603,7 +2611,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                         break;
                     case 4:
                         System.out.println("Vaya frenando gradualmente");
-                        this.LabelInfo.setText("POR FAVOR VAYA FRENANDO ..!");
+                        this.LabelInfo.setText(textoDeFrenos);
                         
                         break;
                     case 5:
@@ -2622,12 +2630,13 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
 
                 for (int cont1s = 0; cont1s < this.tiempo_paso / 1000; cont1s++) {
                     Thread.sleep(1000L);
-                    System.out.println(new StringBuilder().append("Paso 1s,i: ").append(this.pasoactual).append(" j: ").append(cont1s).toString());
+                    System.out.println("Segundos que deben transcurrir: "+this.tiempo_paso / 1000+" s");
+                    System.out.println("Segundos transcurridos: "+(cont1s + 1)+" s");
                     CapturarDatos("frenometro");
 
-                    if (((!isCanal0()) || (!isCanal1())) && (this.pasoactual != 6)) {
+                    if (((!isCanal0()) || (!isCanal1())) && (this.pasoactual != 6) && !activarPresencia && (isVehiculoMedidoPorUnaLlanta() && !isCanal0())) {
                         this.LabelAviso.setBackground(this.PanelTitulos.getBackground());
-                        if ((this.pasoactual == 4) || (this.pasoactual == 5) || isVehiculoMedidoPorUnaLlanta() || activarPresencia) {
+                        if ((this.pasoactual == 4) || (this.pasoactual == 5)) {
                             cont1s = this.tiempo_paso / 1000;
                         } else {
                             this.LabelInfo.setText("El eje se salio de los rodillos");
@@ -2644,7 +2653,7 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                             break;
                         }
                     }
-                    if (this.pasoactual == 4) {
+                    if (this.pasoactual == 4 && !isVehiculoMedidoPorUnaLlanta()) {
                         if ((this.ComandoRecibido[6] - this.valcalcero5 <= this.velminimad) || (this.ComandoRecibido[7] - this.valcalcero6 <= this.velminimai)) {
                             cont1s = this.tiempo_paso / 1000;
                         }
@@ -2662,8 +2671,6 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                         System.out.println(new StringBuilder().append("velocidad minima derecha: ").append(this.velminimad).append(" velocidad minima izquierda: ").append(this.velminimai).toString());
                         this.timeraviso.start();
                         this.LabelAviso.setText("FRENE");
-                        System.out.println("Frenando. tiempo de frenado: " + this.tiempoFrenado);
-                        if (!lado.equalsIgnoreCase("ambos")) Thread.sleep(tiempoFrenado);
                         break;
                     case 4:
 
@@ -2687,6 +2694,8 @@ public class DlgIntegradoLiviano extends javax.swing.JDialog implements ActionLi
                 this.Datos5.clear();
                 this.Datos6.clear();
             }
+            if (activarPresencia || activarUmbralPeso) 
+                CMensajes.mensajeCorrecto("salidabaja fin (binario): " + String.format("%6s", Integer.toBinaryString(salidabaja & 0xFF)).replace(' ', '0'));
         }
         comandoSTOP();
         try {

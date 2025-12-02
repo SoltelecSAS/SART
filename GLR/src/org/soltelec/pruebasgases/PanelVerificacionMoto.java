@@ -7,6 +7,7 @@ package org.soltelec.pruebasgases;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -25,6 +26,7 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
     private final Set<Integer> conjuntoDefectos = new LinkedHashSet<>();
     private StringBuilder mensaje;
     private boolean defectoEncontrado;
+    private List<Integer> idCodigoCausalRechazoBogota = new ArrayList<>();
     private StringBuilder detalleRechazo;
     private Map<Integer, String> mapStrRechazos = new HashMap<Integer, String>();
     String str;
@@ -188,7 +190,7 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
             //1
             if (fugasTubo.isSelected()) 
             {
-                int idDefectoTablaRechazoGases = 8;
+                idCodigoCausalRechazoBogota.add(8);
 //              mensaje.append(" 40103041 ".concat(chb84035.getText()));
                 mensajeNew = mensajeNew +"-4.1.1.1.1 " +fugasTubo.getText();
                 mensajeNew = mensajeNew.replaceAll("<html>", " ");
@@ -215,7 +217,7 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
             //2
             if (salidasAdicionales.isSelected()) 
             {
-                
+                idCodigoCausalRechazoBogota.add(10);
                 mensajeNew = mensajeNew + "-4.1.1.1.2 "+ salidasAdicionales.getText();
                 mensajeNew = mensajeNew.replaceAll("<html>", " ");
                 mensajeNew = mensajeNew.replaceAll("</html>", "; \n");
@@ -240,6 +242,7 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
             //3
             if (AusenciaTaponesAceite.isSelected()) 
             {
+                idCodigoCausalRechazoBogota.add(13);
                 mensajeNew = mensajeNew + "-4.1.1.1.3 "+AusenciaTaponesAceite.getText();
                 mensajeNew = mensajeNew.replaceAll("<html>", " ");
                 mensajeNew = mensajeNew.replaceAll("</html>", "; \n");
@@ -263,7 +266,7 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
             //4
             if (tapaCombustible.isSelected()) 
             {
-                
+                idCodigoCausalRechazoBogota.add(11);
                 mensajeNew = mensajeNew +"-4.1.1.1.4 " +tapaCombustible.getText();
                 mensajeNew = mensajeNew.replaceAll("<html>", " ");
                 mensajeNew = mensajeNew.replaceAll("</html>", "; \n");
@@ -289,7 +292,7 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
 //            //5
             if (SalidasDiseno.isSelected()) 
             {
-                
+                idCodigoCausalRechazoBogota.add(14);
                 mensajeNew = mensajeNew + "-4.1.1.1.6 "+ SalidasDiseno.getText();
                 mensajeNew = mensajeNew.replaceAll("<html>", " ");
                 mensajeNew = mensajeNew.replaceAll("</html>", "; \n");
@@ -320,6 +323,10 @@ public class PanelVerificacionMoto extends javax.swing.JPanel implements java.aw
 //            AddDefGases();
             System.out.println("------------");
         }
+    }
+
+    public List<Integer> getCodigosCausalesRechazoBogota(){
+        return idCodigoCausalRechazoBogota;
     }
 
     public static void main(String args[]) {

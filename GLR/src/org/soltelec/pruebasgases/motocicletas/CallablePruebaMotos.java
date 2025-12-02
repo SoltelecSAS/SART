@@ -241,7 +241,6 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
             regMedidas.registrarTemperaturaMotor(medidorRevTemp.getTemp(), idPrueba);
             System.out.println("se ha registrado la temperatura del motor");
             panel.getButtonFinalizar().setVisible(true);
-            panel.getButtonRpm().setVisible(LeerArchivo.rechazarPorRpm());
             panel.getButtonRpm().setText("Rechazar moto por RPM ");
             panel.getButtonRpm().setVisible(false);
             tempStored = medidorRevTemp.getTemp();
@@ -288,10 +287,24 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
             panel.getLinearTemperatura().setValue(temp);
             contadorTemporizacion = 0;
             int count = 0;
+            boolean primeraVezFueraRango = false;
+            boolean desactivarPreguntaRpm = Utilidades.leerBooleanDesdeArchivo("propiedades.properties", "desactivarPreguntaRpm");
+            if (!desactivarPreguntaRpm) {
+                System.out.println("================================MENSAJE IMPORTANTE================================================================");
+                System.out.println("Propiedad de propiedades.properties desactivarPreguntaRpm no encontrada o en false, se asume como false por defecto.");
+                System.out.println("Si desea desactivar la pregunta de RPM fuera de rango, agregue la propiedad desactivarPreguntaRpm=true en el archivo propiedades.properties");
+                System.out.println("================================================================================================");
+            }else{
+                System.out.println("================================MENSAJE IMPORTANTE================================================================");
+                System.out.println("Propiedad de propiedades.properties desactivarPreguntaRpm esta en true (desactivarPreguntaRpm=true).");
+                System.out.println("Si desea activar la pregunta de RPM fuera de rango, cambie la propiedad desactivarPreguntaRpm a false en el archivo propiedades.properties");
+                System.out.println("================================================================================================");
+            }
+            System.out.println("Propiedad de propiedades.properties desactivarPreguntaRpm: "+desactivarPreguntaRpm);
             while (!aceleracionHumoTerminada) {
                 count++;
                 System.out.println("count etapa validacion RPM: "+count);
-                int respuesta = count > 1 ? JOptionPane.showConfirmDialog(panel,
+                int respuesta = count > 1 && !primeraVezFueraRango && !desactivarPreguntaRpm ? JOptionPane.showConfirmDialog(panel,
                 "Se salio del rango de 2500 a 3000 RPMs.\n" +
                 "¿Desea rechazarlo por RPM?",
                 "Advertencia: RPM fuera de rango",
@@ -300,12 +313,17 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
 
                 // Si el usuario acepta (responde "Sí"), ejecutamos el método rechazoRpmMetodo
                 if (respuesta == JOptionPane.YES_OPTION) {
-                    panel.getButtonRpm().setVisible(true);
-                    panel.getButtonRpm().setEnabled(true);
-                    panel.getButtonRpm().doClick();
+                    panel.getRechazarPorRpmMotos().setVisible(true);
+                    panel.getRechazarPorRpmMotos().setEnabled(true);
+                    panel.getRechazarPorRpmMotos().doClick();
                 }else if(respuesta != 22){
-                    panel.getButtonRpm().setVisible(true);
-                    panel.getButtonRpm().setEnabled(true);
+                    panel.getRechazarPorRpmMotos().setVisible(true);
+                    panel.getRechazarPorRpmMotos().setEnabled(true);
+                    primeraVezFueraRango = true;
+                }else if(desactivarPreguntaRpm){
+                    System.out.println("Propiedad de propiedades.properties(desactivarPreguntaRpm=true), no se muestra pregunta de rechazo por RPM fuera de rango.");
+                    panel.getRechazarPorRpmMotos().setVisible(true);
+                    panel.getRechazarPorRpmMotos().setEnabled(true);
                 }
 
                 rpm = medidorRevTemp.getRpm();
@@ -330,9 +348,9 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
 
                         // Si el usuario acepta (responde "Sí"), ejecutamos el método rechazoRpmMetodo
                         if (respuesta == JOptionPane.YES_OPTION) {
-                            panel.getButtonRpm().setEnabled(true);
-                            panel.getButtonRpm().setVisible(true);
-                            panel.getButtonRpm().doClick();
+                            panel.getRechazarPorRpmMotos().setEnabled(true);
+                            panel.getRechazarPorRpmMotos().setVisible(true);
+                            panel.getRechazarPorRpmMotos().doClick();
                             return null;
                         }
 
@@ -366,6 +384,7 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
                 }
                 if (contadorTemporizacion >= 10) aceleracionHumoTerminada = true;
             }
+            count = 0;
             System.out.println(panel.getFuncion().getText());
             if (isSalida()) {
                 List<MedicionGases> lecturaAbortada = new ArrayList<MedicionGases>();
@@ -387,6 +406,7 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
                     humo_mot = "negro";
                     panel.getFuncion().setText("4.1.1.1.7 Presencia de humo negro o azul (Negro)");
                     List<MedicionGases> lecturaRechazada = new ArrayList<MedicionGases>();
+                    Utilidades.cargarCausalRechazoGases(16, idPrueba);
                     return lecturaRechazada;
 
                 } else if (opcion == 1/*Azul*/) {
@@ -397,6 +417,7 @@ public class CallablePruebaMotos implements Callable<List<MedicionGases>> {
                     humo_mot = "azul";
                     panel.getFuncion().setText("4.1.1.1.7 Presencia de humo negro o azul (Azul)");
                     List<MedicionGases> lecturaRechazada = new ArrayList<MedicionGases>();
+                    Utilidades.cargarCausalRechazoGases(16, idPrueba);
                     return lecturaRechazada;
                 }
             }

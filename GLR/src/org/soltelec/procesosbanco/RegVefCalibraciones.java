@@ -122,7 +122,7 @@ public class RegVefCalibraciones {
             //put@
             String saltarseCalibracion = UtilPropiedades.cargarPropiedad("serialElectronicoAnalizador", "seriales.properties");
             if (fechaCalibracion.compareTo(fechaActual) < 1 && !saltarseCalibracion.equalsIgnoreCase("PERRO")) {
-                Mensajes.mensajeAdvertencia("Necesita Calibracion Dos puntos");
+                Mensajes.mensajeAdvertencia("Necesita Calibracion Dos puntos, Ultima Fecha de Calibracion: " + calibracion.getFecha());
                 Thread.sleep(1000);
                 necesitaCalibracion = true;
             } else {
@@ -163,7 +163,7 @@ public class RegVefCalibraciones {
             return true;
         } else {
             if (fechaCalibracion.compareTo(fechaActual) < 1) {
-                Mensajes.mensajeAdvertencia("Necesita Calibracion Dos puntos");
+                Mensajes.mensajeAdvertencia("Ya se paso de la fecha para la Calibracion Dos Puntos, Ultima Fecha de Calibracion: " + calibracion.getFecha());
                 necesitaCalibracion = true;
             } else {
                 Mensajes.mensajeCorrecto("No necesita calibracion, Ultima Fecha de Calibracion: " + calibracion.getFecha());

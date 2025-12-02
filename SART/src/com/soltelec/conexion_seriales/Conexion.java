@@ -20,6 +20,7 @@ import com.soltelec.util.CMensajes;
 import com.soltelec.util.Utilidades;
 import com.soltelec.util.Utilidades2;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
@@ -336,6 +337,40 @@ public class Conexion implements Serializable {
                 con.disconnect();
             }
         }
+    }
+
+    public static void sendReviewMotosBogota(int idHojaPruebas){
+        System.out.println("ipServidor: "+Conexion.getIpServidor());
+        String url = "http://" + Conexion.getIpServidor() + ":8089/api/reviews/motos/" + idHojaPruebas;
+        String jsonBody = "{\"idHojaPruebas\": " + idHojaPruebas + "}";
+        sendPostAsync(url, jsonBody);
+    }
+
+    public static void sendPostAsync(String url, String jsonBody) {
+        new Thread(() -> {
+            HttpURLConnection con = null;
+            try {
+                URL obj = new URL(url);
+                con = (HttpURLConnection) obj.openConnection();
+                con.setRequestMethod("POST");
+                con.setRequestProperty("User-Agent", "Mozilla/5.0");
+                con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                con.setDoOutput(true);
+
+                try (OutputStream os = con.getOutputStream()) {
+                    byte[] input = jsonBody.getBytes("utf-8");
+                    os.write(input, 0, input.length);
+                }
+
+                // No leemos la respuesta, solo lo mandamos
+                con.getResponseCode(); // opcional: asegura que se envíe
+            } catch (Exception e) {
+                // ignoramos cualquier excepción
+                e.printStackTrace();
+            } finally {
+                if (con != null) con.disconnect();
+            }
+        }).start();
     }
     
     public static String getBaseDatos() {

@@ -97,7 +97,7 @@ public class Utilidades2 {
 
    public static int getIsEditable(){ //evalua si el artefacto esta activo o no
       String consulta = "SELECT artf FROM cda WHERE id_cda = 1";
-      Conexion.setConexionFromFile();
+      if (Conexion.getUrl() == null) Conexion.setConexionFromFile();
       try (Connection con = DriverManager.getConnection(
          Conexion.getUrl(), 
          Conexion.getUsuario(), 
@@ -119,6 +119,34 @@ public class Utilidades2 {
          );
          e.printStackTrace();
          throw new RuntimeException("Error al tratar de conectarse con el base de datos: \n"+ e.getMessage());
+      }
+   }
+
+   public static boolean getIfHaveBogotaReport(){ //evalua si el artefacto esta activo o no
+      String consulta = "SELECT client_id_bogota FROM cda WHERE id_cda = 1";
+      if (Conexion.getUrl() == null) Conexion.setConexionFromFile();
+      try (Connection con = DriverManager.getConnection(
+         Conexion.getUrl(), 
+         Conexion.getUsuario(), 
+         Conexion.getContrasena()
+      ); 
+         PreparedStatement consultaDagma = con.prepareStatement(consulta)) {
+
+         //rc representa el resultado de la consulta
+         try (ResultSet rc = consultaDagma.executeQuery()) {
+               while (rc.next()) {
+                  String idSoltelecBogota = rc.getString("client_id_bogota");
+                  //Si el id es el de Soltelec que es el 24 en la pagina de siifmo ambiente bogota asume que tiene entidad en bogota
+                  return idSoltelecBogota != null && rc.getInt("client_id_bogota") == 24; 
+               }
+         }
+         return false;
+      } catch (Exception e) {
+         System.out.println(
+            "Hubo un error al tratar de obtener client_id_bogota en la base de datos\n"
+         );
+         e.printStackTrace();
+         return false;
       }
    }
 

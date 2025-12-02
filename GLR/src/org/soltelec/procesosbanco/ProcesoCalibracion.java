@@ -249,7 +249,7 @@ public class ProcesoCalibracion implements Runnable {
                     //return;
                     contadorTimer = 3;
                 }
-
+                //San bosco
                 while (medicion.getValorPres() >= umbral - 5 && medicion.getValorPres() <= umbral + 20 ) {
                     panelProgreso.getBarraTiempo().setValue(contadorTimer);
                     Thread.sleep(77);

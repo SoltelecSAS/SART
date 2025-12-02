@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
@@ -218,9 +219,17 @@ public class CallableInicioMotos implements Callable<Void> {
                 panel.getPanelMensaje().setText(" ");
                 configurarPanelVerificacion(TapaLlenadoActivador, alidasAdicionalActivador);//oculta items no aplicables a Motocicletas
                 JOptionPane.showMessageDialog(null, panelVerificacionDeMoto, "SART 1.7.3.- Inspeccion Sensorial ", JOptionPane.PLAIN_MESSAGE);
+                //Rechazo_gases
                 if (panelVerificacionDeMoto.isDefectoEncontrado()) {
                     System.out.println("Defecto " + panelVerificacionDeMoto.getMensaje().toString());
                     JOptionPane.showMessageDialog(panel, panelVerificacionDeMoto.getMensaje().toString());
+
+                    List<Integer> causalesDeRechazo = panelVerificacionDeMoto.getCodigosCausalesRechazoBogota();
+
+                    for(int z = 0; z < causalesDeRechazo.size() ; z++){
+                        Utilidades.cargarCausalRechazoGases(causalesDeRechazo.get(z), idPrueba);
+                    }
+
                     try {
                         RegistrarMedidas regMedidas = new RegistrarMedidas();
                         regMedidas.setMensaDefe(panelVerificacionDeMoto.getDetallesRechazos());

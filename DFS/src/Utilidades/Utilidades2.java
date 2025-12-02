@@ -401,7 +401,7 @@ public class Utilidades2 {
                         if (value.equals("true") || value.equals("false")) {
                             return Boolean.parseBoolean(value);
                         } else {
-                            System.err.println("Valor inválido para la clave '" + key + "': " + value);
+                            System.err.println("Valor inválido para la clave '" + key + "': " + value+". Se asumira como false.");
                             return false;
                         }
                     }

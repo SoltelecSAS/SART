@@ -5,15 +5,13 @@ import com.soltelec.dao.UsuariosJpaController;
 import com.soltelec.dao.conexion.PersistenceController;
 import com.soltelec.model.TextPrompt;
 import com.soltelec.model.Usuarios;
+import com.soltelec.util.AddTablas;
 import com.soltelec.util.Utilidades2;
 
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
-import static java.time.temporal.TemporalQueries.localDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -49,6 +47,7 @@ public class FrmLogin extends javax.swing.JFrame {
         System.out.println("paso validando");
         initComponents();
         Utilidades2.editarHumedadTemperatura("0", "0");
+        AddTablas.actualizarTablasDb();
         ponerLookAndFeel();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(d);

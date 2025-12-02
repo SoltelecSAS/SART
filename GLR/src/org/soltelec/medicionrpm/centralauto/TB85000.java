@@ -79,6 +79,7 @@ public class TB85000 implements MedidorRevTemp {
         try{
             rpm = Integer.parseInt(strInt);
         }catch(NumberFormatException ne){
+            ne.printStackTrace();
             rpm = -1;
         }
         return rpm;
@@ -105,6 +106,7 @@ public class TB85000 implements MedidorRevTemp {
                 rpm = Integer.parseInt(strInt);
             }catch(NumberFormatException ne){
                 rpm = -1;
+                ne.printStackTrace();
             }catch(Exception ex){
                 ex.printStackTrace();
             }
@@ -117,6 +119,7 @@ public class TB85000 implements MedidorRevTemp {
                 temp = Integer.parseInt(strTemp);
             }catch(NumberFormatException ne){
                 temp = -1;
+                ne.printStackTrace();
             }catch(Exception ex){
                 ex.printStackTrace();
             }
